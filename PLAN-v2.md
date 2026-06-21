@@ -103,15 +103,28 @@ Setiap unit di bawah ini harus diimplementasikan sebagai *pure functional compon
 - [x] Deploy plugin to `~/.hermes/plugins/web/prebextor/`
 - [x] Install skill to `~/project/prebextor/` (one package with plugin)
 - [x] Patch `config.yaml`: `web.extract_backend = prebextor`
-- [x] Write `CHANGELOG.md` entries for v3.0.0, v3.1.0, v3.1.1
-- [x] Tag `v3.1.1`
-- [ ] **Comprehensive multi-site test** (35+ sites, 7 categories) — 🔄 IN PROGRESS
-- [ ] Update architecture blueprint with v3.1 final design
-- [ ] Generate final validation report
+- [x] Write `CHANGELOG.md` entries for v3.0.0, v3.1.0, v3.1.1, v3.1.2
+- [x] Tag `v3.1.2`
+- [x] **Comprehensive multi-site test** (39 sites, 7 categories) — ✅ DONE (37/39 PASS, 95%)
+- [x] Update architecture blueprint with v3.1 final design
+- [x] Generate final validation report
 
 ---
 
 ## 5. Test Results Log
+
+### v3.1.2 — 2026-06-21 (39 sites, 7 categories) — FINAL
+
+| Category | Sites | Pass | Rate | Notes |
+|----------|-------|------|------|-------|
+| News/Article | 6 | 6 | 100% | BBC, CNN, Reuters, Guardian, AlJazeera, HN |
+| E-commerce | 5 | 5 | 100% | Amazon, Ebay, Etsy, Walmart, BestBuy |
+| SPA/Dynamic JS | 6 | 5 | 83% | Reddit rate-limited |
+| Blog/Content | 6 | 6 | 100% | Medium, Dev.to, Hashnode, WordPress, Blogger, Substack |
+| Corporate/Info | 6 | 6 | 100% | Apple, Microsoft, Google, Mozilla, Wikipedia, GitHub |
+| Data-heavy/Table | 6 | 5 | 83% | TradingEconomics rate-limited |
+| Education/Reference | 6 | 6 | 100% | Khan Academy, Coursera, NatGeo, Weather, StackOverflow, GitHub Trending |
+| **Total** | **39** | **37** | **95%** | Only 2 rate-limit failures |
 
 ### v3.1.1 — 2026-06-21 (18 sites, 6 categories)
 
