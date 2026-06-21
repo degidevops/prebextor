@@ -91,17 +91,23 @@ class StructuralMapper:
         """Return a CSS selector for the main content container. Raises
         MappingError if no selector can be confidently identified."""
 
-        # 1. semantic precedence: <main> then <article>
-        for tag in _COMMON_MAIN_SELECTORS:
+        # 1. semantic precedence: <main> then <article>, including ARIA role equivalents
+        _semantic_selectors = [
+            "main",
+            "article",
+            '[role="main"]',
+            '[role="article"]',
+        ]
+        for sel in _semantic_selectors:
             probe = (
                 "(function(){"
-                f" const el = document.querySelector('{tag}');"
+                f" const el = document.querySelector('{sel}');"
                 " return el ? 'found' : null;"
                 "})()"
             )
             got = self.client.evaluate_js(probe, tab_id, user)
             if got == "found":
-                return tag
+                return sel
 
         # 2. snapshot pattern matching (id before class)
         snap = self.client.snapshot(tab_id, user)
