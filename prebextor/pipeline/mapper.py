@@ -6,8 +6,9 @@ Pipeline v3 (NO SNAPSHOT — raw HTML first):
     1b. ARIA roles: [role="main"], [role="article"]
     1c. Pattern match: id/class tokens containing content/main/article/body/post/entry/story
   Phase 2: Density fallback (JS-side; highest text-to-tag ratio)
+  Phase 3: Ultimate fallback — return body
 
-The mapper never invents selectors. If no pass returns a selector, fail fast.
+The mapper never invents selectors. If no pass returns a selector, returns "body".
 """
 
 from __future__ import annotations
@@ -43,10 +44,9 @@ class StructuralMapper:
 
     def map_selector(self, tab_id: str, user: str) -> str:
         """Return a CSS selector for the main content container.
-        Raises MappingError if no selector can be found."""
+        Never raises — always returns a valid selector (falls back to "body")."""
 
-        # ===== Phase 1: evaluate_js semantic detection =====
-        # 1a. Semantic tags + ARIA role via evaluate_js
+        # ===== Phase 1a: Semantic tags + ARIA role =====
         _js_semantic = [
             "main",
             "article",
@@ -64,7 +64,7 @@ class StructuralMapper:
             if got == "found":
                 return sel
 
-        # 1b. Pattern match via evaluate_js (id/class tokens)
+        # ===== Phase 1b: Pattern match (id/class tokens) =====
         pattern_js = """(function(){
   var tokens = ['content','main','article','body','post','entry','story'];
   var all = document.querySelectorAll('*[id], *[class]');
@@ -90,24 +90,20 @@ class StructuralMapper:
         if sel:
             return sel
 
-        # ===== Phase 2: Density fallback (JS-side; highest text-to-tag wins) =====
+        # ===== Phase 2: Density fallback =====
         density_expr = """(function(){
-  var cands = Array.from(
-    document.querySelectorAll('main,article,section,div')
-  );
+  var cands = Array.from(document.querySelectorAll('main,article,section,div'));
   var score = cands.map(function(el){
-    return {
-      el: el,
-      len: (el.innerText||'').length,
-      tags: el.getElementsByTagName('*').length
-    };
-  }).filter(function(x){ return x.len >= 100; });
+    return { el: el, len: (el.innerText||'').length, tags: el.getElementsByTagName('*').length };
+  }).filter(function(x){ return x.len >= 50; });
   if (!score.length) return null;
   score.sort(function(a,b){ return (b.len - b.tags) - (a.len - a.tags); });
   var best = score[0].el;
   if (best.id) { return best.tagName.toLowerCase() + '#' + best.id; }
   if (best.className && typeof best.className === 'string') {
-    return best.tagName.toLowerCase() + '.' + best.className.trim().split(/\\s+/).join('.');
+    var cls = best.className.trim().split(/\\s+/).join('.');
+    cls = cls.replace(/[^a-zA-Z0-9_\\-\\.]/g, '');
+    if(cls) return best.tagName.toLowerCase() + '.' + cls;
   }
   return best.tagName.toLowerCase();
 })()"""
@@ -115,7 +111,5 @@ class StructuralMapper:
         if sel:
             return sel
 
-        raise MappingError(
-            "StructuralMapper: no container identified "
-            "(no semantic tag, no ARIA role, no pattern match, no density candidate)"
-        )
+        # ===== Phase 3: Ultimate fallback =====
+        return "body"

@@ -165,44 +165,32 @@ class CamoFoxClient:
         tab_id: str,
         user: str,
         selector: Optional[str] = None,
-        chunk_size: int = 15000,
+        chunk_size: int = 20000,
     ) -> Optional[str]:
-        """Get outerHTML of element matching selector (chunked, no staging).
+        """Get outerHTML of element matching selector (chunked).
 
-        Uses direct evaluate_js return for small HTML, chunked for large.
-        No window.__pe_html staging — avoids stale reference issues.
+        Uses window.__pe_html staging for chunked retrieval.
+        Staging is set FRESH each time — no stale reference.
         """
         if selector:
             js_selector = selector.replace("'", "\\'")
-            get_js = (
+            stage_js = (
                 f"(function(){{"
                 f" const el = document.querySelector('{js_selector}');"
                 f" if(!el) return null;"
-                f" return el.outerHTML;"
+                f" window.__pe_html = el.outerHTML;"
+                f" return String(el.outerHTML.length);"
                 f"}})()"
             )
         else:
-            get_js = "document.documentElement.outerHTML"
-
-        # First try: direct eval (works for small pages)
-        result = self.evaluate_js(get_js, tab_id, user, timeout=30)
-        if result is not None:
-            return result
-
-        # Fallback: chunked via JSON.stringify (for large HTML)
-        if selector:
-            js_selector = selector.replace("'", "\\'")
-            length_js = (
-                f"(function(){{"
-                f" const el = document.querySelector('{js_selector}');"
-                f" if(!el) return 0;"
-                f" return el.outerHTML.length;"
-                f"}})()"
+            stage_js = (
+                "(()=>{"
+                "window.__pe_html = document.documentElement.outerHTML;"
+                "return String(document.documentElement.outerHTML.length);"
+                "})()"
             )
-        else:
-            length_js = "document.documentElement.outerHTML.length"
 
-        length_str = self.evaluate_js(length_js, tab_id, user, timeout=30)
+        length_str = self.evaluate_js(stage_js, tab_id, user, timeout=30)
         if length_str is None:
             return None
 
@@ -214,12 +202,12 @@ class CamoFoxClient:
         if length == 0:
             return ""
 
-        # Chunked retrieval using JSON.stringify for proper escaping
+        # Chunked retrieval
         chunks: List[str] = []
         pos = 0
         while pos < length:
             end = min(pos + chunk_size, length)
-            chunk_js = f"JSON.stringify((function(){{ const el = document.querySelector('{selector.replace(chr(39), chr(92)+chr(39)) if selector else ''}'); return el ? el.outerHTML : document.documentElement.outerHTML; }})().substring({pos},{end}))"
+            chunk_js = f"JSON.stringify(window.__pe_html.substring({pos},{end}))"
             part_json = self.evaluate_js(chunk_js, tab_id, user, timeout=30)
             if part_json is None:
                 break
@@ -231,6 +219,12 @@ class CamoFoxClient:
                 break
             chunks.append(part)
             pos += len(part)
+
+        # Clean up staging
+        try:
+            self.evaluate_js("delete window.__pe_html;", tab_id, user, timeout=5)
+        except Exception:
+            pass
 
         return "".join(chunks)
 

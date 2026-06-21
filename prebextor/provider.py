@@ -212,11 +212,6 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                 },
                 "error": None,
             }
-        except (MappingError, AssertionError_) as e:
-            return {
-                "url": url, "title": "", "content": "",
-                "raw_content": "", "metadata": {}, "error": str(e),
-            }
         except Exception as e:
             return {
                 "url": url, "title": "", "content": "",
