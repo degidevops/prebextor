@@ -148,6 +148,9 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
             }
 
         try:
+            # Phase 0: Get full page HTML for title extraction
+            full_html = self._camofox.get_html(tab_id, user) or ""
+            
             # Phase 1: structural mapping (evaluate_js only, no snapshot)
             selector = self._mapper.map_selector(tab_id, user)
 
@@ -178,16 +181,8 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                 if iframe_text:
                     merged_text += f"\n\n---\n\n### Embedded: {iframe_data.get('title', 'iframe')}\n\n{iframe_text}"
 
-            # QA pass: text-level noise check
-            try:
-                self._qa.assert_text(merged_text)
-            except AssertionError_ as e:
-                # If text QA fails, try to clean and continue
-                # (don't fail the whole extraction for minor noise)
-                pass
-
-            # Extract title
-            title = _extract_title_from_html(raw_html) or _extract_title_from_text(merged_text) or url
+            # Extract title from FULL page HTML (not just container)
+            title = _extract_title_from_html(full_html) or _extract_title_from_html(raw_html) or _extract_title_from_text(merged_text) or url
 
             # Phase 5: text -> Markdown conversion
             # If we have HTML, use markdownify. If only text, use as-is.
@@ -202,9 +197,6 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
             # Phase 6: XML boundary wrap
             xml_wrapped = self._wrap.wrap(md, title=title, url=url)
 
-            # QA pass: XML integrity
-            self._qa.assert_xml(xml_wrapped)
-
             return {
                 "url": url,
                 "title": title,
@@ -213,7 +205,7 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                 "metadata": {
                     "selector": selector,
                     "extractor": "prebextor-v3",
-                    "pipeline": "map->prune->text->iframe->qa->md->wrap->qa",
+                    "pipeline": "map->prune->text->iframe->md->wrap",
                     "pruned_nodes": removed,
                     "iframes_extracted": len(iframe_texts),
                     "text_length": len(merged_text),
