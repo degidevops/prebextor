@@ -190,3 +190,50 @@ Drives the contract change for `extract()` in `provider.py`: it **must** return 
     ├── plugin-layout.md
     └── troubleshooting.md
 ```
+
+---
+
+## Bab 4: Iframe Extraction Strategy (v3)
+
+### 4.1 Masalah Cross-Origin Iframe
+
+Banyak website modern memuat konten utama di dalam iframe cross-origin:
+- **CME FedWatch**: Data tabel probability di-load dari `cmegroup-tools.quikstrike.net`
+- **Embedded widgets**: Maps, charts, calculators dari domain ketiga
+- **SPA micro-frontends**: Komponen UI dari subdomain berbeda
+
+Cross-origin policy memblokir akses ke `contentDocument` iframe dari parent page.
+
+### 4.2 Solusi: Recursive Iframe Extraction
+
+```
+1. Detect significant iframes (ukuran > 300x200, bukan tracking/ads)
+2. Buka iframe src di tab CamoFox baru
+3. Extract content dari tab iframe secara recursive
+4. Merge iframe text ke parent content
+```
+
+### 4.3 Implementasi
+
+File: `prebextor/pipeline/iframe_extractor.py`
+
+```python
+class IframeExtractor:
+    def detect_significant_iframes(tab_id, user) -> List[Dict]
+    def extract_iframe_content(iframe_src, parent_user) -> Optional[Dict]
+```
+
+### 4.4 Tracking/Ads Filter
+
+Iframe dari domain berikut di-skip:
+- `doubleclick.net`, `google-analytics.com`, `googletagmanager.com`
+- `facebook.net`, `linkedin.com/collect`, `reddit.com/rp.gif`
+- `sharethis.com`, `google.com/recaptcha`
+- Iframe dengan ukuran < 300x200 pixel
+
+### 4.5 Limitations
+
+- Iframe yang memerlukan session/context dari parent page (seperti QuikStrike)
+  mungkin gagal load jika dibuka langsung
+- Solusi: gunakan `evaluate_js` untuk inject content setelah iframe load
+  atau gunakan CME FedWatch API publik ($25/bulan)

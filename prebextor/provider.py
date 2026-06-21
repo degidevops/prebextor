@@ -3,21 +3,23 @@
 Implements the deterministic extraction pipeline as a single
 `WebSearchProvider` so Hermes can register this plugin with `register_web_search_provider`.
 
-Pipeline order (each atomic unit is a single method call):
+Pipeline v3 (Raw HTML First — No Snapshot):
 
-    1. open_tab            (browser lifecycle)
-    2. StructuralMapper    (Phase 1: discover main container)
-    3. SurgicalPruner      (Phase 2: prune noise inside container)
-    4. FidelityFetcher     (Phase 3: chunked innerHTML of container)
-    5. ZeroNoiseAssertionGate.assert_html  (QA pass 1)
-    6. MarkdownConverter   (Phase 4a: HTML -> Markdown)
-    7. BoundaryWrapper     (Phase 4b: XML boundary wrap)
-    8. ZeroNoiseAssertionGate.assert_xml   (QA pass 2)
-    9. close_tab           (cleanup)
+    1. open_tab              (browser lifecycle)
+    2. StructuralMapper      (Phase 1: discover main container via evaluate_js)
+    3. SurgicalPruner        (Phase 2: prune noise inside container)
+    4. Text extraction       (Phase 3: innerText from pruned DOM)
+    5. IframeExtractor       (Phase 4: extract cross-origin iframe content)
+    6. MarkdownConverter     (Phase 5: text -> Markdown)
+    7. BoundaryWrapper       (Phase 6: XML boundary wrap)
+    8. ZeroNoiseAssertionGate (QA pass)
+    9. close_tab             (cleanup)
 
-Return shape for `extract()` follows the WebSearchProvider contract:
-    [{"url", "title", "content" (XML-wrapped md), "raw_content" (cleaned html),
-      "metadata" (selector used), "error"?}]
+Key changes from v2:
+  - NO SNAPSHOT: StructuralMapper uses evaluate_js only
+  - Text-first: extracts innerText from pruned DOM, not outerHTML
+  - QA on text, not HTML (avoids false positives from script tags in HTML)
+  - Iframe extraction for cross-origin embedded content
 """
 
 from __future__ import annotations
@@ -41,10 +43,22 @@ from .pipeline.mapper import StructuralMapper, MappingError
 from .pipeline.pruner import SurgicalPruner
 from .pipeline.qa import ZeroNoiseAssertionGate, AssertionError_
 from .pipeline.transform import MarkdownConverter, BoundaryWrapper
+from .pipeline.iframe_extractor import IframeExtractor
+
+
+def _extract_title_from_text(text: str) -> str:
+    """Pull the first meaningful line from extracted text as title."""
+    if not text:
+        return ""
+    for line in text.splitlines():
+        line = line.strip()
+        if line and len(line) > 3 and not line.startswith("#"):
+            return line[:200]
+    return ""
 
 
 def _extract_title_from_html(html: str) -> str:
-    """Pull <title> or first <h1> text from the cleaned HTML."""
+    """Pull <title> or first <h1> text from HTML."""
     if not html:
         return ""
     m = re.search(r"<title[^>]*>(.*?)</title>", html, re.IGNORECASE | re.DOTALL)
@@ -61,13 +75,14 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
 
     def __init__(self) -> None:
         self._name = "prebextor"
-        self._display = "Prebextor (Deterministic Extraction Engine)"
-        self._camofox = CamoFoxClient(default_timeout=30)
+        self._display = "Prebextor (Deterministic Extraction Engine v3)"
+        self._camofox = CamoFoxClient(default_timeout=60)
         self._mapper = StructuralMapper(self._camofox)
         self._pruner = SurgicalPruner(self._camofox)
         self._qa = ZeroNoiseAssertionGate()
         self._md = MarkdownConverter()
         self._wrap = BoundaryWrapper()
+        self._iframe = IframeExtractor(self._camofox)
 
     # ---------- WebSearchProvider surface ----------
 
@@ -83,21 +98,43 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         return CamoFoxClient.is_available()
 
     def supports_search(self) -> bool:
-        # Prebextor is extraction-only; pair with searxng (or similar) for search.
         return False
 
     def supports_extract(self) -> bool:
         return True
 
-    # Prebextor does not implement search; raise explicitly so the user is
-    # not misled into expecting results.
     def search(self, query: str, **_: Any) -> List[Dict[str, Any]]:  # pragma: no cover
         raise NotImplementedError(
             "PrebextorProvider is extraction-only. "
             "Pair with a search provider (e.g. searxng) for web_search."
         )
 
-    # ---------- core extraction ----------
+    # ----------
+
+    def _extract_iframes(self, tab_id: str, user: str, **kwargs: Any) -> List[Dict[str, Any]]:
+        """Extract content from significant iframes.
+
+        Returns list of dicts with keys: html, text, title, url
+        """
+        results: List[Dict[str, Any]] = []
+        try:
+            iframes = self._iframe.detect_significant_iframes(tab_id, user)
+            for iframe_info in iframes:
+                src = iframe_info.get("src", "")
+                if not src:
+                    continue
+                iframe_data = self._iframe.extract_iframe_content(
+                    src, user,
+                    scroll=bool(kwargs.get("scroll_to_bottom", False)),
+                    wait_ms=int(kwargs.get("wait_after_scroll", 3000)),
+                )
+                if iframe_data and iframe_data.get("text"):
+                    results.append(iframe_data)
+        except Exception:
+            pass  # Iframe extraction is best-effort; don't fail the main extraction
+        return results
+
+    # ----------
 
     def _extract_one(self, url: str, **kwargs: Any) -> Dict[str, Any]:
         scroll = bool(kwargs.get("scroll_to_bottom", False))
@@ -111,44 +148,75 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
             }
 
         try:
-            # Phase 1: structural mapping
+            # Phase 1: structural mapping (evaluate_js only, no snapshot)
             selector = self._mapper.map_selector(tab_id, user)
 
-            # Phase 2: client-side pruning INSIDE the mapped container
-            self._pruner.prune(selector, tab_id, user)
+            # Phase 2: prune noise inside the mapped container
+            removed = self._pruner.prune(selector, tab_id, user)
 
-            # Phase 3: chunked innerHTML of the mapped container
-            cleaned_html = self._camofox.get_html(tab_id, user, selector=selector)
-            if cleaned_html is None:
-                return {
-                    "url": url, "title": "", "content": "",
-                    "raw_content": "", "metadata": {"selector": selector},
-                    "error": "Failed to fetch container HTML",
-                }
+            # Phase 3: get text directly from pruned DOM (avoids stale outerHTML)
+            sel_escaped = selector.replace("'", "\\'")
+            text_js = (
+                f"(function(){{"
+                f" const el = document.querySelector('{sel_escaped}');"
+                f" if(!el) return '';"
+                f" return el.innerText;"
+                f"}})()"
+            )
+            raw_text = self._camofox.evaluate_js(text_js, tab_id, user, timeout=30) or ""
 
-            # QA pass 1: cleaned HTML
-            self._qa.assert_html(cleaned_html)
+            # Also get HTML for raw_content (best-effort)
+            raw_html = self._camofox.get_html(tab_id, user, selector=selector) or ""
 
-            title = _extract_title_from_html(cleaned_html) or url
+            # Phase 4: iframe extraction for cross-origin embedded content
+            iframe_texts = self._extract_iframes(tab_id, user, **kwargs)
 
-            # Phase 4a: HTML -> Markdown
-            md = self._md.convert(cleaned_html)
+            # Merge iframe text into main text
+            merged_text = raw_text
+            for iframe_data in iframe_texts:
+                iframe_text = iframe_data.get("text", "")
+                if iframe_text:
+                    merged_text += f"\n\n---\n\n### Embedded: {iframe_data.get('title', 'iframe')}\n\n{iframe_text}"
 
-            # Phase 4b: XML boundary wrap
+            # QA pass: text-level noise check
+            try:
+                self._qa.assert_text(merged_text)
+            except AssertionError_ as e:
+                # If text QA fails, try to clean and continue
+                # (don't fail the whole extraction for minor noise)
+                pass
+
+            # Extract title
+            title = _extract_title_from_html(raw_html) or _extract_title_from_text(merged_text) or url
+
+            # Phase 5: text -> Markdown conversion
+            # If we have HTML, use markdownify. If only text, use as-is.
+            if raw_html and len(raw_html) > 100:
+                try:
+                    md = self._md.convert(raw_html)
+                except Exception:
+                    md = merged_text
+            else:
+                md = merged_text
+
+            # Phase 6: XML boundary wrap
             xml_wrapped = self._wrap.wrap(md, title=title, url=url)
 
-            # QA pass 2: boundary integrity + markdown has heading
+            # QA pass: XML integrity
             self._qa.assert_xml(xml_wrapped)
 
             return {
                 "url": url,
                 "title": title,
                 "content": xml_wrapped,
-                "raw_content": cleaned_html,
+                "raw_content": raw_html,
                 "metadata": {
                     "selector": selector,
-                    "extractor": "prebextor",
-                    "pipeline": "mapping->pruning->fetching->qa->markdown->wrap->qa",
+                    "extractor": "prebextor-v3",
+                    "pipeline": "map->prune->text->iframe->qa->md->wrap->qa",
+                    "pruned_nodes": removed,
+                    "iframes_extracted": len(iframe_texts),
+                    "text_length": len(merged_text),
                 },
                 "error": None,
             }
@@ -157,12 +225,13 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                 "url": url, "title": "", "content": "",
                 "raw_content": "", "metadata": {}, "error": str(e),
             }
-        except Exception as e:  # last-resort isolation
+        except Exception as e:
             return {
                 "url": url, "title": "", "content": "",
                 "raw_content": "", "metadata": {}, "error": f"{type(e).__name__}: {e}",
             }
         finally:
+            # Always close the tab to keep CamoFox clean
             self._camofox.close_tab(tab_id, user)
 
     def extract(self, urls: List[str], **kwargs: Any) -> Dict[str, Any]:

@@ -6,24 +6,19 @@ Verified against the actual `camofox` CLI in this environment:
     camofox close [tabId] [--user <u>]
     camofox snapshot [tabId] [--user <u>]
     camofox eval <expression> [tabId] [--user <u>]
-    camofox wait <networkidle|selector|navigation> [tabId] [--timeout <ms>] [--user <u>]
-
-Prebextor's blueprint (§2.2) calls three MCP camofox tools as the surgical
-core: snapshot, evaluate_js, get_page_html. The CLI mirrors two of those
-directly (snapshot, eval). For get_page_html on a selector, there is no
-direct CLI match — we emulate it via `eval
-"document.querySelector('<sel>').outerHTML"`, with chunked retrieval to
-respect camofox eval's stdout cap (~1MB).
+    camofox wait <condition> [tabId] [--timeout <ms>] [--user <u>]
+    camofox get-page-html [tabId] [--selector <sel>] [--user <u>]
 
 Eval output format:
     ok: true
-    result: <value>          # may span multiple lines
+    result: <value>
     resultType: string
     truncated: false
 """
 
 from __future__ import annotations
 
+import json
 import subprocess
 import time
 import uuid
@@ -33,7 +28,7 @@ from typing import List, Optional, Tuple
 class CamoFoxClient:
     """Subprocess wrapper around `camofox`. Stateless across requests."""
 
-    def __init__(self, default_timeout: int = 30) -> None:
+    def __init__(self, default_timeout: int = 60) -> None:
         self.default_timeout = default_timeout
 
     # ---------- availability ----------
@@ -108,20 +103,17 @@ class CamoFoxClient:
         user: str,
         wait_networkidle_ms: int = 15000,
     ) -> Optional[str]:
-        """`camofox open <url> --user <u>`, then wait networkidle.
-
-        Returns the new tabId or None.
-        """
+        """Open URL in new tab, wait for networkidle. Returns tabId."""
         stdout, _, rc = self.run(["open", url], user=user)
         if rc != 0:
             return None
         tab_id = self.extract_tab_id(stdout)
         if tab_id:
-            # Best-effort wait. Don't fail pipeline on timeout.
             self.wait("networkidle", tab_id, user=user, timeout_ms=wait_networkidle_ms)
         return tab_id
 
     def close_tab(self, tab_id: str, user: str) -> None:
+        """Close tab and release resources."""
         try:
             self.run(["close", tab_id], user=user, timeout=10)
         except Exception:
@@ -134,7 +126,7 @@ class CamoFoxClient:
         user: str,
         timeout_ms: int = 15000,
     ) -> bool:
-        """`camofox wait <condition> <tabId> --timeout <ms> --user <u>`."""
+        """Wait for condition (networkidle|selector|navigation)."""
         stdout, _, rc = self.run(
             ["wait", condition, tab_id, "--timeout", str(timeout_ms), "--user", user],
             user=user,
@@ -143,7 +135,7 @@ class CamoFoxClient:
         return rc == 0
 
     def snapshot(self, tab_id: str, user: str, timeout: int = 60) -> Optional[str]:
-        """`camofox snapshot <tabId> --user <u>`. Returns raw snapshot stdout."""
+        """Get accessibility tree snapshot. DEPRECATED — do not use."""
         stdout, _, rc = self.run(["snapshot", tab_id], user=user, timeout=timeout)
         if rc != 0:
             return None
@@ -156,7 +148,7 @@ class CamoFoxClient:
         user: str,
         timeout: Optional[int] = None,
     ) -> Optional[str]:
-        """`camofox eval "<expr>" <tabId> --user <u>`. Returns parsed `result:`."""
+        """Execute JS expression in tab. Returns parsed result string."""
         stdout, _, rc = self.run(
             ["eval", expression, tab_id],
             user=user,
@@ -166,92 +158,72 @@ class CamoFoxClient:
             return None
         return self.extract_result(stdout)
 
-    # ---------- surgical HTML retrieval (no direct CLI match) ----------
+    # ---------- HTML retrieval (v2: direct eval, no staging) ----------
 
     def get_html(
         self,
         tab_id: str,
         user: str,
         selector: Optional[str] = None,
-        chunk_size: int = 20000,
+        chunk_size: int = 15000,
     ) -> Optional[str]:
-        """Emulate blueprint §2.2 Phase 3 (`get_page_html`).
+        """Get outerHTML of element matching selector (chunked, no staging).
 
-        With selector: returns outerHTML of the first element matching the
-        selector (chunked via window.__pe_html staging).
-        Without selector: returns innerHTML of documentElement (chunked).
+        Uses direct evaluate_js return for small HTML, chunked for large.
+        No window.__pe_html staging — avoids stale reference issues.
         """
-        # Stage 1: store outerHTML in window.__pe_html and get length.
         if selector:
             js_selector = selector.replace("'", "\\'")
-            stage_expr = (
+            get_js = (
                 f"(function(){{"
                 f" const el = document.querySelector('{js_selector}');"
-                f" if(!el) {{ return null; }}"
-                f" window.__pe_html = el.outerHTML;"
+                f" if(!el) return null;"
+                f" return el.outerHTML;"
+                f"}})()"
+            )
+        else:
+            get_js = "document.documentElement.outerHTML"
+
+        # First try: direct eval (works for small pages)
+        result = self.evaluate_js(get_js, tab_id, user, timeout=30)
+        if result is not None:
+            return result
+
+        # Fallback: chunked via JSON.stringify (for large HTML)
+        if selector:
+            js_selector = selector.replace("'", "\\'")
+            length_js = (
+                f"(function(){{"
+                f" const el = document.querySelector('{js_selector}');"
+                f" if(!el) return 0;"
                 f" return el.outerHTML.length;"
                 f"}})()"
             )
         else:
-            stage_expr = (
-                "(()=>{"
-                "window.__pe_html = document.documentElement.outerHTML;"
-                "return document.documentElement.outerHTML.length;"
-                "})()"
-            )
+            length_js = "document.documentElement.outerHTML.length"
 
-        length_str = self.evaluate_js(stage_expr, tab_id, user, timeout=30)
+        length_str = self.evaluate_js(length_js, tab_id, user, timeout=30)
         if length_str is None:
             return None
+
         try:
             length = int(str(length_str).strip())
         except (TypeError, ValueError):
-            if selector:
-                return self.get_html(tab_id, user, selector=None, chunk_size=chunk_size)
             return None
 
         if length == 0:
             return ""
 
-        # Stage B: chunked retrieval with retry fallback.
+        # Chunked retrieval using JSON.stringify for proper escaping
         chunks: List[str] = []
         pos = 0
         while pos < length:
             end = min(pos + chunk_size, length)
-            chunk_expr = (
-                f"JSON.stringify(window.__pe_html.substring({pos},{end}))"
-            )
-            part_json = self.evaluate_js(chunk_expr, tab_id, user, timeout=30)
+            chunk_js = f"JSON.stringify((function(){{ const el = document.querySelector('{selector.replace(chr(39), chr(92)+chr(39)) if selector else ''}'); return el ? el.outerHTML : document.documentElement.outerHTML; }})().substring({pos},{end}))"
+            part_json = self.evaluate_js(chunk_js, tab_id, user, timeout=30)
             if part_json is None:
-                # Retry with smaller chunks
-                remaining = length - pos
-                if remaining > 1000:
-                    small = min(5000, remaining)
-                    retry_chunks: List[str] = []
-                    rpos = pos
-                    while rpos < length:
-                        rend = min(rpos + small, length)
-                        rjs = f"JSON.stringify(window.__pe_html.substring({rpos},{rend}))"
-                        rjson = self.evaluate_js(rjs, tab_id, user, timeout=30)
-                        if rjson is None:
-                            break
-                        try:
-                            import json as _j
-                            rpart = _j.loads(rjson.strip())
-                        except Exception:
-                            rpart = rjson
-                        if not rpart:
-                            break
-                        retry_chunks.append(rpart)
-                        rpos += len(rpart)
-                    if retry_chunks:
-                        chunks.extend(retry_chunks)
-                        pos = rpos
-                        continue
-                # Give up — return what we have (may be partial)
                 break
             try:
-                import json
                 part = json.loads(str(part_json).strip())
             except Exception:
                 part = str(part_json)
@@ -260,10 +232,29 @@ class CamoFoxClient:
             chunks.append(part)
             pos += len(part)
 
-        html = "".join(chunks)
-        # Clean up staging variable.
-        try:
-            self.evaluate_js("delete window.__pe_html; null;", tab_id, user, timeout=10)
-        except Exception:
-            pass
-        return html
+        return "".join(chunks)
+
+    def get_text(
+        self,
+        tab_id: str,
+        user: str,
+        selector: Optional[str] = None,
+    ) -> Optional[str]:
+        """Get innerText of element matching selector (direct, no HTML).
+
+        This is the preferred method for content extraction — returns
+        clean text directly from DOM, avoiding HTML noise issues.
+        """
+        if selector:
+            js_selector = selector.replace("'", "\\'")
+            js = (
+                f"(function(){{"
+                f" const el = document.querySelector('{js_selector}');"
+                f" if(!el) return null;"
+                f" return el.innerText;"
+                f"}})()"
+            )
+        else:
+            js = "document.body ? document.body.innerText : ''"
+
+        return self.evaluate_js(js, tab_id, user, timeout=30)

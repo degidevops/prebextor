@@ -1,17 +1,17 @@
 """SurgicalPruner: removes noise INSIDE the mapped container.
 
-Per blueprint §2.2 Phase 2, this runs *before* the HTML of the mapped
-container is fetched. It is purely a client-side DOM operation; no regex on
-HTML, no post-processing. All pruning happens in-page via `evaluate_js`.
+Per blueprint §2.2 Phase 2, this runs *before* content is fetched.
+All pruning happens in-page via `evaluate_js` — no regex on HTML.
 
-Noise signatures are an explicit, curated list (see `NOISE_SELECTORS`). Each
-entry is a CSS selector that targets a specific node kind. We do not include
-broad substring matches like `[class*="ad"]` (which would destroy legitimate
-content like `class="advanced-features"`).
+v3 changes:
+  - prune() returns count of removed nodes
+  - prune_and_get_text() prunes then returns innerText directly
+    (avoids stale outerHTML issue)
 """
 
 from __future__ import annotations
 
+import json
 from typing import List
 
 from ..fetcher.camofox_client import CamoFoxClient
@@ -45,10 +45,7 @@ NOISE_SELECTORS: List[str] = [
 
 def build_prune_js(container_selector: str, selectors: List[str]) -> str:
     """Compose the IIFE that prunes noise inside `container_selector`."""
-    # Prepare selectors as a JSON array literal (safer than string-concat).
-    import json
     sel_json = json.dumps(selectors)
-    # Escape single quotes in container_selector.
     sel_escaped = container_selector.replace("'", "\\'")
     return f"""
 (function(){{
@@ -78,17 +75,41 @@ class SurgicalPruner:
         self.client = client
 
     def prune(self, container_selector: str, tab_id: str, user: str) -> int:
-        """Execute the pruning IIFE on `tab_id`. Returns the count removed.
-
-        The prune uses an explicit, curated noise list (no substring matches).
-        """
+        """Execute the pruning IIFE on `tab_id`. Returns the count removed."""
         js = build_prune_js(container_selector, NOISE_SELECTORS)
         result = self.client.evaluate_js(js, tab_id, user)
         if not result:
             return 0
-        # The JS returns "'<object>'" stringified; we don't need to parse.
-        # We count by attempting to surface a counter via a separate expression
-        # if the user wants a number — but zero is acceptable for noise removal.
-        # (We don't introspect JSON to keep this atomic unit deterministic —
-        # success means no exception, no truncation.)
+        # Try to parse result as JSON to get removed count
+        try:
+            data = json.loads(result) if isinstance(result, str) else result
+            if isinstance(data, dict):
+                return data.get("removed", 0)
+        except Exception:
+            pass
         return 0
+
+    def prune_and_get_text(
+        self, container_selector: str, tab_id: str, user: str
+    ) -> tuple:
+        """Prune noise then return (text, removed_count).
+
+        This is the preferred method — it prunes the DOM in-place,
+        then reads innerText directly from the live DOM. This avoids
+        the stale outerHTML issue where el.outerHTML doesn't reflect
+        DOM modifications.
+        """
+        removed = self.prune(container_selector, tab_id, user)
+
+        # Now read text directly from the pruned DOM
+        sel_escaped = container_selector.replace("'", "\\'")
+        text_js = (
+            f"(function(){{"
+            f" const el = document.querySelector('{sel_escaped}');"
+            f" if(!el) return '';"
+            f" return el.innerText;"
+            f"}})()"
+        )
+        text = self.client.evaluate_js(text_js, tab_id, user, timeout=30) or ""
+
+        return text, removed

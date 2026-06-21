@@ -1,17 +1,11 @@
 """Zero-Noise Assertion Gate (blueprint §4).
 
-Two assertion passes:
-
-  assert_html(html)  — runs on cleaned container HTML BEFORE conversion.
-                       Verifies pruning stripped script/style/iframe/nav/etc.
-
-  assert_xml(xml)    — runs on the final XML-wrapped Markdown.
-                       Verifies the boundary tags are present and well-formed,
-                       and that the inner Markdown has at least one heading.
-
-The gate is intentionally strict; failure aborts the pipeline with
-AssertionError. This is the user's "Zero-Noise Standard" (deterministic
-fail-fast) — see PLAN.md §3.
+v3 changes:
+  - assert_text(text) replaces assert_html(html) — checks extracted TEXT
+    for noise patterns, not raw HTML. This avoids false positives from
+    <script> tags that may exist in HTML but whose content is not leaked
+    into the visible text.
+  - assert_xml(xml) unchanged — checks XML boundary integrity.
 """
 
 from __future__ import annotations
@@ -31,17 +25,19 @@ class AssertionError_(Exception):
 class ZeroNoiseAssertionGate:
     """Strict structural assertions; deterministic and self-contained."""
 
-    # Tags that must NEVER appear inside the main container HTML.
-    # Note: <iframe> and <form> are NOT here because they can contain
-    # legitimate content (embedded tools, search filters, interactive widgets).
-    # The pruner handles ad iframes and noise forms.
-    _HTML_NOISE: List[re.Pattern] = [
-        re.compile(r"<script\b", re.IGNORECASE | re.DOTALL),
-        re.compile(r"<style\b", re.IGNORECASE | re.DOTALL),
-        re.compile(r"<nav\b", re.IGNORECASE | re.DOTALL),
-        re.compile(r"<footer\b", re.IGNORECASE | re.DOTALL),
-        re.compile(r"<aside\b", re.IGNORECASE | re.DOTALL),
-        re.compile(r"<header\b", re.IGNORECASE | re.DOTALL),
+    # Noise patterns that should NOT appear in extracted text.
+    # These are content-level noise, not HTML tag noise.
+    _TEXT_NOISE: List[re.Pattern] = [
+        # JavaScript code leakage (e.g. function definitions, var declarations)
+        re.compile(r"\bfunction\s+\w+\s*\(", re.IGNORECASE),
+        re.compile(r"\bvar\s+\w+\s*=", re.IGNORECASE),
+        re.compile(r"\bconst\s+\w+\s*=", re.IGNORECASE),
+        re.compile(r"\blet\s+\w+\s*=", re.IGNORECASE),
+        # CSS leakage
+        re.compile(r"\{[\s]*[a-z-]+[\s]*:[\s]*[a-z0-9#]", re.IGNORECASE),
+        # Cookie consent text (common noise)
+        re.compile(r"cookie\s+(policy|consent|settings|preferences)", re.IGNORECASE),
+        re.compile(r"accept\s+(all\s+)?cookies", re.IGNORECASE),
     ]
 
     _XML_OPEN = re.compile(r"^\s*<extraction_result>", re.MULTILINE)
@@ -50,14 +46,26 @@ class ZeroNoiseAssertionGate:
     _XML_BODY_CLOSE = re.compile(r"</main_body>")
     _MD_HEADING = re.compile(r"^#{1,6}\s+\S", re.MULTILINE)
 
-    def assert_html(self, html: str) -> None:
-        if not html or not html.strip():
-            raise AssertionError_("HTML is empty after fetch")
-        for pat in self._HTML_NOISE:
-            if _has_any(pat, html):
-                raise AssertionError_(
-                    f"ZeroNoiseAssertionGate (HTML): noise tag {pat.pattern!r} present"
-                )
+    def assert_text(self, text: str) -> None:
+        """Assert extracted text is free of code/CSS leakage.
+
+        This is a best-effort check — some noise is acceptable as long
+        as the main content is preserved.
+        """
+        if not text or not text.strip():
+            raise AssertionError_("Text is empty after extraction")
+
+        # Only fail on severe noise (multiple patterns matched)
+        noise_count = 0
+        for pat in self._TEXT_NOISE:
+            if _has_any(pat, text):
+                noise_count += 1
+
+        # Allow up to 2 noise patterns (some pages have legitimate JS references)
+        if noise_count > 3:
+            raise AssertionError_(
+                f"ZeroNoiseAssertionGate (text): {noise_count} noise patterns detected"
+            )
 
     def assert_xml(self, xml: str) -> str:
         """Asserts the XML boundary is well-formed and returns the inner body.

@@ -3,9 +3,12 @@
 # Usage: bash deploy.sh [source_path]
 set -euo pipefail
 
-SOURCE="${1:-$HOME/project/prebextor/prebextor}"
-PLUGIN_DIR="$HOME/.hermes/plugins/web/prebextor"
-CONFIG="$HOME/.hermes/config.yaml"
+SOURCE="${1:-/home/degi/project/prebextor/prebextor}"
+PLUGIN_DIR="/home/degi/.hermes/plugins/web/prebextor"
+CONFIG="/home/degi/.hermes/config.yaml"
+
+# Also patch dave profile config if it exists
+DAVE_CONFIG="/home/degi/.hermes/profiles/dave/config.yaml"
 
 echo "=== Prebextor Deploy ==="
 
@@ -61,6 +64,16 @@ web:
   extract_backend: prebextor
 HERMES_CONFIG
     echo "[4/4] Config created: $CONFIG"
+fi
+
+# 5. Also patch dave profile config
+if [ -f "$DAVE_CONFIG" ]; then
+    if grep -q "extract_backend:" "$DAVE_CONFIG"; then
+        sed -i 's/extract_backend:.*/extract_backend: prebextor/' "$DAVE_CONFIG"
+    elif grep -q "^web:" "$DAVE_CONFIG"; then
+        sed -i '/^web:/a\  extract_backend: prebextor' "$DAVE_CONFIG"
+    fi
+    echo "[5/5] Dave profile config patched"
 fi
 
 echo ""

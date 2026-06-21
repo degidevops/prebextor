@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.0.0] — 2026-06-21
+
+### Added
+- **Iframe extraction** (`pipeline/iframe_extractor.py`) — detects and extracts
+  content from significant cross-origin iframes (e.g., CME FedWatch QuikStrike).
+  Filters out tracking/ads iframes by domain and size.
+- **`CamoFoxClient.get_text()`** — returns `innerText` directly from DOM,
+  bypassing stale `outerHTML` issues.
+- **`SurgicalPruner.prune_and_get_text()`** — prunes DOM then reads text
+  directly from live DOM (no HTML round-trip).
+
+### Changed
+- **Pipeline redesign (v3)**: NO SNAPSHOT approach.
+  - `StructuralMapper`: removed snapshot-based detection, now uses
+    `evaluate_js` only for semantic tags, ARIA roles, pattern matching,
+    and density analysis.
+  - Content extraction: now reads `el.innerText` from pruned DOM instead
+    of `el.outerHTML` (fixes stale HTML after DOM mutation).
+  - QA gate: `assert_text()` checks extracted text for code/CSS leakage
+    instead of checking raw HTML for `<script>` tags.
+  - `CamoFoxClient.get_html()`: removed `window.__pe_html` staging,
+    uses direct `evaluate_js` return + chunked `JSON.stringify` fallback.
+- **`provider.py`**: Pipeline order updated to
+  `map->prune->text->iframe->qa->md->wrap->qa`.
+- **`PrebextorProvider.__display_name`**: updated to "Prebextor (Deterministic Extraction Engine v3)".
+
+### Removed
+- **Snapshot-based structure detection** — `StructuralMapper` no longer
+  calls `camofox snapshot`. Reason: snapshots are unreliable for SPA
+  and dynamic content, often returning truncated or stale data.
+- **`window.__pe_html` staging** in `get_html()` — caused stale HTML
+  being returned after DOM pruning.
+- **Strict HTML-based QA** (`assert_html`) — replaced with text-based
+  `assert_text()` that tolerates script tags in HTML but checks for
+  actual code leakage in extracted text.
+
+### Fixed
+- **Stale `outerHTML` after DOM pruning** — `get_html()` was returning
+  HTML that didn't reflect DOM modifications made by `prune()`. Fix:
+  use `innerText` for content extraction, HTML only for `raw_content`.
+- **Config profile dave not updated** — `deploy.sh` now patches both
+  root `config.yaml` and profile dave `~/.hermes/profiles/dave/config.yaml`.
+
+---
+
 ## [2.0.0] — 2026-06-21
 
 ### Added
@@ -15,40 +60,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `scripts/deploy.sh` — validates source tree, copies real files to `~/.hermes/plugins/web/prebextor/`, patches config.yaml
   - `scripts/undeploy.sh` — removes plugin dir, reverts config
   - `scripts/verify.py` — 11-point verification (import, instantiation, capabilities, envelope schema)
-  - `references/plugin-layout.md` — plugin folder structure (Appendix A from blueprint-v2)
-  - `references/troubleshooting.md` — common issues and fixes
 - **E2E test suite** (`tests/`):
   - `test_e2e_extract.py` — 32 assertions against real website (example.com), validates full pipeline
   - `test_envelope_schema.py` — 41 assertions for Hermes envelope contract compliance (mock + real)
-- **Density fallback improvement** — StructuralMapper density threshold lowered from 500 to 100 chars, added `tagName` fallback for elements without id/class
+- **Density fallback improvement** — StructuralMapper density threshold lowered from 500 to 100 chars
 
 ### Changed
-- **`extract()` return shape** — now returns Hermes envelope `{"success": True, "data": [...]}` instead of raw `List[Dict]` (breaking change)
-- **`_extract_one()` success return** — now includes `"error": None` key for consistent per-URL shape
-- **`provider.py` return annotation** — `extract()` annotated as `Dict[str, Any]` (was `List[Dict[str, Any]]`)
+- **`extract()` return shape** — now returns Hermes envelope `{"success": True, "data": [...]}` instead of raw `List[Dict]`
+- **`_extract_one()` success return** — now includes `"error": None` key
 
 ### Fixed
-- **StructuralMapper density fallback** — now returns `best.tagName.toLowerCase()` instead of `null` when element has no id/class (fixes extraction on simple pages like example.com)
+- **StructuralMapper density fallback** — now returns `best.tagName.toLowerCase()` instead of `null`
 
 ---
 
 ## [1.0.0] — 2026-06-21
 
 ### Added
-- **Git repository initialized** with `.gitignore` (Python artifacts, venv, env files).
-- **`CHANGELOG.md`** — structured changelog (Keep a Changelog 1.1.0 format).
-- **`blueprint-v2.md`** — architecture blueprint with Hermes Agent Integration Layer.
-- **`PLAN-v2.md`** — implementation plan with Layer 0 (plugin integration) + Sprint 5 (deployment).
-- **Plugin source code** (`prebextor/` package):
-  - `provider.py`, `__init__.py`, `plugin.yaml`
-  - `pipeline/` — mapper, pruner, transform, qa
-  - `fetcher/` — camofox_client
-- **Initial release** of Prebextor Deterministic Extraction Engine.
-- **Architecture blueprint v1** (`architecture/blueprint-v1.md`).
-- **PLAN.md** — original atomic unit catalog.
-- **Research documents** (`research/`) — CamoFox, extraction pipeline, LLM formats, Hermes contracts.
+- **Git repository initialized** with `.gitignore`
+- **Plugin source code** (`prebextor/` package)
+- **Architecture blueprint v1** (`architecture/blueprint-v1.md`)
+- **PLAN.md** — original atomic unit catalog
+- **Research documents** (`research/`) — CamoFox, extraction pipeline, LLM formats, Hermes contracts
 
 ---
 
+[3.0.0]: https://github.com/degi/prebextor/compare/v2.0.0...v3.0.0
 [2.0.0]: https://github.com/degi/prebextor/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/degi/prebextor/releases/tag/v1.0.0
