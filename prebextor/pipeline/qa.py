@@ -32,15 +32,16 @@ class ZeroNoiseAssertionGate:
     """Strict structural assertions; deterministic and self-contained."""
 
     # Tags that must NEVER appear inside the main container HTML.
+    # Note: <iframe> and <form> are NOT here because they can contain
+    # legitimate content (embedded tools, search filters, interactive widgets).
+    # The pruner handles ad iframes and noise forms.
     _HTML_NOISE: List[re.Pattern] = [
         re.compile(r"<script\b", re.IGNORECASE | re.DOTALL),
         re.compile(r"<style\b", re.IGNORECASE | re.DOTALL),
-        re.compile(r"<iframe\b", re.IGNORECASE | re.DOTALL),
         re.compile(r"<nav\b", re.IGNORECASE | re.DOTALL),
         re.compile(r"<footer\b", re.IGNORECASE | re.DOTALL),
         re.compile(r"<aside\b", re.IGNORECASE | re.DOTALL),
         re.compile(r"<header\b", re.IGNORECASE | re.DOTALL),
-        re.compile(r"<form\b", re.IGNORECASE | re.DOTALL),
     ]
 
     _XML_OPEN = re.compile(r"^\s*<extraction_result>", re.MULTILINE)

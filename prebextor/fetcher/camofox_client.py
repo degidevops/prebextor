@@ -230,7 +230,36 @@ class CamoFoxClient:
             )
             part_json = self.evaluate_js(chunk_expr, tab_id, user, timeout=30)
             if part_json is None:
-                return None
+                # Chunk failed — try a smaller chunk size for the last segment
+                remaining = length - pos
+                if remaining > 5000 and chunk_size > 5000:
+                    # Retry with smaller chunks
+                    small_chunk = 5000
+                    retry_chunks: List[str] = []
+                    retry_pos = pos
+                    while retry_pos < length:
+                        retry_end = min(retry_pos + small_chunk, length)
+                        retry_expr = (
+                            f"JSON.stringify(window.__pe_html.substring({retry_pos},{retry_end}))"
+                        )
+                        retry_json = self.evaluate_js(retry_expr, tab_id, user, timeout=30)
+                        if retry_json is None:
+                            break  # Give up on this segment
+                        try:
+                            import json as _json
+                            retry_part = _json.loads(retry_json.strip())
+                        except Exception:
+                            retry_part = retry_json
+                        if not retry_part:
+                            break
+                        retry_chunks.append(retry_part)
+                        retry_pos += len(retry_part)
+                    if retry_chunks:
+                        chunks.extend(retry_chunks)
+                        pos = retry_pos
+                        continue
+                # If retry also failed, return what we have so far
+                break
             try:
                 import json
                 part = json.loads(part_json.strip())
