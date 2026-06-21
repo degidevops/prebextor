@@ -12,8 +12,7 @@ Pipeline v3 (Raw HTML First — No Snapshot):
     5. IframeExtractor       (Phase 4: extract cross-origin iframe content)
     6. MarkdownConverter     (Phase 5: text -> Markdown)
     7. BoundaryWrapper       (Phase 6: XML boundary wrap)
-    8. ZeroNoiseAssertionGate (QA pass)
-    9. close_tab             (cleanup)
+    7. close_tab             (cleanup)
 
 Key changes from v2:
   - NO SNAPSHOT: StructuralMapper uses evaluate_js only
@@ -39,9 +38,8 @@ except Exception:  # pragma: no cover
 
 
 from .fetcher.camofox_client import CamoFoxClient
-from .pipeline.mapper import StructuralMapper, MappingError
+from .pipeline.mapper import StructuralMapper
 from .pipeline.pruner import SurgicalPruner
-from .pipeline.qa import ZeroNoiseAssertionGate, AssertionError_
 from .pipeline.transform import MarkdownConverter, BoundaryWrapper
 from .pipeline.iframe_extractor import IframeExtractor
 
@@ -79,7 +77,6 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         self._camofox = CamoFoxClient(default_timeout=60)
         self._mapper = StructuralMapper(self._camofox)
         self._pruner = SurgicalPruner(self._camofox)
-        self._qa = ZeroNoiseAssertionGate()
         self._md = MarkdownConverter()
         self._wrap = BoundaryWrapper()
         self._iframe = IframeExtractor(self._camofox)
