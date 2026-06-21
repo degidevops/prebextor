@@ -177,14 +177,12 @@ class CamoFoxClient:
     ) -> Optional[str]:
         """Emulate blueprint §2.2 Phase 3 (`get_page_html`).
 
-        Without selector: returns innerHTML of `documentElement` (chunked).
         With selector: returns outerHTML of the first element matching the
-        selector (chunked). Both write to `window.__pe_html` first to avoid
-        bursting the ~1MB stdout cap.
+        selector (chunked via window.__pe_html staging).
+        Without selector: returns innerHTML of documentElement (chunked).
         """
-        # Stage 1: determine source and staging.
+        # Stage 1: store outerHTML in window.__pe_html and get length.
         if selector:
-            # Escape single quotes.
             js_selector = selector.replace("'", "\\'")
             stage_expr = (
                 f"(function(){{"
@@ -194,7 +192,6 @@ class CamoFoxClient:
                 f" return el.outerHTML.length;"
                 f"}})()"
             )
-            expr_kind = f"selector='{selector}'"
         else:
             stage_expr = (
                 "(()=>{"
@@ -202,17 +199,13 @@ class CamoFoxClient:
                 "return document.documentElement.outerHTML.length;"
                 "})()"
             )
-            expr_kind = "documentElement"
 
-        # Stage A: stage into window.__pe_html and return length.
         length_str = self.evaluate_js(stage_expr, tab_id, user, timeout=30)
         if length_str is None:
             return None
         try:
-            length = int(length_str.strip())
+            length = int(str(length_str).strip())
         except (TypeError, ValueError):
-            # If the expression returned null (selector matched nothing), retry
-            # with no selector so we still have something to return.
             if selector:
                 return self.get_html(tab_id, user, selector=None, chunk_size=chunk_size)
             return None
@@ -220,7 +213,7 @@ class CamoFoxClient:
         if length == 0:
             return ""
 
-        # Stage B: chunk retrieval using JSON.stringify to keep transports safe.
+        # Stage B: chunked retrieval with retry fallback.
         chunks: List[str] = []
         pos = 0
         while pos < length:
@@ -230,49 +223,45 @@ class CamoFoxClient:
             )
             part_json = self.evaluate_js(chunk_expr, tab_id, user, timeout=30)
             if part_json is None:
-                # Chunk failed — try a smaller chunk size for the last segment
+                # Retry with smaller chunks
                 remaining = length - pos
-                if remaining > 5000 and chunk_size > 5000:
-                    # Retry with smaller chunks
-                    small_chunk = 5000
+                if remaining > 1000:
+                    small = min(5000, remaining)
                     retry_chunks: List[str] = []
-                    retry_pos = pos
-                    while retry_pos < length:
-                        retry_end = min(retry_pos + small_chunk, length)
-                        retry_expr = (
-                            f"JSON.stringify(window.__pe_html.substring({retry_pos},{retry_end}))"
-                        )
-                        retry_json = self.evaluate_js(retry_expr, tab_id, user, timeout=30)
-                        if retry_json is None:
-                            break  # Give up on this segment
-                        try:
-                            import json as _json
-                            retry_part = _json.loads(retry_json.strip())
-                        except Exception:
-                            retry_part = retry_json
-                        if not retry_part:
+                    rpos = pos
+                    while rpos < length:
+                        rend = min(rpos + small, length)
+                        rjs = f"JSON.stringify(window.__pe_html.substring({rpos},{rend}))"
+                        rjson = self.evaluate_js(rjs, tab_id, user, timeout=30)
+                        if rjson is None:
                             break
-                        retry_chunks.append(retry_part)
-                        retry_pos += len(retry_part)
+                        try:
+                            import json as _j
+                            rpart = _j.loads(rjson.strip())
+                        except Exception:
+                            rpart = rjson
+                        if not rpart:
+                            break
+                        retry_chunks.append(rpart)
+                        rpos += len(rpart)
                     if retry_chunks:
                         chunks.extend(retry_chunks)
-                        pos = retry_pos
+                        pos = rpos
                         continue
-                # If retry also failed, return what we have so far
+                # Give up — return what we have (may be partial)
                 break
             try:
                 import json
-                part = json.loads(part_json.strip())
+                part = json.loads(str(part_json).strip())
             except Exception:
-                # Plain-string fallback (older camofox builds).
-                part = part_json
+                part = str(part_json)
             if not part:
                 break
             chunks.append(part)
             pos += len(part)
 
         html = "".join(chunks)
-        # Drop the staging sentinel.
+        # Clean up staging variable.
         try:
             self.evaluate_js("delete window.__pe_html; null;", tab_id, user, timeout=10)
         except Exception:
