@@ -150,6 +150,7 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                     "extractor": "prebextor",
                     "pipeline": "mapping->pruning->fetching->qa->markdown->wrap->qa",
                 },
+                "error": None,
             }
         except (MappingError, AssertionError_) as e:
             return {
@@ -164,17 +165,23 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         finally:
             self._camofox.close_tab(tab_id, user)
 
-    def extract(self, urls: List[str], **kwargs: Any) -> List[Dict[str, Any]]:
+    def extract(self, urls: List[str], **kwargs: Any) -> Dict[str, Any]:
         """Extract content from one or more URLs.
+
+        Returns the Hermes WebSearchProvider envelope:
+            {"success": True, "data": [{url,title,content,raw_content,metadata,error?}, ...]}
+        On total failure: {"success": False, "error": "..."}
 
         Supported kwargs (per URL):
             - scroll_to_bottom: bool, trigger lazy loading (default: False)
             - wait_after_scroll: ms to wait after scroll (default: 3000)
 
-        Returns list of dicts following the WebSearchProvider contract.
         Failures on individual URLs do NOT abort the batch.
         """
-        results: List[Dict[str, Any]] = []
-        for url in urls:
-            results.append(self._extract_one(url, **kwargs))
-        return results
+        try:
+            results: List[Dict[str, Any]] = []
+            for url in urls:
+                results.append(self._extract_one(url, **kwargs))
+            return {"success": True, "data": results}
+        except Exception as e:
+            return {"success": False, "error": f"{type(e).__name__}: {e}"}

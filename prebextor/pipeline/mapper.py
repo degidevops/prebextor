@@ -121,7 +121,7 @@ class StructuralMapper:
             " );"
             " const score = cands.map(el => ({"
             "   el, len: (el.innerText||'').length, tags: el.getElementsByTagName('*').length"
-            " })).filter(x => x.len >= 500);"
+            " })).filter(x => x.len >= 100);"
             " if (!score.length) return null;"
             " score.sort((a,b) => (b.len - b.tags) - (a.len - a.tags));"
             " const best = score[0].el;"
@@ -129,7 +129,7 @@ class StructuralMapper:
             " if (best.className && typeof best.className === 'string') {"
             "   return best.tagName.toLowerCase() + '.' + best.className.trim().split(/\\s+/).join('.')"
             " }"
-            " return null;"
+            " return best.tagName.toLowerCase();"
             "})()"
         )
         sel = self.client.evaluate_js(density_expr, tab_id, user)
