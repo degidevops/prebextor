@@ -44,6 +44,20 @@ echo "[2/4] Plugin directory created: $PLUGIN_DIR"
 cp -rL "$SOURCE"/* "$PLUGIN_DIR/"
 echo "[3/4] Files copied (real files, no symlinks)"
 
+# 3b. Apply Prebextor-owned patches to the user's Hermes-agent checkout
+#     (idempotent; required for web_extract to dispatch to Prebextor).
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+if [ -x "$SCRIPT_DIR/apply-patches.sh" ]; then
+    if PROJECT_ROOT="$PROJECT_ROOT" HERMES_HOME="$(dirname "$PLUGIN_DIR")" \
+        bash "$SCRIPT_DIR/apply-patches.sh"; then
+        echo "[3b] Prebextor patches applied to Hermes-agent"
+    else
+        echo "[3b] WARN: apply-patches.sh failed — see messages above." >&2
+        echo "         web_extract may NOT route to Prebextor until this is fixed." >&2
+    fi
+fi
+
 # 4. Patch config.yaml
 if [ -f "$CONFIG" ]; then
     cp "$CONFIG" "$CONFIG.bak.prebextor"

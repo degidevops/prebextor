@@ -7,6 +7,87 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.1.3] — 2026-06-22
+
+### Added
+- **`patches/` registry** — Prebextor now owns a tiny patch set for the
+  user's Hermes-agent checkout. Each entry is a single `.patch` file plus a
+  shared `manifest.json` that records SHA-256 baselines, sentinel strings,
+  and rollback metadata. This lets `deploy.sh` install hermes-side fixes
+  automatically instead of leaving them scattered across the codebase.
+
+- **`scripts/apply-patches.sh`** — applies the patch set to the user's
+  Hermes-agent checkout. Idempotent, drift-aware, and reversible:
+  - Skips if a `.prebextor-patched` marker says the patch is in.
+  - Detects sentinel strings (defends against partial installs / hand-applies).
+  - Refuses to patch if the target's SHA-256 has drifted upstream
+    (real Hermes move forward → user re-runs `scripts/test_patches.py`
+    against the new HEAD and we patch the patch in a future release).
+  - Always creates a `<target><backup_extension>` backup so `undeploy.sh`
+    can restore the exact pre-install state.
+
+- **`scripts/test_patches.py`** — 15-assertion CI-style test that runs
+  every manifest entry through a sandboxed clone of the user's
+  Hermes-agent. Asserts: manifest schema, drift detection, apply,
+  `git apply --check`, idempotency, sentinel detection, revert via
+  `git apply --reverse`, and a full round-trip. Used internally before
+  release; safe to run anytime the user wants to confirm "is my install
+  healthy".
+
+- **Two upstream Hermes-agent fixes** that `deploy.sh` now applies
+  automatically (lives in `patches/web_tools.py.patch`):
+
+  1. **`_is_backend_available("prebextor")`** previously did a hard-coded
+     `from web.prebextor import PrebextorProvider` which crashed with
+     `No module named 'web.prebextor'` in the `tools/web_tools.py` context
+     (the plugin's source directory is not on `sys.path` for that file).
+     Result: `web.extract_backend: prebextor` silently fell back to
+     `searxng` (search-only), and users saw `SearXNG is a search-only
+     backend and cannot extract URL content`.
+     Fix: route availability through the plugin registry — call
+     `_ensure_web_plugins_loaded()` then `get_provider("prebextor")`, and
+     return `provider.is_available()`. The plugin continues to register
+     itself via the standard `register_web_search_provider(ctx)` hook.
+
+  2. **Envelope normalization in `web_extract_tool` dispatcher** —
+     Prebextor's `extract()` follows the Hermes docs contract
+     (`{"success": True, "data": [dict, ...]}`) but the in-tree bundled
+     providers historically returned the raw list. The dispatcher was
+     hard-coded to the legacy shape, so plugging in an envelope-returning
+     provider crashed the downstream loop with
+     `'str' object has no attribute 'get'`.
+     Fix: a normalizer now accepts three shapes:
+       1. Envelope success → unwrap `data`
+       2. Raw list (legacy) → pass through unchanged
+       3. Envelope failure → early-return the error
+     Plus a defensive coerce-to-`[]` at the bottom in case a plugin
+     returns something exotic, so the downstream code never crashes
+     on `'str' object has no attribute 'get'`.
+
+### Changed
+- **`scripts/deploy.sh`** — now invokes `apply-patches.sh` after copying
+  the plugin files. Without this hook, the patch never lands on the
+  user's Hermes-agent and `web_extract` continues to route to `searxng`
+  regardless of `extract_backend` config.
+- **`scripts/undeploy.sh`** — now restores patched files from
+  `<target><backup_extension>` and removes the marker + backup, so a
+  fully clean uninstall is achievable.
+- **`SKILL.md`** — added pitfall about the patch dependency (deploy
+  reverts cleanly but we never `git commit` the patch in the user's
+  Hermes checkout — that's deliberate, see Note below).
+
+### Deployment note (read if you maintain the upstream Hermes fork)
+
+The patches are NOT shipped via `git commit` in the upstream Hermes-agent
+repo. They live in `~/project/prebextor/patches/` and are applied by
+`deploy.sh` at install time. The reason: Prebextor is a **user plugin**,
+not an upstream Hermes feature, and committing fixup changes into the
+user's possibly-forked Hermes checkout would be presumptuous. Whoever
+**upstream** Hermes decides to ship a Hermes envelope normalizer, this
+patch can be dropped from `patches/`.
+
+---
+
 ## [3.1.2] — 2026-06-21
 
 ### Changed
