@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hermes-prebextor"
+version = "3.3.0"
+description = "Prebextor Deterministic Extraction Engine — Mapping → Pruning → Fetching → Cleaning → Markdown → Boundary XML Wrap → QA Gate."
+authors = [{ name = "degi", email = "degi@prebextor" }]
+license = { text = "MIT" }
+requires-python = ">=3.10"
+
+dependencies = [
+    "markdownify>=0.11",
+    "beautifulsoup4>=4.12",
+    "pyyaml>=6.0",
+]
+
+[tool.setuptools]
+# Plugin is discovered via plugin.yaml + __init__.py:register(ctx) by the
+# Hermes CLI's `hermes plugins install` workflow. We don't package a pip
+# distribution — install via `hermes plugins install degidevops/prebextor`.
