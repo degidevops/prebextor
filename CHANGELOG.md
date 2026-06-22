@@ -7,6 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.2.0] — 2026-06-22
+
+### Added
+- **Skill wrapping (per-profile, single-artifact install)** — Prebextor is now
+  installable via Hermes skill system, satisfying the original mandate
+  "install the skill and the plugin comes with it".
+- **`prebextor/__init__.py` self-registers an internal skill** via
+  `ctx.register_skill(name="install", path=...)`. Reachable as
+  `skill_view('prebextor:install')`; opt-in, not auto-listed. Documents the
+  install/verify/uninstall sequence from inside the plugin so the install
+  procedure is portable alongside the code.
+- **`prebextor/skill_internal/SKILL.md`** — bundled procedure doc mirrored
+  after the canonical per-profile skill.
+- **`installer.py`**  at
+  `~/.hermes/profiles/dave/skills/web-extraction/prebextor/tools/installer.py`
+  — single CLI surface (`install | verify | test | uninstall | status`) for
+  the per-profile skeleton. Delegates to the canonical `scripts/*.sh` so the
+  plugin source itself stays authoritative.
+- **`status` command** in the installer — read-only diagnostic that checks
+  plugin copy, patch marker, dispatcher sentinel, config backend, and skill
+  location. Exits 0 only when all 6 invariants hold.
+
+### Changed
+- **`scripts/verify.py`** — switched to absolute path resolution so the verify
+  suite survives sandbox `HOME` redirection (e.g.
+  `~/.hermes/profiles/dave/home/`). Old version preserved as
+  `verify.py.original`. Added `--test-extract` flag for the bundled end-to-end
+  smoke test.
+- **`SKILL.md` shipped layout is now per-profile** — the standalone skeleton
+  lives at the active profile's `skills/web-extraction/prebextor/`, not in
+  the shared root. Hermes scans `$HERMES_HOME/skills/` where `HERMES_HOME` is
+  set per-profile. Skill documents this explicitly so cross-profile installs
+  are reproducible.
+
+### Verification (v3.2.0)
+- Installer `status` → **READY** (6/6 invariants)
+- Installer `verify` → 9/9 PASS
+- Installer `test`  → 10/10 PASS (provider.extract envelope intact)
+- Mock `register(ctx)` self-registers `provider: prebextor` + `skill: install`
+- `cp -rL` confirms skill_internal/ ships with deployed copy
+
+---
+
 ## [3.1.3] — 2026-06-22
 
 ### Added

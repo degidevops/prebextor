@@ -6,6 +6,11 @@ dist/
 build/
 .eggs/
 *.so
+*.swp
+*.swo
+.idea/
+.vscode/
+.DS_Store
 .env
 .venv/
 venv/
