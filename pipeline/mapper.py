@@ -37,14 +37,23 @@ class StructuralMapper:
     """Maps a DOM to a single CSS selector for the main content container.
 
     Strategy: evaluate_js only (no snapshot). Raw HTML detection via JS.
+
+    v1.0.1: Now returns (selector, confidence) tuple.
+      Confidence levels:
+        1.0 — semantic tag found (<main>, <article>)
+        0.8 — ARIA role found
+        0.6 — pattern match (id/class tokens)
+        0.4 — density fallback
+        0.2 — ultimate fallback (body)
     """
 
     def __init__(self, client: CamoFoxClient) -> None:
         self.client = client
 
-    def map_selector(self, tab_id: str, user: str) -> str:
-        """Return a CSS selector for the main content container.
-        Never raises — always returns a valid selector (falls back to "body")."""
+    def map_selector(self, tab_id: str, user: str) -> tuple:
+        """Return (CSS selector, confidence) for the main content container.
+        Never raises — always returns a valid selector (falls back to "body").
+        Confidence: 0.0-1.0 indicating mapping quality."""
 
         # ===== Phase 1a: Semantic tags + ARIA role =====
         _js_semantic = [
@@ -62,7 +71,7 @@ class StructuralMapper:
             )
             got = self.client.evaluate_js(probe, tab_id, user)
             if got == "found":
-                return sel
+                return (sel, 1.0)
 
         # ===== Phase 1b: Pattern match (id/class tokens) =====
         pattern_js = """(function(){
@@ -88,7 +97,7 @@ class StructuralMapper:
 })()"""
         sel = self.client.evaluate_js(pattern_js, tab_id, user)
         if sel:
-            return sel
+            return (sel, 0.6)
 
         # ===== Phase 2: Density fallback =====
         density_expr = """(function(){
@@ -109,7 +118,7 @@ class StructuralMapper:
 })()"""
         sel = self.client.evaluate_js(density_expr, tab_id, user)
         if sel:
-            return sel
+            return (sel, 0.4)
 
         # ===== Phase 3: Ultimate fallback =====
-        return "body"
+        return ("body", 0.2)

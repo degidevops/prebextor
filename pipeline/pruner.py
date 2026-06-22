@@ -1,12 +1,12 @@
 """SurgicalPruner: removes noise INSIDE the mapped container.
 
-Per blueprint §2.2 Phase 2, this runs *before* content is fetched.
-All pruning happens in-page via `evaluate_js` — no regex on HTML.
+Per blueprint Phase 2, this runs *before* content is fetched.
+All pruning happens in-page via `evaluate_js` -- no regex on HTML.
 
-v3 changes:
+v1.0.1 enhancements:
   - prune() returns count of removed nodes
   - prune_and_get_text() prunes then returns innerText directly
-    (avoids stale outerHTML issue)
+  - prune_dynamic() removes blocks identified as noise by ContentAwareScorer
 """
 
 from __future__ import annotations
@@ -47,7 +47,7 @@ def build_prune_js(container_selector: str, selectors: List[str]) -> str:
     """Compose the IIFE that prunes noise inside `container_selector`."""
     sel_json = json.dumps(selectors)
     sel_escaped = container_selector.replace("'", "\\'")
-    return f"""
+    return """
 (function(){{
   const container = document.querySelector('{sel_escaped}');
   if (!container) return {{ ok: false, reason: 'container_not_found' }};
@@ -60,16 +60,19 @@ def build_prune_js(container_selector: str, selectors: List[str]) -> str:
         if (n && n.parentNode) {{ n.parentNode.removeChild(n); removed++; }}
       }}
     }} catch (e) {{
-      // selector errored (e.g. invalid CSS) — skip silently
+      // selector errored (e.g. invalid CSS) -- skip silently
     }}
   }}
   return {{ ok: true, removed: removed }};
 }})()
-""".strip()
+""".format(sel_escaped=sel_escaped, sel_json=sel_json).strip()
 
 
 class SurgicalPruner:
-    """Prunes noise from inside the mapped container."""
+    """Prunes noise from inside the mapped container.
+
+    v1.0.1: Added prune_dynamic() for content-aware noise removal.
+    """
 
     def __init__(self, client: CamoFoxClient) -> None:
         self.client = client
@@ -80,7 +83,6 @@ class SurgicalPruner:
         result = self.client.evaluate_js(js, tab_id, user)
         if not result:
             return 0
-        # Try to parse result as JSON to get removed count
         try:
             data = json.loads(result) if isinstance(result, str) else result
             if isinstance(data, dict):
@@ -94,7 +96,7 @@ class SurgicalPruner:
     ) -> tuple:
         """Prune noise then return (text, removed_count).
 
-        This is the preferred method — it prunes the DOM in-place,
+        This is the preferred method -- it prunes the DOM in-place,
         then reads innerText directly from the live DOM. This avoids
         the stale outerHTML issue where el.outerHTML doesn't reflect
         DOM modifications.
@@ -113,3 +115,56 @@ class SurgicalPruner:
         text = self.client.evaluate_js(text_js, tab_id, user, timeout=30) or ""
 
         return text, removed
+
+    def prune_dynamic(
+        self,
+        container_selector: str,
+        noise_selectors: List[str],
+        tab_id: str,
+        user: str,
+    ) -> int:
+        """Prune blocks identified as noise by ContentAwareScorer.
+
+        v1.0.1 addition -- removes blocks that the scorer identified
+        as likely noise (high link density, low text density).
+
+        Args:
+            container_selector: The parent container selector
+            noise_selectors: List of selectors to prune (from scorer)
+            tab_id: Browser tab ID
+            user: Browser user ID
+
+        Returns:
+            Number of nodes removed
+        """
+        if not noise_selectors:
+            return 0
+
+        # Escape container selector once
+        container_escaped = container_selector.replace("'", "\\'")
+
+        removed = 0
+        for sel in noise_selectors:
+            sel_escaped = sel.replace("'", "\\'")
+            js = (
+                "(function(){"
+                f" var container = document.querySelector('{container_escaped}');"
+                " if(!container) return 0;"
+                f" var nodes = container.querySelectorAll('{sel_escaped}');"
+                " var count = 0;"
+                " for(var i=0;i<nodes.length;i++){"
+                "   if(nodes[i] && nodes[i].parentNode){"
+                "     nodes[i].parentNode.removeChild(nodes[i]);"
+                "     count++;"
+                "   }"
+                " }"
+                " return count;"
+                "})()"
+            )
+            result = self.client.evaluate_js(js, tab_id, user, timeout=15)
+            if result:
+                try:
+                    removed += int(result)
+                except (TypeError, ValueError):
+                    pass
+        return removed

@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.1] — 2026-06-22
+
+### Added
+- **Content-Aware Scoring (`pipeline/scorer.py`)** — CETD-inspired text density analysis.
+  Scores DOM blocks by text density, link density, and punctuation patterns.
+  Identifies noise (navigation, ads, sidebars) without selecting "content".
+  High score = likely content (keep). Low score + high link density = likely noise (prune).
+- **Content Validation (`pipeline/validator.py`)** — Multi-pass validation with fallback.
+  Pass 1 (strict): Requires substantial content (200+ chars, 2+ commas, score >= 3.0).
+  Pass 2 (relaxed): Accepts less content (100+ chars, 1+ comma, score >= 1.0).
+  Pass 3 (fallback): Returns body-level content with warning.
+- **Dynamic Noise Pruning (`pipeline/pruner.py`)** — `prune_dynamic()` removes blocks
+  identified as noise by ContentAwareScorer (high link density + low text density).
+- **Confidence Scoring** — Final confidence (0.0-1.0) computed from:
+  mapper confidence (0.3 weight) + scorer confidence (0.3) + validator confidence (0.4).
+- **Enhanced Metadata** — `metadata` now includes: `confidence`, `mapper_confidence`,
+  `scorer_confidence`, `validator_confidence`, `validation_pass`, `validation_warning`,
+  `scored_blocks_count`, `noise_selectors_found`, `pruned_static`, `pruned_dynamic`,
+  `pruned_total`, `content_aware` flag.
+- **StructuralMapper confidence** — `map_selector()` now returns `(selector, confidence)` tuple.
+  Confidence levels: 1.0 (semantic tag), 0.6 (pattern match), 0.4 (density fallback), 0.2 (body).
+
+### Changed
+- **Pipeline** — Refactored from `map->prune->text->iframe->md->wrap` to
+  `map->score->prune->validate->text->iframe->md->wrap`.
+- **Extractor tag** — Changed from `prebextor-v3` to `prebextor-v3.1`.
+
+## [1.0.0] — 2026-06-22
+
+### Changed
+- Version reset from v3.3.0 to v1.0.0 (first production release).
+
 ## [3.2.0] — 2026-06-22
 
 ### Added

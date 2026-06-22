@@ -1,5 +1,5 @@
 name: prebextor
-version: 1.0.0
+version: 1.0.1
 description: "Prebextor Deterministic Extraction Engine — Mapping → Pruning → Fetching → Cleaning → Markdown → Boundary XML Wrap → QA Gate. Built on CamoFox and markdownify."
 author: degi
 kind: backend
