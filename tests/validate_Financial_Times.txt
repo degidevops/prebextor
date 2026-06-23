@@ -1,0 +1,66 @@
+# Financial Times
+# URL: https://www.ft.com
+# Title: Home - Financial Times
+# Selector: main
+# Confidence: 0.495
+# Content length: 1471 chars
+# Raw length: 7925 chars
+
+=== FULL CONTENT ===
+
+<extraction_result>
+  <metadata>
+  Title: Home - Financial Times
+  URL: https://www.ft.com
+  Timestamp: 2026-06-23T02:11:23.418843+00:00
+  </metadata>
+
+  <main_body>
+Upcoming events
+
+Discover unmissable flagship events with FT journalists to expand your thinking and elevate your career
+
+[Explore all events](https://events.ft.com/events-list)
+
+[FT Live](https://insurance.live.ft.com)
+
+[Global Insurance Summit](https://insurance.live.ft.com "Global Insurance Summit")
+
+Finding opportunity in a changing insurance ecosystem
+
+Wednesday, 24 JuneLondon, UK
+
+[FT Live](https://lawyerssummit.live.ft.com)
+
+[Innovative Lawyers Global Summit](https://lawyerssummit.live.ft.com "Innovative Lawyers Global Summit")
+
+Shaping the Future of Law
+
+Thursday, 25 JuneLondon, UK
+
+[FT Live](https://ukftweekendfestival.live.ft.com)
+
+[FT Weekend Festival](https://ukftweekendfestival.live.ft.com "FT Weekend Festival")
+
+Experience the FT come to life
+
+Saturday, 5 SeptemberKenwood House, Hampstead Lane, London, UK
+
+Join the discussion
+
+Gain access to a series of exclusive communities, convened by the Financial Times.
+
+[FT Live Forums](https://forums.live.ft.com/)
+
+Exclusive, peer-level communities for senior executives shaping strategy, leadership and transformation.
+
+[FT Leaders Academy](https://www.leadersacademy.ft.com/)
+
+Smart, practical learning to help you grow at every stage of your career. Delivered by experts, shaped by global trends.
+  </main_body>
+</extraction_result>
+
+
+=== FULL RAW HTML ===
+
+<main id="site-content" data-ft-origin="next-home-page"><section class="slice advert-slice slice__no-title"><div class="slice__content"><pg-slot data-config-key="high-impact" labeled="true"></pg-slot></div></section><section class="slice advert-slice slice__no-title"><div class="slice__content"><pg-slot data-config-key="mid-desktop" labeled="true"></pg-slot></div></section><section class="slice advert-slice slice__no-title"><div class="slice__content"><pg-slot data-config-key="top-mobile" labeled="true"></pg-slot></div></section><section class="slice advert-slice slice__no-title"><div class="slice__content"><pg-slot data-config-key="mid-mobile" labeled="true"></pg-slot></div></section><div id="fomo-ghost-marker" class="fomo-ghost-marker" aria-hidden="true" data-trackable="fomo-ghost" data-trackable-context-component="{&quot;type&quot;:&quot;container&quot;,&quot;name&quot;:&quot;fomo-ghost-ds&quot;}" data-trackable-context-fomo-slice-visible="false"></div><div data-trackable="list:must-reads-you-missed" data-trackable-context-list-type="must-reads-you-missed" data-trackable-context-list-position="9" data-trackable-context-list-siblings="23" data-trackable-context-slice-key="fomo-1" class="client-slice hidden fomo-1" data-trackable-context-component="{&quot;type&quot;:&quot;container&quot;,&quot;name&quot;:&quot;fomo-carousel-ds&quot;}"><section class="slice slice--default" data-trackable-context-fomo-slice-visible="false"><div class="slice__content"><div class="separator--dotted"></div><div class="layout-desktop__grid-container"><div class="layout__grid-content"></div></div></div></section></div><section class="slice advert-slice slice__no-title"><div class="slice__content"><pg-slot data-config-key="mid1" labeled="true"></pg-slot></div></section><section class="slice section"><div class="slice__content"><div class="separator--dotted"></div><div class="community-home-page-slice o-grid-row o-grid-row--compact community-home-page-slice--events community-home-page-slice--default-layout"><div data-o-grid-colspan="12 M12 L3" class="community-home-page-slice__column community-home-page-slice__header-column"><div class="community-home-page-slice__header"><div role="heading" aria-level="3" class="o3-type-body-highlight community-home-page-slice__title">Upcoming events</div><p class="o3-type-body-base community-home-page-slice__strapline">Discover unmissable flagship events with FT journalists to expand your thinking and elevate your career</p><a class="o3-type-body-base community-home-page-slice__link" href="https://events.ft.com/events-list">Explore all events</a></div></div><div data-o-grid-colspan="12 M4 L3" class="community-home-page-slice__column community-home-page-slice__item-column"><div class="event-teaser" data-trackable="event-teaser" data-trackable-context-content-id="38a54f97-57a6-4d41-bb42-b3e64a593713" data-o-tracking-view="true"><div class="event-teaser__content-container"><div class="event-teaser__details"><a class="o3-type-label event-teaser__brand" href="https://insurance.live.ft.com" data-trackable="event-teaser-brand-link">FT Live</a><div class="event-teaser__title-heading" role="heading" aria-level="4"><a class="o3-type-body-highlight event-teaser__title" data-trackable="event-teaser-title" href="https://insurance.live.ft.com" title="Global Insurance Summit">Global Insurance Summit</a></div><span class="o3-type-body-base event-teaser__standfirst">Finding opportunity in a changing insurance ecosystem</span></div><div class="event-teaser__footer"><span class="o3-type-label event-teaser__timestamp event-teaser__timestamp--start-date"><time datetime="2026-06-24T09:00:00.000Z">Wednesday, 24 June</time></span><span class="o3-type-detail event-teaser__location">London, UK</span></div></div></div></div><div data-o-grid-colspan="12 M4 L3" class="community-home-page-slice__column community-home-page-slice__item-column"><div class="event-teaser" data-trackable="event-teaser" data-trackable-context-content-id="708b34bf-6555-4193-b3fb-4bc86f5e7916" data-o-tracking-view="true"><div class="event-teaser__content-container"><div class="event-teaser__details"><a class="o3-type-label event-teaser__brand" href="https://lawyerssummit.live.ft.com" data-trackable="event-teaser-brand-link">FT Live</a><div class="event-teaser__title-heading" role="heading" aria-level="4"><a class="o3-type-body-highlight event-teaser__title" data-trackable="event-teaser-title" href="https://lawyerssummit.live.ft.com" title="Innovative Lawyers Global Summit">Innovative Lawyers Global Summit</a></div><span class="o3-type-body-base event-teaser__standfirst">Shaping the Future of Law</span></div><div class="event-teaser__footer"><span class="o3-type-label event-teaser__timestamp event-teaser__timestamp--start-date"><time datetime="2026-06-25T08:00:00.000Z">Thursday, 25 June</time></span><span class="o3-type-detail event-teaser__location">London, UK</span></div></div></div></div><div data-o-grid-colspan="12 M4 L3" class="community-home-page-slice__column community-home-page-slice__item-column"><div class="event-teaser" data-trackable="event-teaser" data-trackable-context-content-id="1cb73936-27eb-49ae-96e7-00a77fe232da" data-o-tracking-view="true"><div class="event-teaser__content-container"><div class="event-teaser__details"><a class="o3-type-label event-teaser__brand" href="https://ukftweekendfestival.live.ft.com" data-trackable="event-teaser-brand-link">FT Live</a><div class="event-teaser__title-heading" role="heading" aria-level="4"><a class="o3-type-body-highlight event-teaser__title" data-trackable="event-teaser-title" href="https://ukftweekendfestival.live.ft.com" title="FT Weekend Festival">FT Weekend Festival</a></div><span class="o3-type-body-base event-teaser__standfirst">Experience the FT come to life</span></div><div class="event-teaser__footer"><span class="o3-type-label event-teaser__timestamp event-teaser__timestamp--start-date"><time datetime="2026-09-05T07:00:00.000Z">Saturday, 5 September</time></span><span class="o3-type-detail event-teaser__location">Kenwood House, Hampstead Lane, London, UK</span></div></div></div></div></div><div class="community-home-page-slice o-grid-row o-grid-row--compact community-home-page-slice--forums community-home-page-slice--default-layout"><div data-o-grid-colspan="12 M12 L3" class="community-home-page-slice__column community-home-page-slice__header-column"><div class="community-home-page-slice__header"><div role="heading" aria-level="3" class="o3-type-body-highlight community-home-page-slice__title">Join the discussion</div><p class="o3-type-body-base community-home-page-slice__strapline">Gain access to a series of exclusive communities, convened by the Financial Times.</p></div></div><div data-o-grid-colspan="12 M4 L3" class="community-home-page-slice__column community-home-page-slice__item-column"><div class="forum-teaser" data-trackable="forum-teaser"><div role="heading" aria-level="4" class="forum-teaser__title-heading"><a class="o3-type-body-highlight forum-teaser__title" data-trackable="forum-teaser-title" href="https://forums.live.ft.com/">FT Live Forums</a></div><span class="o3-type-detail forum-teaser__strapline">Exclusive, peer-level communities for senior executives shaping strategy, leadership and transformation.</span></div></div><div data-o-grid-colspan="12 M4 L3" class="community-home-page-slice__column community-home-page-slice__item-column"><div class="forum-teaser" data-trackable="forum-teaser"><div role="heading" aria-level="4" class="forum-teaser__title-heading"><a class="o3-type-body-highlight forum-teaser__title" data-trackable="forum-teaser-title" href="https://www.leadersacademy.ft.com/">FT Leaders Academy</a></div><span class="o3-type-detail forum-teaser__strapline">Smart, practical learning to help you grow at every stage of your career.  Delivered by experts, shaped by global trends.</span></div></div></div></div></section></main>

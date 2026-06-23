@@ -1,0 +1,33 @@
+# CME FedWatch
+# URL: https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html
+# Title: FedWatch - CME Group
+# Selector: main
+# Confidence: 0.511
+# Content length: 253 chars
+# Raw length: 66 chars
+
+=== FULL CONTENT ===
+
+<extraction_result>
+  <metadata>
+  Title: FedWatch - CME Group
+  URL: https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html
+  Timestamp: 2026-06-23T02:12:21.626372+00:00
+  </metadata>
+
+  <main_body>
+
+  </main_body>
+</extraction_result>
+
+
+=== FULL RAW HTML ===
+
+<main id="main-content" tabindex="-1">
+  
+    
+
+  
+    
+  
+</main>

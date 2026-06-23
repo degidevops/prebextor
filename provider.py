@@ -156,6 +156,25 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
             # Phase 0: Get full page HTML for title extraction
             full_html = self._camofox.get_html(tab_id, user) or ""
 
+            # Phase 0.5: Anti-bot / challenge page detection (v1.0.2)
+            anti_bot_warning = self._mapper._detect_anti_bot(tab_id, user)
+            if anti_bot_warning:
+                return {
+                    "url": url,
+                    "title": _extract_title_from_html(full_html) or url,
+                    "content": "",
+                    "raw_content": "",
+                    "metadata": {
+                        "selector": "",
+                        "extractor": "prebextor-v3.1",
+                        "pipeline": "map->score->prune->validate->text->iframe->md->wrap",
+                        "confidence": 0.0,
+                        "content_aware": True,
+                        "anti_bot_detected": True,
+                    },
+                    "error": anti_bot_warning,
+                }
+
             # Phase 1: structural mapping (evaluate_js only, no snapshot)
             # v1.0.1: mapper now returns (selector, confidence)
             selector, mapper_confidence = self._mapper.map_selector(tab_id, user)
@@ -184,6 +203,26 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
 
             # Also get HTML for raw_content (best-effort)
             raw_html = self._camofox.get_html(tab_id, user, selector=selector) or ""
+
+            # v1.0.2: Empty content detection — if text is too short after all phases,
+            # the page is likely JS-rendered with content not yet loaded, or a redirect
+            if len(raw_text.strip()) < 30:
+                return {
+                    "url": url,
+                    "title": _extract_title_from_html(full_html) or url,
+                    "content": "",
+                    "raw_content": "",
+                    "metadata": {
+                        "selector": selector,
+                        "extractor": "prebextor-v3.1",
+                        "pipeline": "map->score->prune->validate->text->iframe->md->wrap",
+                        "confidence": 0.0,
+                        "mapper_confidence": mapper_confidence,
+                        "content_aware": True,
+                        "empty_content": True,
+                    },
+                    "error": f"Empty content extracted ({len(raw_text.strip())} chars) — page may be JS-rendered or blocked",
+                }
 
             # Phase 6: iframe extraction for cross-origin embedded content
             iframe_texts = self._extract_iframes(tab_id, user, **kwargs)

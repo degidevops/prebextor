@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hermes-prebextor"
-version = "1.0.1"
+version = "1.0.2"
 description = "Prebextor Deterministic Extraction Engine — Mapping → Pruning → Fetching → Cleaning → Markdown → Boundary XML Wrap → QA Gate."
 authors = [{ name = "degi", email = "degi@prebextor" }]
 license = { text = "MIT" }

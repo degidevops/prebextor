@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.2] — 2026-06-23
+
+### Added
+- **Anti-bot/Challenge Page Detection (`pipeline/mapper.py`)** — `_detect_anti_bot()` method.
+  Checks page title and body text for anti-bot keywords (robot, captcha, challenge, etc.).
+  Returns early with error instead of extracting challenge page content.
+
+- **Empty Content Detection (`provider.py`)** — Post-extraction validation.
+  If extracted text < 30 chars, returns error indicating JS-render or block issue.
+  Prevents returning empty `<main_body>` wrappers as valid content.
+
+- **JS-Rendered Page Waiting (`pipeline/mapper.py`)** — `_wait_for_content()` method.
+  Polls `document.readyState` and `body.innerText` length before mapping.
+  Waits up to 15s for page to populate with >= 100 chars of text.
+
+### Changed
+- **StructuralMapper semantic probes** — Now check `innerText.length >= 50`, not just element existence.
+  Prevents selecting empty `<main>` or `<article>` tags from JS-rendered pages.
+
+- **StructuralMapper pattern match** — Skips empty containers (< 50 chars).
+  Returns best match (most text) instead of first match.
+
+### Fixed
+- Bloomberg and similar anti-bot pages no longer returned as valid content.
+- JS-heavy sites (CNBC, CME FedWatch) no longer return empty `<main_body>`.
+- CNBC title showing as URL string instead of page title (empty content detection catches this).
+
+### Test Results
+- Re-validated 15 economics/finance/fedwatch sites with v1.0.2 fixes.
+- Anti-bot: Bloomberg correctly detected and flagged.
+- Empty content: CNBC, CME FedWatch correctly flagged as JS-render issues.
+- Valid sites (Reuters, MQL5, Atlanta Fed, TradingEconomics) still extract correctly.
+
 ## [1.0.1] — 2026-06-22
 
 ### Added

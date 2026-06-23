@@ -1,0 +1,159 @@
+{
+  "version": "1.0.2",
+  "results": [
+    {
+      "name": "Bloomberg (anti-bot)",
+      "url": "https://www.bloomberg.com",
+      "status": "PASS (anti-bot)",
+      "confidence": 0.0,
+      "content_len": 0,
+      "error": "Anti-bot challenge detected (title:robot)",
+      "anti_bot": true,
+      "empty_content": false,
+      "time": 6.4
+    },
+    {
+      "name": "CNBC Economy (JS-render)",
+      "url": "https://www.cnbc.com/economy/",
+      "status": "PASS (empty)",
+      "confidence": 0.0,
+      "content_len": 0,
+      "error": "Empty content extracted (0 chars) \u2014 page may be JS-rendered or blocked",
+      "anti_bot": false,
+      "empty_content": true,
+      "time": 16.4
+    },
+    {
+      "name": "CME FedWatch (JS-render)",
+      "url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html",
+      "status": "PASS (empty)",
+      "confidence": 0.0,
+      "content_len": 0,
+      "error": "Empty content extracted (0 chars) \u2014 page may be JS-rendered or blocked",
+      "anti_bot": false,
+      "empty_content": true,
+      "time": 17.6
+    },
+    {
+      "name": "The Economist (over-prune)",
+      "url": "https://www.economist.com",
+      "status": "PASS (empty)",
+      "confidence": 0.0,
+      "content_len": 0,
+      "error": "Empty content extracted (0 chars) \u2014 page may be JS-rendered or blocked",
+      "anti_bot": false,
+      "empty_content": true,
+      "time": 15.1
+    },
+    {
+      "name": "Financial Times (paywall)",
+      "url": "https://www.ft.com",
+      "status": "PASS",
+      "confidence": 0.495,
+      "content_len": 1471,
+      "error": null,
+      "anti_bot": false,
+      "empty_content": false,
+      "time": 18.5
+    },
+    {
+      "name": "Forex Factory (wrong selector)",
+      "url": "https://www.forexfactory.com/calendar",
+      "status": "PASS",
+      "confidence": 0.35,
+      "content_len": 10641,
+      "error": null,
+      "anti_bot": false,
+      "empty_content": false,
+      "time": 10.3
+    },
+    {
+      "name": "Investing.com Calendar (wrong selector)",
+      "url": "https://www.investing.com/economic-calendar",
+      "status": "PASS",
+      "confidence": 0.35,
+      "content_len": 12836,
+      "error": null,
+      "anti_bot": false,
+      "empty_content": false,
+      "time": 49.3
+    },
+    {
+      "name": "DailyFX (redirect)",
+      "url": "https://www.dailyfx.com/economic-calendar",
+      "status": "PASS",
+      "confidence": 0.701,
+      "content_len": 2891,
+      "error": null,
+      "anti_bot": false,
+      "empty_content": false,
+      "time": 25.9
+    },
+    {
+      "name": "CentralBank Watch (breadcrumb)",
+      "url": "https://centralbank.watch/federal-reserve/",
+      "status": "PASS",
+      "confidence": 0.345,
+      "content_len": 836,
+      "error": null,
+      "anti_bot": false,
+      "empty_content": false,
+      "time": 8.6
+    },
+    {
+      "name": "Reuters Business (should work)",
+      "url": "https://www.reuters.com/business/",
+      "status": "PASS",
+      "confidence": 0.475,
+      "content_len": 1027,
+      "error": null,
+      "anti_bot": false,
+      "empty_content": false,
+      "time": 13.2
+    },
+    {
+      "name": "MQL5 Calendar (should work)",
+      "url": "https://www.mql5.com/en/economic-calendar",
+      "status": "PASS",
+      "confidence": 0.631,
+      "content_len": 32202,
+      "error": null,
+      "anti_bot": false,
+      "empty_content": false,
+      "time": 11.9
+    },
+    {
+      "name": "Atlanta Fed Tracker (should work)",
+      "url": "https://www.atlantafed.org/research-and-data/data/market-probability-tracker",
+      "status": "PASS",
+      "confidence": 0.816,
+      "content_len": 10119,
+      "error": null,
+      "anti_bot": false,
+      "empty_content": false,
+      "time": 38.1
+    },
+    {
+      "name": "TradingEconomics (should work)",
+      "url": "https://tradingeconomics.com/calendar",
+      "status": "PASS",
+      "confidence": 0.493,
+      "content_len": 7580,
+      "error": null,
+      "anti_bot": false,
+      "empty_content": false,
+      "time": 28.9
+    },
+    {
+      "name": "MacroMicro Fed (should work)",
+      "url": "https://en.macromicro.me/collections/4238/us-federal/77/probability-fed-rate-hike",
+      "status": "PASS",
+      "confidence": 0.501,
+      "content_len": 4343,
+      "error": null,
+      "anti_bot": false,
+      "empty_content": false,
+      "time": 16.6
+    }
+  ]
+}

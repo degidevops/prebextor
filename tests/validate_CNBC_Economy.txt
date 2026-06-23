@@ -1,0 +1,26 @@
+# CNBC Economy
+# URL: https://www.cnbc.com/economy/
+# Title: https://www.cnbc.com/economy/
+# Selector: [role="main"]
+# Confidence: 0.438
+# Content length: 221 chars
+# Raw length: 127 chars
+
+=== FULL CONTENT ===
+
+<extraction_result>
+  <metadata>
+  Title: https://www.cnbc.com/economy/
+  URL: https://www.cnbc.com/economy/
+  Timestamp: 2026-06-23T02:11:06.226269+00:00
+  </metadata>
+
+  <main_body>
+
+  </main_body>
+</extraction_result>
+
+
+=== FULL RAW HTML ===
+
+<div class="BrandPageWrapper-contentWrapper" role="main" id="MainContentContainer"><p id="MainContent" tabindex="-1"></p></div>
