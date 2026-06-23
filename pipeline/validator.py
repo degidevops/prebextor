@@ -29,7 +29,10 @@ _scorer_mod = None
 def _get_scorer_mod():
     global _scorer_mod
     if _scorer_mod is None:
-        from prebextor.pipeline import scorer as _scorer_mod
+        try:
+            from prebextor.pipeline import scorer as _scorer_mod
+        except ImportError:
+            import scorer as _scorer_mod
     return _scorer_mod
 
 

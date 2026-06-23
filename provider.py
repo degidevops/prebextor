@@ -36,14 +36,18 @@ try:
 except Exception:  # pragma: no cover
     WebSearchProvider = object  # type: ignore[misc,assignment]
 
+import sys, os
+_pkg = os.path.dirname(os.path.abspath(__file__))
+if _pkg not in sys.path:
+    sys.path.insert(0, _pkg)
 
-from .fetcher.camofox_client import CamoFoxClient
-from .pipeline.mapper import StructuralMapper
-from .pipeline.pruner import SurgicalPruner
-from .pipeline.transform import MarkdownConverter, BoundaryWrapper
-from .pipeline.iframe_extractor import IframeExtractor
-from .pipeline.scorer import ContentAwareScorer
-from .pipeline.validator import ContentValidator
+from fetcher.camofox_client import CamoFoxClient
+from pipeline.mapper import StructuralMapper
+from pipeline.pruner import SurgicalPruner
+from pipeline.transform import MarkdownConverter, BoundaryWrapper
+from pipeline.iframe_extractor import IframeExtractor
+from pipeline.scorer import ContentAwareScorer
+from pipeline.validator import ContentValidator
 
 
 def _extract_title_from_text(text: str) -> str:
