@@ -1,6 +1,6 @@
 """ContentAwareScorer: CETD-inspired text density analysis for DOM blocks.
 
-Algorithm (based on "DOM Based Content Extraction via Text Density" — Sun et al., SIGIR 2011):
+Algorithm (based on "DOM Based Content Extraction via Text Density" -- Sun et al., SIGIR 2011):
   1. Traverse DOM tree from mapped container
   2. For each leaf block (p, pre, td, h1-h6, div with direct text):
      - Calculate text density = textLength / numberOfChildTags
@@ -17,17 +17,29 @@ High score = likely content. Low score = likely noise.
 from __future__ import annotations
 
 import json
+import os
+import sys
 from typing import Any, Dict, List, Optional
 
-from ..fetcher.camofox_client import CamoFoxClient
+# Support both package import and direct file import (_v101: fixed for testability)
+_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _pkg_dir not in sys.path:
+    sys.path.insert(0, _pkg_dir)
+from fetcher.camofox_client import CamoFoxClient
 
 
-# ── Tunable thresholds ──────────────────────────────────────────────
+# -- Tunable thresholds --
 _MIN_TEXT_LENGTH = 25          # Below this, block scores 0
 _LINK_DENSITY_NOISE = 0.5       # Above this, likely navigation/noise
-_TEXT_DENSITY_THRESHOLD = 1.0  # Below this after penalty, likely noise
+_TEXT_DENSITY_THRESHOLD = 0.5  # Below this after penalty = likely noise
 _PUNCTUATION_WEIGHT = 0.1      # Bonus per comma
-_LINK_PENALTY_WEIGHT = 0.5     # Penalty multiplier for link density
+_LINK_PENALTY_WEIGHT = 1.0     # Penalty multiplier for link density (full penalty)
+
+# CETD formula: composite score per block
+# text_density = text_length / (tag_count + 1)  [+1 to avoid div by zero]
+# link_penalty = 1.0 - (link_text_length / total_text_length) * LINK_PENALTY_WEIGHT
+# score = text_density * link_penalty + comma_count * PUNCTUATION_WEIGHT
+# Normalized: divide by 100 to keep scores in 0-5 range
 
 
 class ScoredBlock:
@@ -55,15 +67,17 @@ class ScoredBlock:
             text_length / tag_count if tag_count > 0 else 0.0
         )
 
-        # Composite score (CETD formula)
+        # Composite score (CETD-inspired formula)
         if text_length < _MIN_TEXT_LENGTH:
             self.score = 0.0
         else:
-            density_score = self.text_density * (
-                1.0 - (self.link_density * _LINK_PENALTY_WEIGHT)
-            )
-            punctuation_score = self.comma_count * _PUNCTUATION_WEIGHT
-            self.score = max(0.0, density_score + punctuation_score)
+            # text_density: chars per tag (normalized)
+            text_density = text_length / (tag_count + 1)
+            # link_penalty: 1.0 for no links, 0.0 for all links
+            link_penalty = 1.0 - (link_text_length / text_length) * _LINK_PENALTY_WEIGHT
+            link_penalty = max(0.0, link_penalty)
+            # Normalize to 0-5 range
+            self.score = (text_density * link_penalty) / 100.0 + comma_count * _PUNCTUATION_WEIGHT
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -156,7 +170,7 @@ class ContentAwareScorer:
 
     This scorer identifies noise (navigation, ads, sidebars) by analyzing
     text density, link density, and punctuation patterns. It does NOT
-    select "content" — it identifies what to REMOVE.
+    select "content" -- it identifies what to REMOVE.
 
     High score = likely content (keep).
     Low score + high link density = likely noise (prune).

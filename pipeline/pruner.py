@@ -1,5 +1,10 @@
 """SurgicalPruner: removes noise INSIDE the mapped container.
 
+import sys
+import os
+_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _pkg_dir not in sys.path:
+    sys.path.insert(0, _pkg_dir)
 Per blueprint Phase 2, this runs *before* content is fetched.
 All pruning happens in-page via `evaluate_js` -- no regex on HTML.
 
@@ -11,10 +16,18 @@ v1.0.1 enhancements:
 
 from __future__ import annotations
 
+
+import os
+import sys
+_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _pkg_dir not in sys.path:
+    sys.path.insert(0, _pkg_dir)
+from fetcher.camofox_client import CamoFoxClient
+
 import json
 from typing import List
 
-from ..fetcher.camofox_client import CamoFoxClient
+
 
 
 # A precise, hand-curated noise list. Conservative on purpose: false

@@ -1,5 +1,10 @@
 """IframeExtractor: detects and extracts content from significant iframes.
 
+import sys
+import os
+_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _pkg_dir not in sys.path:
+    sys.path.insert(0, _pkg_dir)
 Strategy:
   1. Detect all iframes in the page
   2. Filter out tracking/ads iframes (small size, known ad domains)
@@ -13,13 +18,21 @@ cross-origin iframe that cannot be accessed via contentDocument.
 
 from __future__ import annotations
 
+
+import os
+import sys
+_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _pkg_dir not in sys.path:
+    sys.path.insert(0, _pkg_dir)
+from fetcher.camofox_client import CamoFoxClient
+
 import json
 import re
 import time
 import uuid
 from typing import Any, Dict, List, Optional, Tuple
 
-from ..fetcher.camofox_client import CamoFoxClient
+
 
 
 # Known tracking/ads domains to skip

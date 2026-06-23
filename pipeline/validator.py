@@ -3,9 +3,9 @@
 Validates that extracted content is substantial and not over-pruned.
 Implements a 3-pass strategy:
 
-  Pass 1 (strict):  High thresholds — content must be substantial
-  Pass 2 (relaxed): Lower thresholds — accept less content
-  Pass 3 (fallback): Return body with warning — better than nothing
+  Pass 1 (strict):  High thresholds -- content must be substantial
+  Pass 2 (relaxed): Lower thresholds -- accept less content
+  Pass 3 (fallback): Return body with warning -- better than nothing
 
 Key principle: It's better to return some noise than to lose content.
 """
@@ -13,13 +13,27 @@ Key principle: It's better to return some noise than to lose content.
 from __future__ import annotations
 
 import json
+import os
+import sys
 from typing import Any, Dict, List, Optional, Tuple
 
-from ..fetcher.camofox_client import CamoFoxClient
-from .scorer import ContentAwareScorer, ScoredBlock
+# Support both package import and direct file import
+_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _pkg_dir not in sys.path:
+    sys.path.insert(0, _pkg_dir)
+from fetcher.camofox_client import CamoFoxClient
+
+# Lazy import to avoid circular deps during module loading
+_scorer_mod = None
+
+def _get_scorer_mod():
+    global _scorer_mod
+    if _scorer_mod is None:
+        from prebextor.pipeline import scorer as _scorer_mod
+    return _scorer_mod
 
 
-# ── Pass thresholds ─────────────────────────────────────────────────
+# -- Pass thresholds --
 _PASS1_MIN_TEXT = 200
 _PASS1_MIN_COMMAS = 2
 _PASS1_MIN_SCORE = 3.0
@@ -30,7 +44,7 @@ _PASS2_MIN_COMMAS = 1
 _PASS2_MIN_SCORE = 1.0
 _PASS2_MAX_LINK_DENSITY = 0.6
 
-_PASS3_MIN_TEXT = 50   # Absolute minimum — almost anything
+_PASS3_MIN_TEXT = 50   # Absolute minimum -- almost anything
 
 
 class ValidationResult:
@@ -101,7 +115,7 @@ class ContentValidator:
     Pass 2 (relaxed): Accepts less content with moderate metrics
     Pass 3 (fallback): Returns body-level content with warning
 
-    The validator never discards content — it only adjusts confidence.
+    The validator never discards content -- it only adjusts confidence.
     """
 
     def __init__(self, client: CamoFoxClient) -> None:
@@ -110,9 +124,9 @@ class ContentValidator:
     def validate(
         self,
         selector: str,
-        scored_blocks: List[ScoredBlock],
-        tab_id: str,
-        user: str,
+        scored_blocks: Optional[List[Any]] = None,
+        tab_id: str = "",
+        user: str = "",
     ) -> ValidationResult:
         """Run multi-pass validation on the extracted content.
 
@@ -142,7 +156,7 @@ class ContentValidator:
             top = scored_blocks[:5]
             avg_score = sum(b.score for b in top) / len(top)
 
-        # ── Pass 1: Strict ──────────────────────────────────────────
+        # -- Pass 1: Strict --
         if (
             text_len >= _PASS1_MIN_TEXT
             and commas >= _PASS1_MIN_COMMAS
@@ -160,7 +174,7 @@ class ContentValidator:
                 pass_used=1,
             )
 
-        # ── Pass 2: Relaxed ─────────────────────────────────────────
+        # -- Pass 2: Relaxed --
         if (
             text_len >= _PASS2_MIN_TEXT
             and commas >= _PASS2_MIN_COMMAS
@@ -176,10 +190,10 @@ class ContentValidator:
                 avg_score=avg_score,
                 confidence=round(confidence, 3),
                 pass_used=2,
-                warning="Relaxed validation — content may include some noise",
+                warning="Relaxed validation -- content may include some noise",
             )
 
-        # ── Pass 3: Fallback ────────────────────────────────────────
+        # -- Pass 3: Fallback --
         if text_len >= _PASS3_MIN_TEXT:
             return ValidationResult(
                 selector=selector,
@@ -189,13 +203,13 @@ class ContentValidator:
                 avg_score=avg_score,
                 confidence=0.2,
                 pass_used=3,
-                warning=f"Fallback validation — low confidence ({text_len} chars, {commas} commas)",
+                warning=f"Fallback validation -- low confidence ({text_len} chars, {commas} commas)",
             )
 
-        # ── Ultimate fallback: body ─────────────────────────────────
+        # -- Ultimate fallback: body --
         return self._fallback_result(
             selector,
-            f"Content too short ({text_len} chars) — consider body fallback",
+            f"Content too short ({text_len} chars) -- consider body fallback",
         )
 
     def _fallback_result(

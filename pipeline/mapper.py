@@ -1,5 +1,10 @@
 """StructuralMapper: maps a URL's DOM to one CSS selector for the main content.
 
+import sys
+import os
+_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _pkg_dir not in sys.path:
+    sys.path.insert(0, _pkg_dir)
 Pipeline v3 (NO SNAPSHOT — raw HTML first):
   Phase 1: evaluate_js semantic detection
     1a. Semantic tags: <main>, <article>
@@ -13,10 +18,18 @@ The mapper never invents selectors. If no pass returns a selector, returns "body
 
 from __future__ import annotations
 
+
+import os
+import sys
+_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _pkg_dir not in sys.path:
+    sys.path.insert(0, _pkg_dir)
+from fetcher.camofox_client import CamoFoxClient
+
 import re
 from typing import List, Optional
 
-from ..fetcher.camofox_client import CamoFoxClient
+
 
 
 class MappingError(Exception):
