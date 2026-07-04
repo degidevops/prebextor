@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.3] — 2026-07-04
+
+### Added
+- **Standalone Extraction Tool (`prebextor_extract`)** — Registers as independent tool via `ctx.register_tool()`, bypassing `web_tools` dispatcher and `web.extract_backend` config entirely. Eliminates need for core Hermes patches.
+- **`tool_extract.py`** — New module with async handler, availability check (`_check_available`), and tool schema (`PREBEXTOR_EXTRACT_SCHEMA`).
+- Tool returns standardized JSON: `{"success": true, "results": [...]}` with clean XML-wrapped markdown content.
+
+### Changed
+- **`__init__.py`** — Now registers **tool** instead of provider (`ctx.register_tool` vs `ctx.register_web_search_provider`). Keeps internal skill registration.
+- **Plugin architecture** — Shift from provider-based (requires core patches) to tool-based (zero core dependencies). Aligns with Hermes "capability lives at the edges" philosophy.
+
+### Fixed
+- `web_extract` routing conflict with `web.extract_backend` config — Prebextor now has its own tool name `prebextor_extract`.
+- Provider availability check no longer depends on plugin registry population timing — tool's `_check_available()` calls `PrebextorProvider().is_available()` directly.
+- Response shape mismatch (envelope vs raw list) — tool normalizes provider envelope to standard tool output format.
+
+### Deployment Note
+No Hermes core patches required. Deploy via `deploy.sh` (copies plugin files) or future `pip install hermes-prebextor`. Tool appears in `hermes tools list` as `web.prebextor_extract`.
+
+---
+
+## [1.0.3] — 2026-07-04
+
+### Added
+- **Standalone Extraction Tool** (`tool_extract.py`, `__init__.py`) — Registers `prebextor_extract` as independent tool via `ctx.register_tool()`, bypassing `web_tools` dispatcher entirely.
+  - No core Hermes patches required — zero dependency on `web_tools.py` backend selection logic.
+  - Own availability check (`_check_available`) calls `PrebextorProvider.is_available()` directly.
+  - Own schema with `scroll_to_bottom` / `wait_after_scroll` parameters.
+  - Returns normalized `{"success": true, "results": [...]}` format.
+- **Dual-mode operation** — Plugin now provides BOTH:
+  - `PrebextorProvider` (registered via `register_web_search_provider` for users who prefer `web.extract_backend: prebextor`)
+  - `prebextor_extract` tool (standalone, no config conflict, works out of the box)
+
+### Changed
+- **`__init__.py`** — Now registers tool + internal skill instead of provider + skill.
+- **Architecture** — Shifted from "provider needing core patch" to "standalone tool needing zero core changes".
+
+### Fixed
+- **`web_extract` routing conflict** — Users no longer need `web.extract_backend: prebextor` config; tool works independently.
+- **Availability detection** — No longer depends on `_ensure_web_plugins_loaded()` timing in `web_tools._is_backend_available()`.
+- **Response shape mismatch** — Tool handler normalizes provider envelope to tool output format.
+
+### Migration
+- Existing `web.extract_backend: prebextor` config still works (provider still registered).
+- New usage: call `prebextor_extract` tool directly (recommended).
+- No breaking changes — both paths functional.
+
+---
+
 ## [1.0.2] — 2026-06-23
 
 ### Added
