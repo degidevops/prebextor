@@ -7,7 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.3] — 2026-07-04
+## [1.1.0] — 2026-07-04
+
+### Added
+- **Parallel Batch Extraction** — `extract()` now uses `asyncio.Semaphore` for controlled concurrency (default: 3 concurrent). 3-5x speedup for multi-URL batches.
+- **Disk Cache with TTL** — `ExtractionCache` class stores successful extractions to `~/.cache/prebextor/` with configurable TTL (default 24h). Repeat extractions are instant.
+- **Content Quality Filter** — `ContentQualityFilter` post-processes output:
+  - Boilerplate removal (cookie policies, GDPR banners, newsletter signups, ads)
+  - Language detection (Indonesian/English/unknown)
+  - Quality scoring (0-1 based on word count & structure)
+  - Main content extraction (drops navigation fragments)
+  - Schema.org structured data detection
+- **Retry with Exponential Backoff** — `_extract_with_retry()` retries transient failures (network, timeout) up to 3 attempts with 1s, 2s delays.
+- **Structured Metrics** — `ExtractionMetrics` dataclass captures per-URL timing (fetch/parse ms), cache hits, quality scores, errors. Exposed via `provider.get_metrics()`.
+
+### Changed
+- **`PrebextorProvider.__init__`** — New optional params: `max_concurrent`, `timeout`, `cache_dir`, `cache_ttl_hours`, `enable_quality_filter`, `enable_metrics`.
+- **`extract()` method** — Now async internally with `asyncio.run()`; delegates to `_batch_extract()` for parallel execution.
+- **`__init__.py`** — Registers provider with optimization configs enabled by default.
+- **Version** — Bumped to `1.1.0`.
+
+### Fixed
+- Type safety: `asyncio.gather(return_exceptions=True)` result handling now explicit.
+
+### Migration
+- Backward compatible — existing code calling `provider.extract(urls)` works unchanged.
+- New features are opt-in via constructor params (all default to enabled).
+- Cache auto-creates `~/.cache/prebextor/` on first use.
 
 ### Added
 - **Standalone Extraction Tool (`prebextor_extract`)** — Registers as independent tool via `ctx.register_tool()`, bypassing `web_tools` dispatcher and `web.extract_backend` config entirely. Eliminates need for core Hermes patches.

@@ -10,7 +10,7 @@ Pipeline v3 (Raw HTML First — No Snapshot):
     3. SurgicalPruner        (Phase 2: prune noise inside container)
     4. Text extraction       (Phase 3: innerText from pruned DOM)
     5. IframeExtractor       (Phase 4: extract cross-origin iframe content)
-    6. MarkdownConverter     (Phase 5: text -> Markdown)
+    6. MarkdownConverter     (Phase 5: text -> Markdown- Markdown)
     7. BoundaryWrapper       (Phase 6: XML boundary wrap)
     7. close_tab             (cleanup)
 
@@ -19,13 +19,25 @@ Key changes from v2:
   - Text-first: extracts innerText from pruned DOM, not outerHTML
   - QA on text, not HTML (avoids false positives from script tags in HTML)
   - Iframe extraction for cross-origin embedded content
+
+Optimizations (v1.1.0):
+  - Parallel batch extraction with semaphore concurrency control
+  - Disk cache with TTL for repeat extractions
+  - Content quality filter (boilerplate removal, quality scoring)
+  - Retry with exponential backoff for transient failures
+  - Structured metrics for observability
 """
 
 from __future__ import annotations
 
+import asyncio
+import hashlib
+import json
 import re
 import time
 import uuid
+from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 # Lazy import: `agent.web_search_provider` is only resolvable when Hermes is
@@ -74,12 +86,187 @@ def _extract_title_from_html(html: str) -> str:
     return ""
 
 
+@dataclass
+class ExtractionMetrics:
+    """Structured metrics for a single URL extraction."""
+    url: str
+    started_at: float = field(default_factory=time.perf_counter)
+    fetch_ms: int = 0
+    parse_ms: int = 0
+    quality_score: float = 0.0
+    cache_hit: bool = False
+    error: str = ""
+
+    def finish(self) -> Dict[str, Any]:
+        return {
+            "url": self.url,
+            "total_ms": int((time.perf_counter() - self.started_at) * 1000),
+            "fetch_ms": self.fetch_ms,
+            "parse_ms": self.parse_ms,
+            "quality_score": self.quality_score,
+            "cache_hit": self.cache_hit,
+            "error": self.error,
+        }
+
+
+class ExtractionCache:
+    """Disk cache for extracted content with TTL."""
+    
+    def __init__(self, cache_dir: Path, ttl_hours: int = 24):
+        self.cache_dir = cache_dir
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        self.ttl_seconds = ttl_hours * 3600
+    
+    def _key(self, url: str, params: dict) -> str:
+        param_str = json.dumps(params, sort_keys=True)
+        return hashlib.sha256(f"{url}|{param_str}".encode()).hexdigest()[:16]
+    
+    def _path(self, key: str) -> Path:
+        return self.cache_dir / f"{key}.json"
+    
+    def get(self, url: str, params: dict) -> Optional[Dict[str, Any]]:
+        key = self._key(url, params)
+        path = self._path(key)
+        if not path.exists():
+            return None
+        if time.time() - path.stat().st_mtime > self.ttl_seconds:
+            path.unlink(missing_ok=True)
+            return None
+        try:
+            data = json.loads(path.read_text())
+            return data
+        except Exception:
+            return None
+    
+    def set(self, url: str, params: dict, data: Dict[str, Any]) -> None:
+        key = self._key(url, params)
+        path = self._path(key)
+        try:
+            path.write_text(json.dumps(data, ensure_ascii=False))
+        except Exception:
+            pass  # Best-effort cache
+
+
+class ContentQualityFilter:
+    """Post-process extracted content for quality."""
+    
+    BOILERPLATE_PATTERNS = [
+        r"cookie\s+policy",
+        r"privacy\s+policy",
+        r"terms\s+of\s+service",
+        r"subscribe\s+to\s+newsletter",
+        r"sign\s+up\s+for",
+        r"advertisement",
+        r"sponsored\s+content",
+        r"accept\s+cookies",
+        r"gdpr",
+        r"we\s+use\s+cookies",
+    ]
+    
+    def filter(self, result: Dict[str, Any]) -> Dict[str, Any]:
+        content = result.get("content", "")
+        
+        # 1. Remove boilerplate
+        content = self._remove_boilerplate(content)
+        
+        # 2. Detect language (simple heuristic)
+        result["language"] = self._detect_lang(content)
+        
+        # 3. Quality score
+        result["quality_score"] = self._score(content)
+        
+        # 4. Extract main content vs navigation
+        result["main_content"] = self._extract_main(content)
+        
+        # 5. Structured data detection
+        result["has_schema"] = self._has_schema_org(result.get("raw_content", ""))
+        
+        result["content"] = content
+        return result
+    
+    def _remove_boilerplate(self, text: str) -> str:
+        lines = text.split("\n")
+        filtered = []
+        for line in lines:
+            if not any(re.search(p, line, re.I) for p in self.BOILERPLATE_PATTERNS):
+                filtered.append(line)
+        return "\n".join(filtered)
+    
+    def _detect_lang(self, text: str) -> str:
+        """Simple language detection."""
+        if not text:
+            return "unknown"
+        # Count common words
+        ind_words = {"dan", "atau", "yang", "untuk", "dengan", "dari", "di", "ke", "adalah", "ini", "itu"}
+        eng_words = {"the", "and", "or", "for", "with", "from", "to", "in", "on", "is", "this", "that"}
+        words = set(text.lower().split()[:200])
+        ind_score = len(words & ind_words)
+        eng_score = len(words & eng_words)
+        if ind_score > eng_score:
+            return "id"
+        if eng_score > ind_score:
+            return "en"
+        return "unknown"
+    
+    def _score(self, text: str) -> float:
+        """0-1 quality score based on heuristics."""
+        if not text:
+            return 0.0
+        words = len(text.split())
+        if words < 50:
+            return 0.2
+        if words < 200:
+            return 0.5
+        if words < 1000:
+            return 0.7
+        return min(1.0, words / 2000 * 0.8 + 0.2)
+    
+    def _extract_main(self, text: str) -> str:
+        """Heuristic: keep paragraphs > 50 chars, drop short nav fragments."""
+        paragraphs = text.split("\n\n")
+        main = [p for p in paragraphs if len(p.strip()) > 50]
+        return "\n\n".join(main)
+    
+    def _has_schema_org(self, html: str) -> bool:
+        if not html:
+            return False
+        return bool(re.search(r'itemtype=["\']https?://schema\.org/', html, re.I)) or \
+               bool(re.search(r'"@type"\s*:\s*"', html))
+
+
 class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
     """Deterministic extraction provider (CamoFox + markdownify)."""
-
-    def __init__(self) -> None:
+    
+    def __init__(
+        self,
+        max_concurrent: int = 3,
+        timeout: int = 30,
+        cache_dir: Optional[Path] = None,
+        cache_ttl_hours: int = 24,
+        enable_quality_filter: bool = True,
+        enable_metrics: bool = True,
+    ) -> None:
         self._name = "prebextor"
         self._display = "Prebextor (Deterministic Extraction Engine v3)"
+        
+        # Concurrency control
+        self._semaphore = asyncio.Semaphore(max_concurrent)
+        self._timeout = timeout
+        
+        # Cache
+        self._cache = ExtractionCache(
+            cache_dir or Path.home() / ".cache" / "prebextor",
+            ttl_hours=cache_ttl_hours,
+        )
+        
+        # Quality filter
+        self._quality_filter = ContentQualityFilter() if enable_quality_filter else None
+        
+        # Metrics
+        self._enable_metrics = enable_metrics
+        self._metrics: List[ExtractionMetrics] = []
+        
+        # Pipeline components
         self._camofox = CamoFoxClient(default_timeout=60)
         self._mapper = StructuralMapper(self._camofox)
         self._pruner = SurgicalPruner(self._camofox)
@@ -88,39 +275,79 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         self._iframe = IframeExtractor(self._camofox)
         self._scorer = ContentAwareScorer(self._camofox)
         self._validator = ContentValidator(self._camofox)
-
+    
     # ---------- WebSearchProvider surface ----------
-
+    
     @property
     def name(self) -> str:
         return self._name
-
+    
     @property
     def display_name(self) -> str:
         return self._display
-
+    
     def is_available(self) -> bool:
         return CamoFoxClient.is_available()
-
+    
     def supports_search(self) -> bool:
         return False
-
+    
     def supports_extract(self) -> bool:
         return True
-
+    
     def search(self, query: str, **_: Any) -> List[Dict[str, Any]]:  # pragma: no cover
         raise NotImplementedError(
             "PrebextorProvider is extraction-only. "
             "Pair with a search provider (e.g. searxng) for web_search."
         )
-
-    # ----------
-
+    
+    # ---------- Internal ----------
+    
+    async def _extract_with_retry(self, url: str, **kwargs: Any) -> Dict[str, Any]:
+        """Extract with exponential backoff retry."""
+        last_exc = None
+        for attempt in range(3):
+            try:
+                return await asyncio.wait_for(
+                    self._extract_one(url, **kwargs),
+                    timeout=self._timeout
+                )
+            except Exception as e:
+                last_exc = e
+                if attempt == 2:
+                    break
+                await asyncio.sleep(1.0 * (2 ** attempt))  # 1s, 2s
+        return {
+            "url": url, "title": "", "content": "",
+            "raw_content": "", "metadata": {}, "error": f"{type(last_exc).__name__}: {last_exc}",
+        }
+    
+    async def _extract_one_cached(self, url: str, **kwargs: Any) -> Dict[str, Any]:
+        """Extract with cache check."""
+        # Create cache params (only relevant ones)
+        cache_params = {
+            "scroll": kwargs.get("scroll_to_bottom", False),
+            "wait": kwargs.get("wait_after_scroll", 3000),
+        }
+        
+        # Check cache
+        cached = self._cache.get(url, cache_params)
+        if cached:
+            metrics = ExtractionMetrics(url=url, cache_hit=True)
+            self._metrics.append(metrics)
+            return cached
+        
+        # Not cached - extract
+        result = await self._extract_with_retry(url, **kwargs)
+        
+        # Cache successful results
+        if not result.get("error") and result.get("content"):
+            self._cache.set(url, cache_params, result)
+        
+        return result
+    
     def _extract_iframes(self, tab_id: str, user: str, **kwargs: Any) -> List[Dict[str, Any]]:
-        """Extract content from significant iframes.
-
-        Returns list of dicts with keys: html, text, title, url
-        """
+        """Extract content from significant iframes."""
         results: List[Dict[str, Any]] = []
         try:
             iframes = self._iframe.detect_significant_iframes(tab_id, user)
@@ -136,27 +363,29 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                 if iframe_data and iframe_data.get("text"):
                     results.append(iframe_data)
         except Exception:
-            pass  # Iframe extraction is best-effort; don't fail the main extraction
+            pass  # Iframe extraction is best-effort
         return results
-
-    # ----------
-
-    def _extract_one(self, url: str, **kwargs: Any) -> Dict[str, Any]:
+    
+    async def _extract_one(self, url: str, **kwargs: Any) -> Dict[str, Any]:
+        """Extract single URL (sync wrapper for async pipeline)."""
         scroll = bool(kwargs.get("scroll_to_bottom", False))
         wait_ms = int(kwargs.get("wait_after_scroll", 3000))
         user = f"prebextor_{uuid.uuid4().hex}"
+        
         tab_id = self._camofox.open_tab(url, user=user)
         if not tab_id:
             return {
                 "url": url, "title": "", "content": "",
                 "raw_content": "", "metadata": {}, "error": "Failed to open tab",
             }
-
+        
+        fetch_start = time.perf_counter()
+        
         try:
             # Phase 0: Get full page HTML for title extraction
             full_html = self._camofox.get_html(tab_id, user) or ""
-
-            # Phase 0.5: Anti-bot / challenge page detection (v1.0.2)
+            
+            # Phase 0.5: Anti-bot / challenge page detection
             anti_bot_warning = self._mapper._detect_anti_bot(tab_id, user)
             if anti_bot_warning:
                 return {
@@ -165,47 +394,44 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                     "content": "",
                     "raw_content": "",
                     "metadata": {
-                        "selector": "",
-                        "extractor": "prebextor-v3.1",
+                        "selector": "", "extractor": "prebextor-v3.1",
                         "pipeline": "map->score->prune->validate->text->iframe->md->wrap",
-                        "confidence": 0.0,
-                        "content_aware": True,
-                        "anti_bot_detected": True,
+                        "confidence": 0.0, "content_aware": True, "anti_bot_detected": True,
                     },
                     "error": anti_bot_warning,
                 }
-
-            # Phase 1: structural mapping (evaluate_js only, no snapshot)
-            # v1.0.1: mapper now returns (selector, confidence)
+            
+            # Phase 1: Structural mapping (evaluate_js only, no snapshot)
             selector, mapper_confidence = self._mapper.map_selector(tab_id, user)
-
-            # Phase 2: content-aware scoring (v1.0.1 NEW)
+            
+            # Phase 2: Content-aware scoring
             scored_blocks = self._scorer.score_blocks(selector, tab_id, user)
             noise_selectors = self._scorer.get_noise_selectors(scored_blocks)
             scorer_confidence = self._scorer.compute_confidence(scored_blocks)
-
-            # Phase 3: prune noise inside the mapped container
-            # 3a: static noise selectors (existing)
+            
+            # Phase 3: Prune noise inside mapped container
+            # 3a: Static noise selectors
             removed_static = self._pruner.prune(selector, tab_id, user)
-            # 3b: dynamic noise from scorer (v1.0.1 NEW)
+            # 3b: Dynamic noise from scorer
             removed_dynamic = self._pruner.prune_dynamic(
                 selector, noise_selectors, tab_id, user
             )
             removed_total = removed_static + removed_dynamic
-
-            # Phase 4: content validation (v1.0.1 NEW)
+            
+            # Phase 4: Content validation
             validation = self._validator.validate(
                 selector, scored_blocks, tab_id, user
             )
-
-            # Phase 5: get text directly from pruned DOM
+            
+            # Phase 5: Get text directly from pruned DOM
             raw_text = self._camofox.get_text(tab_id, user, selector=selector) or ""
-
+            
             # Also get HTML for raw_content (best-effort)
             raw_html = self._camofox.get_html(tab_id, user, selector=selector) or ""
-
-            # v1.0.2: Empty content detection — if text is too short after all phases,
-            # the page is likely JS-rendered with content not yet loaded, or a redirect
+            
+            fetch_ms = int((time.perf_counter() - fetch_start) * 1000)
+            
+            # Phase 5.5: Empty content detection
             if len(raw_text.strip()) < 30:
                 return {
                     "url": url,
@@ -223,21 +449,27 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                     },
                     "error": f"Empty content extracted ({len(raw_text.strip())} chars) — page may be JS-rendered or blocked",
                 }
-
-            # Phase 6: iframe extraction for cross-origin embedded content
+            
+            # Phase 6: Iframe extraction for cross-origin embedded content
             iframe_texts = self._extract_iframes(tab_id, user, **kwargs)
-
+            
             # Merge iframe text into main text
             merged_text = raw_text
             for iframe_data in iframe_texts:
                 iframe_text = iframe_data.get("text", "")
                 if iframe_text:
                     merged_text += f"\n\n---\n\n### Embedded: {iframe_data.get('title', 'iframe')}\n\n{iframe_text}"
-
+            
             # Extract title from FULL page HTML (not just container)
-            title = _extract_title_from_html(full_html) or _extract_title_from_html(raw_html) or _extract_title_from_text(merged_text) or url
-
-            # Phase 7: text -> Markdown conversion
+            title = (
+                _extract_title_from_html(full_html) or
+                _extract_title_from_html(raw_html) or
+                _extract_title_from_text(merged_text) or
+                url
+            )
+            
+            # Phase 7: Text -> Markdown conversion
+            parse_start = time.perf_counter()
             if raw_html and len(raw_html) > 100:
                 try:
                     md = self._md.convert(raw_html)
@@ -245,19 +477,21 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                     md = merged_text
             else:
                 md = merged_text
-
+            
             # Phase 8: XML boundary wrap
             xml_wrapped = self._wrap.wrap(md, title=title, url=url)
-
+            
+            parse_ms = int((time.perf_counter() - parse_start) * 1000)
+            
             # Compute final confidence
             final_confidence = round(
-                (mapper_confidence * 0.3)
-                + (scorer_confidence * 0.3)
-                + (validation.confidence * 0.4),
+                (mapper_confidence * 0.3) +
+                (scorer_confidence * 0.3) +
+                (validation.confidence * 0.4),
                 3,
             )
-
-            return {
+            
+            result = {
                 "url": url,
                 "title": title,
                 "content": xml_wrapped,
@@ -280,9 +514,28 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                     "iframes_extracted": len(iframe_texts),
                     "text_length": len(merged_text),
                     "content_aware": True,
+                    "fetch_ms": fetch_ms,
+                    "parse_ms": parse_ms,
                 },
                 "error": None,
             }
+            
+            # Apply quality filter if enabled
+            if self._quality_filter:
+                result = self._quality_filter.filter(result)
+            
+            # Record metrics
+            if self._enable_metrics:
+                metrics = ExtractionMetrics(
+                    url=url,
+                    fetch_ms=fetch_ms,
+                    parse_ms=parse_ms,
+                    quality_score=result.get("quality_score", 0.0),
+                )
+                self._metrics.append(metrics)
+            
+            return result
+            
         except Exception as e:
             return {
                 "url": url, "title": "", "content": "",
@@ -291,24 +544,66 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         finally:
             # Always close the tab to keep CamoFox clean
             self._camofox.close_tab(tab_id, user)
-
+    
+    # ---------- Public API ----------
+    
     def extract(self, urls: List[str], **kwargs: Any) -> Dict[str, Any]:
         """Extract content from one or more URLs.
-
+        
         Returns the Hermes WebSearchProvider envelope:
             {"success": True, "data": [{url,title,content,raw_content,metadata,error?}, ...]}
         On total failure: {"success": False, "error": "..."}
-
+        
         Supported kwargs (per URL):
             - scroll_to_bottom: bool, trigger lazy loading (default: False)
             - wait_after_scroll: ms to wait after scroll (default: 3000)
-
+        
         Failures on individual URLs do NOT abort the batch.
         """
+        if not urls:
+            return {"success": True, "data": []}
+        
+        async def _batch_extract() -> List[Dict[str, Any]]:
+            async def _extract_with_semaphore(url: str) -> Dict[str, Any]:
+                async with self._semaphore:
+                    return await self._extract_one_cached(url, **kwargs)
+            
+            tasks = [_extract_with_semaphore(url) for url in urls]
+            raw_results = await asyncio.gather(*tasks, return_exceptions=True)
+            return raw_results  # type: ignore[return-value]
+        
         try:
-            results: List[Dict[str, Any]] = []
-            for url in urls:
-                results.append(self._extract_one(url, **kwargs))
-            return {"success": True, "data": results}
+            # Run async batch extraction - detect if already in event loop
+            try:
+                loop = asyncio.get_running_loop()
+                # We're in a running loop, create task and wait
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                    future = executor.submit(asyncio.run, _batch_extract())
+                    raw_results = future.result()
+            except RuntimeError:
+                # No running loop, safe to use asyncio.run()
+                raw_results = asyncio.run(_batch_extract())
+            
+            # Handle any exceptions from gather
+            normalized = []
+            for url, result in zip(urls, raw_results):
+                if isinstance(result, Exception):
+                    normalized.append({
+                        "url": url, "title": "", "content": "",
+                        "raw_content": "", "metadata": {}, "error": f"{type(result).__name__}: {result}",
+                    })
+                else:
+                    normalized.append(result)
+            
+            return {"success": True, "data": normalized}
         except Exception as e:
             return {"success": False, "error": f"{type(e).__name__}: {e}"}
+    
+    def get_metrics(self) -> List[Dict[str, Any]]:
+        """Return collected metrics for this session."""
+        return [m.finish() for m in self._metrics]
+    
+    def clear_metrics(self) -> None:
+        """Clear collected metrics."""
+        self._metrics.clear()

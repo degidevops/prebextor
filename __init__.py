@@ -20,7 +20,7 @@ from .tool_extract import (
 
 from .provider import PrebextorProvider
 
-__version__ = "1.0.3"
+__version__ = "1.1.0"
 __all__ = ["PrebextorProvider"]
 
 # Skill that ships WITH this plugin. The path is resolved at register-time
@@ -41,7 +41,14 @@ def register(ctx) -> None:
        independently without any config.
     """
     # 1. Provider (for web.extract_backend: prebextor)
-    ctx.register_web_search_provider(PrebextorProvider())
+    # Pass optimization configs
+    ctx.register_web_search_provider(PrebextorProvider(
+        max_concurrent=3,
+        timeout=30,
+        cache_ttl_hours=24,
+        enable_quality_filter=True,
+        enable_metrics=True,
+    ))
 
     # 2. Standalone tool (zero-config, bypasses web_tools dispatcher)
     ctx.register_tool(

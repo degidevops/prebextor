@@ -8,7 +8,14 @@ from typing import Any, Dict, List
 from .provider import PrebextorProvider
 
 
-_provider = PrebextorProvider()
+# Singleton provider with optimization configs enabled
+_provider = PrebextorProvider(
+    max_concurrent=3,
+    timeout=30,
+    cache_ttl_hours=24,
+    enable_quality_filter=True,
+    enable_metrics=True,
+)
 
 
 def _check_available() -> bool:
@@ -57,7 +64,8 @@ PREBEXTOR_EXTRACT_SCHEMA = {
     "description": (
         "Extract content via Prebextor deterministic engine (CamoFox + markdownify). "
         "Returns clean markdown wrapped in XML boundary tags (<extraction_result>, <main_body>). "
-        "No API key required — runs locally. Independent of web.extract_backend config."
+        "No API key required — runs locally. Independent of web.extract_backend config. "
+        "Features: parallel extraction, disk cache, quality filtering, retry logic."
     ),
     "parameters": {
         "type": "object",
