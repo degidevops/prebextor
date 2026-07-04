@@ -7,7 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.1.0] — 2026-07-04
+## [1.2.0] — 2026-07-04
+
+### Added
+- **Structure Cache** — `StructureCache` class caches pipeline decisions (CSS selector, noise selectors, scoring results, confidences) to `~/.cache/prebextor_structure/` with configurable TTL (default 7 days). **NOT content** — HTML is fetched fresh every time, structure reapplied. Safe for dynamic sites (economic calendars, prices, news).
+- **CachedStructure dataclass** — Serializes pipeline structure decisions without any content data.
+- **Cache hit path** — On structure cache hit: fetch fresh HTML → apply cached pruning → extract fresh text → markdown → wrap. ~30-50% faster than full pipeline.
+
+### Removed
+- **Content Cache (`ExtractionCache`)** — Removed entirely. Was caching full extracted content (stale data risk for dynamic sites).
+
+### Changed
+- **`PrebextorProvider.__init__`** — `cache_ttl_hours` default changed from 24 to 168 (7 days) for structure cache. Cache directory changed to `~/.cache/prebextor_structure/`.
+- **`_extract_one_cached`** — Replaced with `_extract_one_with_structure_cache` implementing structure cache logic.
+- **New internal methods** — `_extract_with_cached_structure()`, `_cache_structure_from_result()`.
+- **Metrics** — `ExtractionMetrics` now has `structure_cache_hit` field (replaces `cache_hit`).
+- **Version** — Bumped to `1.2.0`.
+
+### Migration
+- **Breaking**: Content cache removed. Repeat extractions now re-fetch HTML but apply cached structure (~30-50% speedup vs 1000x for content cache).
+- **Safer**: All sites now get fresh HTML. Dynamic sites (calendars, prices) work correctly.
+- **Backward compatible**: Same API, same `provider.extract(urls)` call signature.
 
 ### Added
 - **Parallel Batch Extraction** — `extract()` now uses `asyncio.Semaphore` for controlled concurrency (default: 3 concurrent). 3-5x speedup for multi-URL batches.

@@ -8,11 +8,11 @@ from typing import Any, Dict, List
 from .provider import PrebextorProvider
 
 
-# Singleton provider with optimization configs enabled
+# Singleton provider with Structure Cache enabled
 _provider = PrebextorProvider(
     max_concurrent=3,
     timeout=30,
-    cache_ttl_hours=24,
+    cache_ttl_hours=168,  # 7 days for structure cache
     enable_quality_filter=True,
     enable_metrics=True,
 )
@@ -65,7 +65,8 @@ PREBEXTOR_EXTRACT_SCHEMA = {
         "Extract content via Prebextor deterministic engine (CamoFox + markdownify). "
         "Returns clean markdown wrapped in XML boundary tags (<extraction_result>, <main_body>). "
         "No API key required — runs locally. Independent of web.extract_backend config. "
-        "Features: parallel extraction, disk cache, quality filtering, retry logic."
+        "Features: parallel extraction, structure cache (fresh HTML, cached pipeline), "
+        "quality filtering, retry logic."
     ),
     "parameters": {
         "type": "object",

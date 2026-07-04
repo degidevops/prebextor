@@ -10,7 +10,7 @@ Pipeline v3 (Raw HTML First — No Snapshot):
     3. SurgicalPruner        (Phase 2: prune noise inside container)
     4. Text extraction       (Phase 3: innerText from pruned DOM)
     5. IframeExtractor       (Phase 4: extract cross-origin iframe content)
-    6. MarkdownConverter     (Phase 5: text -> Markdown- Markdown)
+    6. MarkdownConverter     (Phase 5: text -> Markdown)
     7. BoundaryWrapper       (Phase 6: XML boundary wrap)
     7. close_tab             (cleanup)
 
@@ -20,9 +20,10 @@ Key changes from v2:
   - QA on text, not HTML (avoids false positives from script tags in HTML)
   - Iframe extraction for cross-origin embedded content
 
-Optimizations (v1.1.0):
+Optimizations (v1.2.0):
   - Parallel batch extraction with semaphore concurrency control
-  - Disk cache with TTL for repeat extractions
+  - **Structure Cache** — caches pipeline decisions (selector, noise selectors, scoring)
+    NOT content. Fresh HTML fetched every time, structure reapplied. Safe for dynamic sites.
   - Content quality filter (boilerplate removal, quality scoring)
   - Retry with exponential backoff for transient failures
   - Structured metrics for observability
@@ -94,7 +95,7 @@ class ExtractionMetrics:
     fetch_ms: int = 0
     parse_ms: int = 0
     quality_score: float = 0.0
-    cache_hit: bool = False
+    structure_cache_hit: bool = False
     error: str = ""
 
     def finish(self) -> Dict[str, Any]:
@@ -104,28 +105,54 @@ class ExtractionMetrics:
             "fetch_ms": self.fetch_ms,
             "parse_ms": self.parse_ms,
             "quality_score": self.quality_score,
-            "cache_hit": self.cache_hit,
+            "structure_cache_hit": self.structure_cache_hit,
             "error": self.error,
         }
 
 
-class ExtractionCache:
-    """Disk cache for extracted content with TTL."""
+@dataclass
+class CachedStructure:
+    """Pipeline structure decisions — NO CONTENT.
     
-    def __init__(self, cache_dir: Path, ttl_hours: int = 24):
+    Cached: selector, noise_selectors, scoring results, confidences
+    NOT cached: HTML, text, markdown, XML, iframe data
+    """
+    url: str
+    selector: str
+    noise_selectors: List[str]
+    mapper_confidence: float
+    scorer_confidence: float
+    validator_confidence: float
+    validation_pass: int
+    validation_warning: Optional[str]
+    scored_blocks_count: int
+    # Serialized scored_blocks for re-use
+    scored_blocks: List[Dict[str, Any]]
+    cached_at: float = field(default_factory=time.time)
+
+
+class StructureCache:
+    """Disk cache for pipeline structure decisions with TTL.
+    
+    Caches the *structure* (CSS selectors, noise patterns, scoring) NOT content.
+    On cache hit: fetch fresh HTML, apply cached structure, extract fresh content.
+    Safe for dynamic sites (economic calendars, prices, news) because HTML is always fresh.
+    """
+    
+    def __init__(self, cache_dir: Path, ttl_hours: int = 168):  # 7 days default
         self.cache_dir = cache_dir
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.ttl_seconds = ttl_hours * 3600
     
-    def _key(self, url: str, params: dict) -> str:
-        param_str = json.dumps(params, sort_keys=True)
-        return hashlib.sha256(f"{url}|{param_str}".encode()).hexdigest()[:16]
+    def _key(self, url: str) -> str:
+        # Structure cache keyed only by URL (params don't affect structure)
+        return hashlib.sha256(url.encode()).hexdigest()[:16]
     
     def _path(self, key: str) -> Path:
-        return self.cache_dir / f"{key}.json"
+        return self.cache_dir / f"{key}_structure.json"
     
-    def get(self, url: str, params: dict) -> Optional[Dict[str, Any]]:
-        key = self._key(url, params)
+    def get(self, url: str) -> Optional[CachedStructure]:
+        key = self._key(url)
         path = self._path(key)
         if not path.exists():
             return None
@@ -134,14 +161,51 @@ class ExtractionCache:
             return None
         try:
             data = json.loads(path.read_text())
-            return data
+            # Reconstruct scored_blocks from serialized form
+            scored_blocks = data.get("scored_blocks", [])
+            return CachedStructure(
+                url=data["url"],
+                selector=data["selector"],
+                noise_selectors=data["noise_selectors"],
+                mapper_confidence=data["mapper_confidence"],
+                scorer_confidence=data["scorer_confidence"],
+                validator_confidence=data["validator_confidence"],
+                validation_pass=data["validation_pass"],
+                validation_warning=data.get("validation_warning"),
+                scored_blocks_count=data["scored_blocks_count"],
+                scored_blocks=scored_blocks,
+                cached_at=data.get("cached_at", time.time()),
+            )
         except Exception:
             return None
     
-    def set(self, url: str, params: dict, data: Dict[str, Any]) -> None:
-        key = self._key(url, params)
+    def set(self, url: str, structure: CachedStructure) -> None:
+        key = self._key(url)
         path = self._path(key)
         try:
+            # Serialize scored_blocks for storage
+            serialized_blocks = []
+            for block in structure.scored_blocks:
+                if hasattr(block, '__dict__'):
+                    serialized_blocks.append(block.__dict__)
+                elif isinstance(block, dict):
+                    serialized_blocks.append(block)
+                else:
+                    serialized_blocks.append({"data": str(block)})
+            
+            data = {
+                "url": structure.url,
+                "selector": structure.selector,
+                "noise_selectors": structure.noise_selectors,
+                "mapper_confidence": structure.mapper_confidence,
+                "scorer_confidence": structure.scorer_confidence,
+                "validator_confidence": structure.validator_confidence,
+                "validation_pass": structure.validation_pass,
+                "validation_warning": structure.validation_warning,
+                "scored_blocks_count": structure.scored_blocks_count,
+                "scored_blocks": serialized_blocks,
+                "cached_at": structure.cached_at,
+            }
             path.write_text(json.dumps(data, ensure_ascii=False))
         except Exception:
             pass  # Best-effort cache
@@ -242,7 +306,7 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         max_concurrent: int = 3,
         timeout: int = 30,
         cache_dir: Optional[Path] = None,
-        cache_ttl_hours: int = 24,
+        cache_ttl_hours: int = 168,  # 7 days for structure
         enable_quality_filter: bool = True,
         enable_metrics: bool = True,
     ) -> None:
@@ -253,9 +317,9 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         self._semaphore = asyncio.Semaphore(max_concurrent)
         self._timeout = timeout
         
-        # Cache
-        self._cache = ExtractionCache(
-            cache_dir or Path.home() / ".cache" / "prebextor",
+        # Structure Cache (NOT content cache)
+        self._structure_cache = StructureCache(
+            cache_dir or Path.home() / ".cache" / "prebextor_structure",
             ttl_hours=cache_ttl_hours,
         )
         
@@ -304,12 +368,12 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
     # ---------- Internal ----------
     
     async def _extract_with_retry(self, url: str, **kwargs: Any) -> Dict[str, Any]:
-        """Extract with exponential backoff retry."""
+        """Extract with exponential backoff retry - calls full pipeline directly."""
         last_exc = None
         for attempt in range(3):
             try:
                 return await asyncio.wait_for(
-                    self._extract_one(url, **kwargs),
+                    self._extract_full_pipeline(url, **kwargs),
                     timeout=self._timeout
                 )
             except Exception as e:
@@ -322,52 +386,12 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
             "raw_content": "", "metadata": {}, "error": f"{type(last_exc).__name__}: {last_exc}",
         }
     
-    async def _extract_one_cached(self, url: str, **kwargs: Any) -> Dict[str, Any]:
-        """Extract with cache check."""
-        # Create cache params (only relevant ones)
-        cache_params = {
-            "scroll": kwargs.get("scroll_to_bottom", False),
-            "wait": kwargs.get("wait_after_scroll", 3000),
-        }
-        
-        # Check cache
-        cached = self._cache.get(url, cache_params)
-        if cached:
-            metrics = ExtractionMetrics(url=url, cache_hit=True)
-            self._metrics.append(metrics)
-            return cached
-        
-        # Not cached - extract
-        result = await self._extract_with_retry(url, **kwargs)
-        
-        # Cache successful results
-        if not result.get("error") and result.get("content"):
-            self._cache.set(url, cache_params, result)
-        
-        return result
+    async def _extract_full_pipeline(self, url: str, **kwargs: Any) -> Dict[str, Any]:
+        """Full extraction pipeline without cache - used by retry logic."""
+        return await self._extract_one_no_cache(url, **kwargs)
     
-    def _extract_iframes(self, tab_id: str, user: str, **kwargs: Any) -> List[Dict[str, Any]]:
-        """Extract content from significant iframes."""
-        results: List[Dict[str, Any]] = []
-        try:
-            iframes = self._iframe.detect_significant_iframes(tab_id, user)
-            for iframe_info in iframes:
-                src = iframe_info.get("src", "")
-                if not src:
-                    continue
-                iframe_data = self._iframe.extract_iframe_content(
-                    src, user,
-                    scroll=bool(kwargs.get("scroll_to_bottom", False)),
-                    wait_ms=int(kwargs.get("wait_after_scroll", 3000)),
-                )
-                if iframe_data and iframe_data.get("text"):
-                    results.append(iframe_data)
-        except Exception:
-            pass  # Iframe extraction is best-effort
-        return results
-    
-    async def _extract_one(self, url: str, **kwargs: Any) -> Dict[str, Any]:
-        """Extract single URL (sync wrapper for async pipeline)."""
+    async def _extract_one_no_cache(self, url: str, **kwargs: Any) -> Dict[str, Any]:
+        """Extract single URL - full pipeline, no cache check."""
         scroll = bool(kwargs.get("scroll_to_bottom", False))
         wait_ms = int(kwargs.get("wait_after_scroll", 3000))
         user = f"prebextor_{uuid.uuid4().hex}"
@@ -545,6 +569,234 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
             # Always close the tab to keep CamoFox clean
             self._camofox.close_tab(tab_id, user)
     
+    async def _extract_one_with_structure_cache(self, url: str, **kwargs: Any) -> Dict[str, Any]:
+        """Extract using structure cache: fetch fresh HTML, apply cached structure."""
+        # Check structure cache
+        cached_structure = self._structure_cache.get(url)
+        
+        if cached_structure:
+            # Structure cache hit: fetch fresh HTML, apply cached structure
+            return await self._extract_with_cached_structure(url, cached_structure, **kwargs)
+        
+        # Cache miss: full pipeline, then cache structure
+        result = await self._extract_with_retry(url, **kwargs)
+        
+        # Cache structure from successful extraction
+        if not result.get("error") and result.get("metadata", {}).get("selector"):
+            self._cache_structure_from_result(url, result)
+        
+        return result
+    
+    async def _extract_with_cached_structure(
+        self, 
+        url: str, 
+        cached: CachedStructure, 
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """Apply cached structure to fresh HTML fetch."""
+        scroll = bool(kwargs.get("scroll_to_bottom", False))
+        wait_ms = int(kwargs.get("wait_after_scroll", 3000))
+        user = f"prebextor_{uuid.uuid4().hex}"
+        
+        tab_id = self._camofox.open_tab(url, user=user)
+        if not tab_id:
+            return {
+                "url": url, "title": "", "content": "",
+                "raw_content": "", "metadata": {}, "error": "Failed to open tab",
+            }
+        
+        fetch_start = time.perf_counter()
+        
+        try:
+            # Get full page HTML for title
+            full_html = self._camofox.get_html(tab_id, user) or ""
+            
+            # Anti-bot check
+            anti_bot_warning = self._mapper._detect_anti_bot(tab_id, user)
+            if anti_bot_warning:
+                return {
+                    "url": url,
+                    "title": _extract_title_from_html(full_html) or url,
+                    "content": "",
+                    "raw_content": "",
+                    "metadata": {
+                        "selector": "", "extractor": "prebextor-v3.1",
+                        "pipeline": "map->score->prune->validate->text->iframe->md->wrap",
+                        "confidence": 0.0, "content_aware": True, "anti_bot_detected": True,
+                    },
+                    "error": anti_bot_warning,
+                }
+            
+            # Apply cached structure: prune with cached noise selectors
+            selector = cached.selector
+            noise_selectors = cached.noise_selectors
+            
+            # Prune static + dynamic noise
+            removed_static = self._pruner.prune(selector, tab_id, user)
+            removed_dynamic = self._pruner.prune_dynamic(selector, noise_selectors, tab_id, user)
+            
+            # Get text from pruned DOM
+            raw_text = self._camofox.get_text(tab_id, user, selector=selector) or ""
+            raw_html = self._camofox.get_html(tab_id, user, selector=selector) or ""
+            
+            fetch_ms = int((time.perf_counter() - fetch_start) * 1000)
+            
+            # Empty content check
+            if len(raw_text.strip()) < 30:
+                return {
+                    "url": url,
+                    "title": _extract_title_from_html(full_html) or url,
+                    "content": "",
+                    "raw_content": "",
+                    "metadata": {
+                        "selector": selector,
+                        "extractor": "prebextor-v3.1",
+                        "pipeline": "cached_structure->text->iframe->md->wrap",
+                        "confidence": 0.0,
+                        "mapper_confidence": cached.mapper_confidence,
+                        "content_aware": True,
+                        "empty_content": True,
+                    },
+                    "error": f"Empty content extracted ({len(raw_text.strip())} chars)",
+                }
+            
+            # Iframe extraction
+            iframe_texts = self._extract_iframes(tab_id, user, **kwargs)
+            
+            # Merge iframe text
+            merged_text = raw_text
+            for iframe_data in iframe_texts:
+                iframe_text = iframe_data.get("text", "")
+                if iframe_text:
+                    merged_text += f"\n\n---\n\n### Embedded: {iframe_data.get('title', 'iframe')}\n\n{iframe_text}"
+            
+            # Extract title
+            title = (
+                _extract_title_from_html(full_html) or
+                _extract_title_from_html(raw_html) or
+                _extract_title_from_text(merged_text) or
+                url
+            )
+            
+            # Markdown conversion
+            parse_start = time.perf_counter()
+            if raw_html and len(raw_html) > 100:
+                try:
+                    md = self._md.convert(raw_html)
+                except Exception:
+                    md = merged_text
+            else:
+                md = merged_text
+            
+            # XML boundary wrap
+            xml_wrapped = self._wrap.wrap(md, title=title, url=url)
+            
+            parse_ms = int((time.perf_counter() - parse_start) * 1000)
+            
+            # Use cached confidences (structure unchanged)
+            final_confidence = round(
+                (cached.mapper_confidence * 0.3) +
+                (cached.scorer_confidence * 0.3) +
+                (cached.validator_confidence * 0.4),
+                3,
+            )
+            
+            result = {
+                "url": url,
+                "title": title,
+                "content": xml_wrapped,
+                "raw_content": raw_html,
+                "metadata": {
+                    "selector": selector,
+                    "extractor": "prebextor-v3.1",
+                    "pipeline": "cached_structure->text->iframe->md->wrap",
+                    "confidence": final_confidence,
+                    "mapper_confidence": cached.mapper_confidence,
+                    "scorer_confidence": cached.scorer_confidence,
+                    "validator_confidence": cached.validator_confidence,
+                    "validation_pass": cached.validation_pass,
+                    "validation_warning": cached.validation_warning,
+                    "scored_blocks_count": cached.scored_blocks_count,
+                    "noise_selectors_found": len(noise_selectors),
+                    "pruned_static": removed_static,
+                    "pruned_dynamic": removed_dynamic,
+                    "pruned_total": removed_static + removed_dynamic,
+                    "iframes_extracted": len(iframe_texts),
+                    "text_length": len(merged_text),
+                    "content_aware": True,
+                    "fetch_ms": fetch_ms,
+                    "parse_ms": parse_ms,
+                    "structure_cache_hit": True,
+                },
+                "error": None,
+            }
+            
+            # Apply quality filter
+            if self._quality_filter:
+                result = self._quality_filter.filter(result)
+            
+            # Record metrics
+            if self._enable_metrics:
+                metrics = ExtractionMetrics(
+                    url=url,
+                    fetch_ms=fetch_ms,
+                    parse_ms=parse_ms,
+                    quality_score=result.get("quality_score", 0.0),
+                    structure_cache_hit=True,
+                )
+                self._metrics.append(metrics)
+            
+            return result
+            
+        except Exception as e:
+            return {
+                "url": url, "title": "", "content": "",
+                "raw_content": "", "metadata": {}, "error": f"{type(e).__name__}: {e}",
+            }
+        finally:
+            self._camofox.close_tab(tab_id, user)
+    
+    def _cache_structure_from_result(self, url: str, result: Dict[str, Any]) -> None:
+        """Extract and cache structure from a successful full-pipeline result."""
+        meta = result.get("metadata", {})
+        structure = CachedStructure(
+            url=url,
+            selector=meta.get("selector", ""),
+            noise_selectors=[],  # Would need to track these during pipeline
+            mapper_confidence=meta.get("mapper_confidence", 0.0),
+            scorer_confidence=meta.get("scorer_confidence", 0.0),
+            validator_confidence=meta.get("validator_confidence", 0.0),
+            validation_pass=meta.get("validation_pass", 1),
+            validation_warning=meta.get("validation_warning"),
+            scored_blocks_count=meta.get("scored_blocks_count", 0),
+            scored_blocks=[],  # Would need access to scorer's internal blocks
+        )
+        self._structure_cache.set(url, structure)
+    
+    def _extract_iframes(self, tab_id: str, user: str, **kwargs: Any) -> List[Dict[str, Any]]:
+        """Extract content from significant iframes."""
+        results: List[Dict[str, Any]] = []
+        try:
+            iframes = self._iframe.detect_significant_iframes(tab_id, user)
+            for iframe_info in iframes:
+                src = iframe_info.get("src", "")
+                if not src:
+                    continue
+                iframe_data = self._iframe.extract_iframe_content(
+                    src, user,
+                    scroll=bool(kwargs.get("scroll_to_bottom", False)),
+                    wait_ms=int(kwargs.get("wait_after_scroll", 3000)),
+                )
+                if iframe_data and iframe_data.get("text"):
+                    results.append(iframe_data)
+        except Exception:
+            pass  # Iframe extraction is best-effort
+        return results
+    
+    async def _extract_one(self, url: str, **kwargs: Any) -> Dict[str, Any]:
+        """Extract single URL using structure cache."""
+        return await self._extract_one_with_structure_cache(url, **kwargs)
+    
     # ---------- Public API ----------
     
     def extract(self, urls: List[str], **kwargs: Any) -> Dict[str, Any]:
@@ -566,7 +818,7 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         async def _batch_extract() -> List[Dict[str, Any]]:
             async def _extract_with_semaphore(url: str) -> Dict[str, Any]:
                 async with self._semaphore:
-                    return await self._extract_one_cached(url, **kwargs)
+                    return await self._extract_one(url, **kwargs)
             
             tasks = [_extract_with_semaphore(url) for url in urls]
             raw_results = await asyncio.gather(*tasks, return_exceptions=True)
