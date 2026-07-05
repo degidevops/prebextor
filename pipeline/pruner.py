@@ -1,10 +1,5 @@
 """SurgicalPruner: removes noise INSIDE the mapped container.
 
-import sys
-import os
-_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _pkg_dir not in sys.path:
-    sys.path.insert(0, _pkg_dir)
 Per blueprint Phase 2, this runs *before* content is fetched.
 All pruning happens in-page via `evaluate_js` -- no regex on HTML.
 
@@ -141,6 +136,14 @@ class SurgicalPruner:
         v1.0.1 addition -- removes blocks that the scorer identified
         as likely noise (high link density, low text density).
 
+        v1.2.1 -- per-node content guard: only remove a matched node if its
+        innerText is shorter than a content threshold. This prevents the
+        generic-selector over-prune bug: when the noise selector is a bare
+        tag like `p` or `td`, querySelectorAll matches ALL instances inside
+        the container -- including legitimate content blocks. We skip any
+        node whose own innerText exceeds _NOISE_TEXT_CAP, so only true
+        short-link/nav fragments get pruned.
+
         Args:
             container_selector: The parent container selector
             noise_selectors: List of selectors to prune (from scorer)
@@ -152,6 +155,12 @@ class SurgicalPruner:
         """
         if not noise_selectors:
             return 0
+
+        # Per-node cap: skip removing a node whose own text exceeds this.
+        # Scorer only flags short high-link-density blocks as noise, so any
+        # matched block longer than this is content that shares the tag and
+        # must be preserved.
+        _NOISE_TEXT_CAP = 60
 
         # Escape container selector once
         container_escaped = container_selector.replace("'", "\\'")
@@ -166,10 +175,12 @@ class SurgicalPruner:
                 f" var nodes = container.querySelectorAll('{sel_escaped}');"
                 " var count = 0;"
                 " for(var i=0;i<nodes.length;i++){"
-                "   if(nodes[i] && nodes[i].parentNode){"
-                "     nodes[i].parentNode.removeChild(nodes[i]);"
-                "     count++;"
-                "   }"
+                "   var n = nodes[i];"
+                "   if(!n || !n.parentNode) continue;"
+                "   var ownLen = (n.innerText || '').trim().length;"
+                "   if(ownLen > " + str(_NOISE_TEXT_CAP) + ") continue;"
+                "   n.parentNode.removeChild(n);"
+                "   count++;"
                 " }"
                 " return count;"
                 "})()"

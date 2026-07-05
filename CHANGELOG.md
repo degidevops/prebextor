@@ -9,12 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] — 2026-07-05
 
+### Fixed
+- **Scorer over-prune (BUG-1)** — `ScoredBlock.is_likely_noise` now protects content-bearing tags (`p`, `article`, `section`, `li`, `td`, `blockquote`, `pre`, `h1`-`h6`, `dt`, `dd`, `figcaption`) when their text length ≥ 15 chars. Previously, list pages (Hacker News) and simple article pages (example.com) returned 0/14 chars after `prune_dynamic` removed valid content tagged as noise by the scorer.
+- **Generic-selector over-prune (BUG-4)** — `SurgicalPruner.prune_dynamic` now skips removing a matched node when its own `innerText` exceeds 60 chars. Without this cap, a noise selector like `p` matched ALL `<p>` inside the container (including the 101-char content paragraph on example.com), wiping out legitimate content alongside the 10-char nav link the scorer actually flagged.
+- **Metadata stub leak in error path (BUG-3)** — `provider.py`'s two short-circuit "Empty content detected" returns now populate the full metadata schema (scorer_confidence, validator_confidence, validation_pass, validation_warning, scored_blocks_count, noise_selectors_found, pruned_*, iframes_extracted, text_length, fetch_ms, parse_ms). Previously these fields were `null` in the early-return envelope.
+
 ### Changed
 - **Project cleanup** — Removed `.archive-v3/` directory (244K of historical PLAN/blueprint/research/patches/scripts/tests from v3.x era). No active code imported from it; only `INTEGRATION.md` and `skill_internal/SKILL.md` referenced path `.archive-v3/scripts/verify.py` — both updated.
 - **Documentation sync** — `README.md`, `INTEGRATION.md`, `skill_internal/SKILL.md`, `__init__.py` docstring, `plugin.yaml` version field brought in line with v1.2.0 (pipeline v3.1, dual-mode registration, structure cache, parallel batch, quality filter, metrics).
+- **Docstring cleanup (BUG-2)** — `pipeline/mapper.py`, `pipeline/pruner.py`, and `pipeline/iframe_extractor.py` had Python code (`import sys, os`) leaked inside the triple-quoted module docstring (harmless — never executed, dead code duplicated below — but confusing). Removed the leaked lines; the canonical `import` block below the docstring already does the real work.
 
 ### Removed
 - `.archive-v3/` — entire directory. Historical context preserved in pre-1.2.0 CHANGELOG entries.
+
+### Verification
+- Regression: 7/7 real extractions pass (example.com, Hacker News, Wikipedia, python.org, Python docs, StackOverflow, GitHub repo).
+- CamoFox v2.4.6 verified.
+- Plugin deployed to `~/.hermes/plugins/web/prebextor/` and `markdownify` + `beautifulsoup4` installed into Hermes venv via `uv pip`.
 
 ---
 

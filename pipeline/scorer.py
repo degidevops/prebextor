@@ -92,8 +92,35 @@ class ScoredBlock:
 
     @property
     def is_likely_noise(self) -> bool:
-        """Heuristic: low score + high link density = noise."""
-        return self.score < _TEXT_DENSITY_THRESHOLD and self.link_density > _LINK_DENSITY_NOISE
+        """Heuristic: low score + high link density = noise.
+
+        Guard (v1.2.1): content-bearing tags (p, article, section, li, td,
+        blockquote, pre, h1-h6) with substantial text are NEVER flagged as
+        noise, even when link density is high. These tags frequently carry
+        the main content on list pages (Hacker News), tables
+        (economic calendars), and article sites. Over-pruning them was the
+        leading cause of "Empty content extracted" failures on legitimate
+        pages.
+        """
+        if self.score >= _TEXT_DENSITY_THRESHOLD:
+            return False
+        # Content-bearing tags with substantial text are protected.
+        if self.text_length >= _CONTENT_TAG_MIN_TEXT:
+            tag = self.selector.split(".")[0].split("#")[0].lower()
+            if tag in _CONTENT_TAGS:
+                return False
+        # Short text inside non-content tags + high link density = noise.
+        return self.link_density > _LINK_DENSITY_NOISE
+
+
+# Tags that frequently carry the main content. They are protected from
+# dynamic noise pruning when they have substantial text.
+_CONTENT_TAGS: frozenset = frozenset({
+    "p", "article", "section", "li", "td", "blockquote", "pre",
+    "h1", "h2", "h3", "h4", "h5", "h6", "dt", "dd", "figcaption",
+})
+# Below this text length, a block is considered too short to protect.
+_CONTENT_TAG_MIN_TEXT = 15
 
 
 def _build_scoring_js(container_selector: str) -> str:
