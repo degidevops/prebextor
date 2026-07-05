@@ -7,31 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased] — 2026-07-05
+
+### Changed
+- **Project cleanup** — Removed `.archive-v3/` directory (244K of historical PLAN/blueprint/research/patches/scripts/tests from v3.x era). No active code imported from it; only `INTEGRATION.md` and `skill_internal/SKILL.md` referenced path `.archive-v3/scripts/verify.py` — both updated.
+- **Documentation sync** — `README.md`, `INTEGRATION.md`, `skill_internal/SKILL.md`, `__init__.py` docstring, `plugin.yaml` version field brought in line with v1.2.0 (pipeline v3.1, dual-mode registration, structure cache, parallel batch, quality filter, metrics).
+
+### Removed
+- `.archive-v3/` — entire directory. Historical context preserved in pre-1.2.0 CHANGELOG entries.
+
+---
+
 ## [1.2.0] — 2026-07-04
 
 ### Added
 - **Structure Cache** — `StructureCache` class caches pipeline decisions (CSS selector, noise selectors, scoring results, confidences) to `~/.cache/prebextor_structure/` with configurable TTL (default 7 days). **NOT content** — HTML is fetched fresh every time, structure reapplied. Safe for dynamic sites (economic calendars, prices, news).
 - **CachedStructure dataclass** — Serializes pipeline structure decisions without any content data.
-- **Cache hit path** — On structure cache hit: fetch fresh HTML → apply cached pruning → extract fresh text → markdown → wrap. ~30-50% faster than full pipeline.
+- **Cache hit path** — On structure cache hit: fetch fresh HTML → apply cached pruning → extract fresh text → markdown → wrap. ~30-50% faster than full pipeline. New internal methods: `_extract_with_cached_structure()`, `_cache_structure_from_result()`.
 
 ### Removed
-- **Content Cache (`ExtractionCache`)** — Removed entirely. Was caching full extracted content (stale data risk for dynamic sites).
+- **Content Cache (`ExtractionCache`)** — Removed entirely (replaced by Structure Cache). Was caching full extracted content with stale-data risk for dynamic sites.
 
 ### Changed
-- **`PrebextorProvider.__init__`** — `cache_ttl_hours` default changed from 24 to 168 (7 days) for structure cache. Cache directory changed to `~/.cache/prebextor_structure/`.
-- **`_extract_one_cached`** — Replaced with `_extract_one_with_structure_cache` implementing structure cache logic.
-- **New internal methods** — `_extract_with_cached_structure()`, `_cache_structure_from_result()`.
-- **Metrics** — `ExtractionMetrics` now has `structure_cache_hit` field (replaces `cache_hit`).
+- **`PrebextorProvider.__init__`** — `cache_ttl_hours` default 24 → 168 (7 days) for structure cache. Cache directory now `~/.cache/prebextor_structure/`.
+- **`_extract_one_cached`** → `_extract_one_with_structure_cache` (new semantics).
+- **Metrics** — `ExtractionMetrics.structure_cache_hit` replaces `cache_hit`.
 - **Version** — Bumped to `1.2.0`.
 
 ### Migration
-- **Breaking**: Content cache removed. Repeat extractions now re-fetch HTML but apply cached structure (~30-50% speedup vs 1000x for content cache).
-- **Safer**: All sites now get fresh HTML. Dynamic sites (calendars, prices) work correctly.
+- **Breaking**: Content cache removed. Repeat extractions now re-fetch HTML but apply cached structure (~30-50% speedup vs content cache).
+- **Safer**: All sites get fresh HTML — dynamic sites (calendars, prices) work correctly.
 - **Backward compatible**: Same API, same `provider.extract(urls)` call signature.
+
+---
+
+## [1.1.0] — 2026-07-04
 
 ### Added
 - **Parallel Batch Extraction** — `extract()` now uses `asyncio.Semaphore` for controlled concurrency (default: 3 concurrent). 3-5x speedup for multi-URL batches.
-- **Disk Cache with TTL** — `ExtractionCache` class stores successful extractions to `~/.cache/prebextor/` with configurable TTL (default 24h). Repeat extractions are instant.
 - **Content Quality Filter** — `ContentQualityFilter` post-processes output:
   - Boilerplate removal (cookie policies, GDPR banners, newsletter signups, ads)
   - Language detection (Indonesian/English/unknown)
@@ -53,24 +66,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Migration
 - Backward compatible — existing code calling `provider.extract(urls)` works unchanged.
 - New features are opt-in via constructor params (all default to enabled).
-- Cache auto-creates `~/.cache/prebextor/` on first use.
-
-### Added
-- **Standalone Extraction Tool (`prebextor_extract`)** — Registers as independent tool via `ctx.register_tool()`, bypassing `web_tools` dispatcher and `web.extract_backend` config entirely. Eliminates need for core Hermes patches.
-- **`tool_extract.py`** — New module with async handler, availability check (`_check_available`), and tool schema (`PREBEXTOR_EXTRACT_SCHEMA`).
-- Tool returns standardized JSON: `{"success": true, "results": [...]}` with clean XML-wrapped markdown content.
-
-### Changed
-- **`__init__.py`** — Now registers **tool** instead of provider (`ctx.register_tool` vs `ctx.register_web_search_provider`). Keeps internal skill registration.
-- **Plugin architecture** — Shift from provider-based (requires core patches) to tool-based (zero core dependencies). Aligns with Hermes "capability lives at the edges" philosophy.
-
-### Fixed
-- `web_extract` routing conflict with `web.extract_backend` config — Prebextor now has its own tool name `prebextor_extract`.
-- Provider availability check no longer depends on plugin registry population timing — tool's `_check_available()` calls `PrebextorProvider().is_available()` directly.
-- Response shape mismatch (envelope vs raw list) — tool normalizes provider envelope to standard tool output format.
-
-### Deployment Note
-No Hermes core patches required. Deploy via `deploy.sh` (copies plugin files) or future `pip install hermes-prebextor`. Tool appears in `hermes tools list` as `web.prebextor_extract`.
 
 ---
 

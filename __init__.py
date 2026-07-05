@@ -2,10 +2,22 @@
 
 User plugin for Hermes Agent (deployed at ~/.hermes/plugins/web/prebextor/).
 
-Pipeline (per atomic unit):
-  open_tab -> StructuralMapper -> SurgicalPruner -> FidelityFetcher ->
-  ZeroNoiseAssertionGate (HTML) -> MarkdownConverter -> BoundaryWrapper ->
-  ZeroNoiseAssertionGate (XML) -> close_tab
+Pipeline v3.1 (per URL, structure-cache aware):
+  open_tab -> StructuralMapper (anti-bot check + container discovery)
+  -> ContentAwareScorer (text/link density scoring)
+  -> SurgicalPruner (static + dynamic noise removal)
+  -> ContentValidator (3-pass strict/relaxed/fallback)
+  -> CamoFoxClient.get_text (innerText from pruned DOM)
+  -> IframeExtractor (cross-origin embedded content)
+  -> MarkdownConverter -> BoundaryWrapper (XML semantic tags)
+  -> close_tab
+
+Optimizations:
+  - Parallel batch via asyncio.Semaphore (default 3 concurrent)
+  - Structure Cache — caches pipeline decisions, NOT content. HTML always fresh.
+  - Content Quality Filter (boilerplate removal, language, schema.org)
+  - Retry with exponential backoff for transient failures
+  - Structured metrics (ExtractionMetrics) for observability
 """
 
 from __future__ import annotations

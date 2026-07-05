@@ -1,7 +1,7 @@
 ---
 name: prebextor-install
-description: "Install, verify, and uninstall Prebextor — the same procedure as the standalone skeleton, but bundled INSIDE the plugin so the lifecycle travels with the code itself. Opt-in via skill_view('prebextor:install')."
-version: 3.2.0
+description: "Install, verify, and uninstall Prebextor — the procedure is bundled INSIDE the plugin so the install lifecycle travels with the code itself. Opt-in via skill_view('prebextor:install')."
+version: 1.2.0
 platforms: [linux, macos]
 metadata:
   hermes:
@@ -12,10 +12,10 @@ metadata:
 
 # Prebextor — Plugin-Embedded Install Skill (opt-in)
 
-This skill is shipped **inside** the Prebextor plugin (`prebextor/skill_internal/SKILL.md`)
-and registered via `ctx.register_skill()` from the plugin's `register(ctx)` hook.
+This skill ships **inside** the Prebextor plugin (`prebextor/skill_internal/SKILL.md`)
+and is registered via `ctx.register_skill()` from the plugin's `register(ctx)` hook.
 
-It is referenced as `prebextor:install` and is reachable only through
+It is referenced as `prebextor:install` and reachable only through
 `skill_view('prebextor:install')` calls. It does **NOT** appear in the
 system prompt's `<available_skills>` index.
 
@@ -35,55 +35,94 @@ Use this embedded skill when:
 ## Source layout (when bundled with plugin)
 
 ```
-<plugin_root>/                     e.g. /home/degi/.hermes/plugins/web/prebextor/
-├── __init__.py                    # register(ctx) — registers provider + THIS skill
-├── provider.py                    # WebSearchProvider subclass
+<plugin_root>/                     e.g. ~/.hermes/plugins/web/prebextor/
+├── __init__.py                    # register(ctx) — registers provider + tool + THIS skill
+├── provider.py                    # WebSearchProvider subclass + StructureCache + Metrics
+├── tool_extract.py                # prebextor_extract standalone tool handler
 ├── plugin.yaml                    # Manifest
-├── pipeline/                      # Mapper, Pruner, QA, Transformer
+├── pipeline/                      # Mapper, Scorer, Pruner, Validator, Transformer, Iframe
 ├── fetcher/                       # CamoFox client
 └── skill_internal/
     └── SKILL.md                   # ← you are here
 ```
 
-The plugin also expects the full Prebextor source tree at
-`/home/degi/project/prebextor/` for the canonical `scripts/deploy.sh`
-installer. When deploying from pip/git, ship the project source alongside
-the plugin or adapt the installer to read from the plugin's parent tree.
+When deployed via the Hermes plugin system, install directly via the
+`hermes plugins install` workflow. The plugin's `register(ctx)` hook is
+the single entry point — it registers the provider (`PrebextorProvider`),
+the standalone tool (`prebextor_extract`), and this install skill.
 
 ## Install procedure
 
-1.  **Confirm source** at `/home/degi/project/prebextor/`. If missing,
-    copy first (`git clone`, `tar`, `scp`).
+1.  **Confirm source** is at the plugin install path (typically
+    `~/.hermes/plugins/web/prebextor/`). If missing, use the Hermes CLI
+    plugin install command or copy via `cp -rL`.
 
-2.  **Deploy via the canonical installer** (idempotent):
+2.  **Enable the plugin** via `hermes plugins list` then
+    `hermes plugins install <source>` (or symlink/copy manually to
+    `~/.hermes/plugins/web/prebextor/`).
+
+3.  **Verify** the plugin loaded:
     ```bash
-    bash /home/degi/project/prebextor/scripts/deploy.sh
+    hermes plugins list
+    # Should show: prebextor (enabled)
+
+    python3 -c "
+    import sys; sys.path.insert(0, '$HOME/.hermes/plugins/web')
+    from prebextor import PrebextorProvider
+    p = PrebextorProvider()
+    print(p.name, p.supports_extract(), p.is_available())
+    "
+    # Output: prebextor True [True if CamoFox CLI available]
     ```
 
-3.  **Verify**:
+4.  **Verify the tool** is registered:
     ```bash
-    python3 /home/degi/project/prebextor/scripts/verify.py
+    hermes tools list | grep prebextor
+    # Should show: web.prebextor_extract
     ```
 
-4.  **Smoke-test** native `web_extract`:
+5.  **Smoke-test** native extraction:
     ```bash
-    python3 /home/degi/project/prebextor/scripts/verify.py --test-extract
+    python3 -c "
+    import sys; sys.path.insert(0, '$HOME/.hermes/plugins/web')
+    from prebextor import PrebextorProvider
+    p = PrebextorProvider()
+    r = p.extract(['https://example.com'])
+    print(r['success'], len(r.get('data', [])))
+    "
     ```
-    Must print `<extraction_result>` envelope contract.
+    Must print a successful envelope contract.
+
+## Optional: web.extract_backend config
+
+To route `web_extract` (the standard Hermes tool) through Prebextor:
+```bash
+hermes config set web.extract_backend prebextor
+```
+Then restart Hermes (or `/reset` in chat). The standalone `prebextor_extract`
+tool bypasses this config — it works independently.
 
 ## Removal
 
 ```bash
-bash /home/degi/project/prebextor/scripts/undeploy.sh
+# Remove plugin
+rm -rf ~/.hermes/plugins/web/prebextor/
+
+# Revert config if you set it
+hermes config set web.extract_backend searxng   # or your previous backend
 ```
 
-## Pitfalls (see canonical SKILL.md for full list)
+## Pitfalls
 
-*   `cp -rL` — no symlinks
-*   `[3b] WARN` from `deploy.sh` is fatal (patch did not apply)
-*   Per-profile `config.yaml` patching
-*   `plugins.enabled` must list `web/prebextor`
-*   Restart gateway after deploy
+*   `cp -rL` (resolve symlinks) — never `cp -r` with dangling symlinks.
+*   `plugins.enabled` must list `web/prebextor` if your Hermes version uses
+    an explicit plugin allowlist.
+*   Restart gateway/CLI after deploy — plugin manifest reads happen at startup.
+*   CamoFox CLI must be installed and on `PATH` for `is_available()` to return
+    True. Without it, the provider registers but extraction returns errors.
+*   Optional Hermes core patches described in `INTEGRATION.md` are **not**
+    required for the standalone `prebextor_extract` tool — they only affect
+    the `web.extract_backend: prebextor` route through `web_tools`.
 
 ## Why two skills?
 
@@ -96,6 +135,3 @@ Two skill lifecycles, two audiences:
     `skill_view()`, only resolvable when an agent already has the plugin
     loaded. Targets agents that want the install procedure BUNDLED with
     the plugin for portability.
-
-Both call the same canonical installer. Neither reimplements the deploy
-logic — they are procedures, not implementations.

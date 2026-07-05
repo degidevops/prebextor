@@ -5,11 +5,10 @@
 ### Gejala
 - `web.extract_backend: prebextor` sudah diset di `config.yaml`
 - Plugin Prebextor sudah ter-copy ke `~/.hermes/plugins/web/prebextor/`
-- `verify.py` pass untuk import dan plugin copy
 - Tapi `web_extract` error: *"SearXNG is a search-only backend and cannot extract URL content"*
 
 ### Root Cause
-Dua masalah di `/home/degi/.hermes/hermes-agent/tools/web_tools.py`:
+Tiga masalah di `~/.hermes/hermes-agent/tools/web_tools.py`:
 
 1. **`_LEGACY_WEB_BACKENDS` tidak include `prebextor`** → early-return di `_get_backend()` gagal, fallback ke auto-detect (SearXNG karena `SEARXNG_URL` ada)
 
@@ -19,14 +18,24 @@ Dua masalah di `/home/degi/.hermes/hermes-agent/tools/web_tools.py`:
 
 ---
 
-## Fix Applied (2026-07-04)
+## Recommended Path: standalone `prebextor_extract` tool
 
-### File: `/home/degi/.hermes/hermes-agent/tools/web_tools.py`
+Problem di atas berlaku **hanya** bila Anda ingin routing melalui `web.extract_backend: prebextor` (konfigurasi opsional). Sejak v1.0.3 Prebextor juga mendaftarkan tool standalone `prebextor_extract` via `ctx.register_tool()`, yang **bypass** `web_tools` dispatcher sepenuhnya — jadi zero core patches dan zero config conflict.
+
+Lihat `hermes tools list` — harus muncul `web.prebextor_extract`. Call langsung tool tersebut; tidak perlu menyentuh `web_tools.py`.
+
+Bagian di bawah ini menjelaskan patch yang **opsional** bila Anda tetap ingin route lewat `web.extract_backend`.
+
+---
+
+## Optional Fix (untuk routing lewat `web.extract_backend`)
+
+### File: `~/.hermes/hermes-agent/tools/web_tools.py`
 
 #### 1. Tambahkan `prebextor` ke `_LEGACY_WEB_BACKENDS` (line ~157)
 ```python
 _LEGACY_WEB_BACKENDS = frozenset({
-    "parallel", "firecrawl", "tavily", "exa", "searxng", 
+    "parallel", "firecrawl", "tavily", "exa", "searxng",
     "brave-free", "ddgs", "xai", "prebextor"  # ← added
 })
 ```
@@ -72,7 +81,7 @@ if isinstance(results, dict):
 ```bash
 # 1. Test provider langsung
 python3 -c "
-import sys; sys.path.insert(0, '/home/degi/.hermes/plugins/web')
+import sys; sys.path.insert(0, '$HOME/.hermes/plugins/web')
 from prebextor import PrebextorProvider
 p = PrebextorProvider()
 print(p.name, p.supports_extract(), p.is_available())
@@ -81,7 +90,7 @@ print(p.name, p.supports_extract(), p.is_available())
 
 # 2. Test registry resolution
 python3 -c "
-import sys; sys.path.insert(0, '/home/degi/.hermes/hermes-agent')
+import sys; sys.path.insert(0, '$HOME/.hermes/hermes-agent')
 from hermes_cli.plugins import _ensure_plugins_discovered
 _ensure_plugins_discovered()
 from agent.web_search_registry import get_active_extract_provider
@@ -93,7 +102,7 @@ print(p.name if p else 'None')
 # 3. Test end-to-end web_extract
 python3 -c "
 import asyncio, sys
-sys.path.insert(0, '/home/degi/.hermes/hermes-agent')
+sys.path.insert(0, '$HOME/.hermes/hermes-agent')
 from tools.web_tools import web_extract_tool
 async def test():
     result = await web_extract_tool(['https://python.org'])
@@ -102,21 +111,21 @@ asyncio.run(test())
 # Output: JSON dengan results[0].content berisi markdown/html konten
 "
 
-# 4. Run verify script
-python3 /home/degi/project/prebextor/.archive-v3/scripts/verify.py --test-extract
-# Output: [10] PASS: Provider.extract() returns envelope
+# 4. Test standalone prebextor_extract tool (recommended — no core patches required)
+hermes tools list | grep prebextor
+# Output: web.prebextor_extract
 ```
 
 ---
 
-## Arquitecture Note
+## Architecture Note
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Hermes Agent Core (tools/web_tools.py)                    │
 │  ├── _get_extract_backend() → reads config                 │
 │  ├── _is_backend_available() → checks registry             │
-│  │   └── _ensure_web_plugins_loaded() ← KEY FIX            │
+│  │   └── _ensure_web_plugins_loaded() ← KEY FIX (optional) │
 │  └── web_extract_tool() → dispatches to provider           │
 │       └── normalize response (envelope ↔ raw list)         │
 └─────────────────────────────────────────────────────────────┘
@@ -126,17 +135,26 @@ python3 /home/degi/project/prebextor/.archive-v3/scripts/verify.py --test-extrac
 │  Plugin System (hermes_cli/plugins.py)                     │
 │  ├── _ensure_plugins_discovered()                          │
 │  │   └── loads ~/.hermes/plugins/web/prebextor/__init__.py │
-│  │       └── register(ctx) → ctx.register_web_search_provider()
-│  └── agent/web_search_registry.register_provider()         │
+│  │       └── register(ctx) → registers BOTH:              │
+│  │           1. web_search_provider (PrebextorProvider)    │
+│  │           2. register_tool('prebextor_extract')         │
+│  │           3. register_skill('install')                  │
+│  └── agent/web_search_registry.register_provider()        │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Prebextor Plugin (~/.hermes/plugins/web/prebextor/)       │
 │  ├── plugin.yaml (kind: backend, provides_web_providers)   │
-│  ├── __init__.py → register(ctx) → PrebextorProvider()    │
-│  └── provider.py → WebSearchProvider.extract()             │
-│       └── returns {"success": true, "data": [...]}         │
+│  ├── __init__.py → register(ctx) — dual-mode: provider    │
+│  │                              + standalone tool          │
+│  ├── provider.py → WebSearchProvider.extract()             │
+│  │       └── returns {"success": true, "data": [...]}     │
+│  ├── tool_extract.py → prebextor_extract tool handler      │
+│  │       └── standalone, bypasses web_tools (recommended)  │
+│  ├── pipeline/  → Mapper, Scorer, Pruner, Validator, etc.  │
+│  ├── fetcher/   → CamoFoxClient                            │
+│  └── skill_internal/SKILL.md → prebextor:install           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -144,14 +162,15 @@ python3 /home/degi/project/prebextor/.archive-v3/scripts/verify.py --test-extrac
 
 ## Key Principle
 
-> **Core harus handle plugin discovery SEBELUM availability check.**
-> 
-> `_is_backend_available()` adalah *single chokepoint* untuk semua caller:
-> - `_get_backend()` (auto-detect)
-> - `_get_capability_backend()` (per-capability config)
-> - `check_web_api_key()` (tool registry gate)
-> - `web_extract_tool()` / `web_search_tool()` (dispatch)
-> 
+> **Standalone tool = zero config conflict.** Pakai `prebextor_extract` langsung;
+> skip seluruh router `web_tools.py`. Routing lewat `web.extract_backend`
+> membutuhkan tiga patch opsional di atas.
+
+> **Core harus handle plugin discovery SEBELUM availability check** (opsional:
+> hanya jika routing lewat `web.extract_backend`). `_is_backend_available()` adalah
+> *single chokepoint* untuk: `_get_backend()` (auto-detect),
+> `_get_capability_backend()` (per-capability config), `check_web_api_key()`
+> (tool registry gate), `web_extract_tool()` / `web_search_tool()` (dispatch).
 > Jadi **wajib** call `_ensure_web_plugins_loaded()` di awal fungsi ini.
 
 ---
@@ -160,10 +179,18 @@ python3 /home/degi/project/prebextor/.archive-v3/scripts/verify.py --test-extrac
 
 | File | Role |
 |------|------|
-| `/home/degi/.hermes/hermes-agent/tools/web_tools.py` | **Fixed** - backend selection & dispatch |
-| `/home/degi/.hermes/hermes-agent/agent/web_search_registry.py` | Registry implementation |
-| `/home/degi/.hermes/hermes-agent/hermes_cli/plugins.py` | Plugin discovery & registration |
-| `~/.hermes/plugins/web/prebextor/__init__.py` | Plugin entry point |
+| `~/.hermes/hermes-agent/tools/web_tools.py` | Backend selection & dispatch (optional fix) |
+| `~/.hermes/hermes-agent/agent/web_search_registry.py` | Registry implementation |
+| `~/.hermes/hermes-agent/hermes_cli/plugins.py` | Plugin discovery & registration |
+| `~/.hermes/plugins/web/prebextor/__init__.py` | Plugin entry point — registers provider + tool + skill |
 | `~/.hermes/plugins/web/prebextor/provider.py` | PrebextorProvider implementation |
-| `/home/degi/project/prebextor/.archive-v3/scripts/deploy.sh` | Deploy script (copies plugin, patches config) |
-| `/home/degi/project/prebextor/.archive-v3/scripts/verify.py` | Verification script |
+| `~/.hermes/plugins/web/prebextor/tool_extract.py` | Standalone `prebextor_extract` tool handler |
+| `~/.hermes/plugins/web/prebextor/pipeline/*.py` | Mapper, Scorer, Pruner, Validator, Transformer, Iframe |
+| `~/.hermes/plugins/web/prebextor/fetcher/camofox_client.py` | CamoFox CLI wrapper |
+| `~/.hermes/plugins/web/prebextor/skill_internal/SKILL.md` | Embedded install skill |
+
+---
+
+## Changelog Note
+
+Patch di atas dikembangkan pada v3.1.3 (sebelum adopsi tool standalone pada v1.0.3 / Juni 2026) untuk mengatasi masalah routing lewat `web_tools`. Saat ini patch dianggap **opsional** — gunakan tool `prebextor_extract` langsung untuk operasi zero-config. Patch historis sebelumnya (manifest, deploy/undeploy scripts, verify.py) sudah dihapus saat cleanup v1.2.0+; konteks tersedia di CHANGELOG.md historis entry.
