@@ -2,9 +2,9 @@
 # URL: https://www.ft.com
 # Title: Home - Financial Times
 # Selector: main
-# Confidence: 0.495
-# Content length: 1471 chars
-# Raw length: 7925 chars
+# Confidence: 0.473
+# Content length: 31048 chars
+# Raw length: 0 chars
 
 === FULL CONTENT ===
 
@@ -12,55 +12,505 @@
   <metadata>
   Title: Home - Financial Times
   URL: https://www.ft.com
-  Timestamp: 2026-06-23T02:11:23.418843+00:00
+  Timestamp: 2026-07-06T05:38:27.810171+00:00
   </metadata>
 
   <main_body>
-Upcoming events
+[![Big investors commit billions to private credit despite turmoil](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Fa97bd977-0da6-4455-8357-3ca072c4db0a.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/ea275bbd-e411-4db5-a9d2-415666f2a923)
 
-Discover unmissable flagship events with FT journalists to expand your thinking and elevate your career
+[Private credit](/private-credit)
 
-[Explore all events](https://events.ft.com/events-list)
+[Big investors commit billions to private credit despite turmoil](/content/ea275bbd-e411-4db5-a9d2-415666f2a923)
 
-[FT Live](https://insurance.live.ft.com)
+[Institutional investors poured money into funds as retail money fled](/content/ea275bbd-e411-4db5-a9d2-415666f2a923)
 
-[Global Insurance Summit](https://insurance.live.ft.com "Global Insurance Summit")
+2 hours ago
 
-Finding opportunity in a changing insurance ecosystem
+[![Son remakes SoftBank in his own image](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F2a9502cc-75b0-4a3e-819a-4349908c4cf7.jpg?source=next-home-page&dpr=2&width=580&fit=scale-down)](/content/a29a698c-3fb6-4e6f-ab02-1b7843786066)
 
-Wednesday, 24 JuneLondon, UK
+[Technology sector](/technology-sector)
 
-[FT Live](https://lawyerssummit.live.ft.com)
+[The Big Read. Son remakes SoftBank in his own image](/content/a29a698c-3fb6-4e6f-ab02-1b7843786066)
 
-[Innovative Lawyers Global Summit](https://lawyerssummit.live.ft.com "Innovative Lawyers Global Summit")
+Editor's picks
 
-Shaping the Future of Law
+[![Why OpenAI and Anthropic may struggle to float](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Ff80dce21-ac2b-4958-b068-b7d528fc3777.jpg?source=next-home-page&dpr=2&width=180&fit=scale-down)](/content/7bff5ad3-a7dc-4641-be97-7f383446ff75)
 
-Thursday, 25 JuneLondon, UK
+[opinion content. Why OpenAI and Anthropic may struggle to float](/content/7bff5ad3-a7dc-4641-be97-7f383446ff75)
 
-[FT Live](https://ukftweekendfestival.live.ft.com)
+[![John Thornhill headshot](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Fuploaded-files%2FJohn-Thornhill-cb9e3fe5-a71d-446c-8af6-22909f40f5c3.png?source=next-home-page&dpr=2&height=40&fit=cover&gravity=faces&width=40)John Thornhill](/john-thornhill)
 
-[FT Weekend Festival](https://ukftweekendfestival.live.ft.com "FT Weekend Festival")
+[opinion content. Andy Burnham needs to start by understanding how little he knows](/content/e21fde74-724f-4898-a382-88cbac975a12)
 
-Experience the FT come to life
+[![Martin Wolf headshot](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Fuploaded-files%2Fmartin_wolf__-11ecb108-991c-486c-87c7-758042e32245.png?source=next-home-page&dpr=2&height=40&fit=cover&gravity=faces&width=40)Martin Wolf](/martin-wolf)
 
-Saturday, 5 SeptemberKenwood House, Hampstead Lane, London, UK
+[![Fifa reverses suspension of star US striker after call from Trump](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Fcc49fd9f-e3a8-453f-8c05-b8c087ae6071.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/a858d225-59b8-4a85-866d-77055e7bfd58)
 
-Join the discussion
+[Fifa Men's World Cup](/fifa-mens-world-cup)
 
-Gain access to a series of exclusive communities, convened by the Financial Times.
+[Fifa reverses suspension of star US striker after call from Trump](/content/a858d225-59b8-4a85-866d-77055e7bfd58)
 
-[FT Live Forums](https://forums.live.ft.com/)
+[Belgium cries foul after governing body clears Folarin Balogun to play World Cup match](/content/a858d225-59b8-4a85-866d-77055e7bfd58)
 
-Exclusive, peer-level communities for senior executives shaping strategy, leadership and transformation.
+[![US voters say Trump’s Iran war not worth the cost — FT poll](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F3ce35728-a14b-4b72-a334-563ce671fb25.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/f1fe0dae-d22b-4284-b0f9-fa10f717af1c)
 
-[FT Leaders Academy](https://www.leadersacademy.ft.com/)
+[US politics & policy](/us-politics-policy)
 
-Smart, practical learning to help you grow at every stage of your career. Delivered by experts, shaped by global trends.
+[US voters say Trump’s Iran war not worth the cost — FT poll](/content/f1fe0dae-d22b-4284-b0f9-fa10f717af1c)
+
+[Survey shows conflict is dragging down president’s approval ratings ahead of November midterms](/content/f1fe0dae-d22b-4284-b0f9-fa10f717af1c)
+
+Exclusive content
+
+[![Shipowners turn to dirty fossil fuels and nuclear power as green hopes sail away](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F2aa2a61c-e1e6-4df6-aee5-85081cb7aa14.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/2eb36e45-68de-4510-bec1-73da9db98480)
+
+[Shipping](/shipping)
+
+[Shipowners turn to dirty fossil fuels and nuclear power as green hopes sail away](/content/2eb36e45-68de-4510-bec1-73da9db98480)
+
+[Deeply divided industry fractures into several camps backing different technologies and fuels](/content/2eb36e45-68de-4510-bec1-73da9db98480)
+
+2 hours ago
+
+[![Converting car plants to make military drones will fail, warns Japan defence titan](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F550a09c9-3284-4142-8f6b-ef366f31d6fc.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/31de8d91-4dd4-4dc0-a802-80dabd6ef9a2)
+
+[Japanese business & finance](/japanese-business-finance)
+
+[Converting car plants to make military drones will fail, warns Japan defence titan](/content/31de8d91-4dd4-4dc0-a802-80dabd6ef9a2)
+
+[Mitsubishi Heavy Industries chief says tactic risks being ‘enormous waste’ of taxpayers’ money](/content/31de8d91-4dd4-4dc0-a802-80dabd6ef9a2)
+
+Exclusive content
+
+[How modern drone warfare is forcing arms producers to rethink](/content/f67994f3-b3ef-4a94-a70e-29c5263a3cc3)
+
+2 hours ago
+
+## MONETARY POLICY RADAR
+
+[When the Fed moves, markets react](/content/15bc46c9-a8df-4ed9-9cc3-9a844edb7e80?segmentId=f46c58b4-657d-fe38-2090-e6773736e3f6)
+
+[Anticipate September's announcement with Monetary Policy Radar](/content/15bc46c9-a8df-4ed9-9cc3-9a844edb7e80?segmentId=f46c58b4-657d-fe38-2090-e6773736e3f6)
+
+You can see this section because you have access to [Monetary Policy Radar](https://professional-monetary-policy-radar.ft.com/)
+
+[![](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F7670446e-12ae-40e1-948a-ad6fa4dec700.jpg?source=next-home-page&dpr=2&height=135&fit=cover&gravity=poi&width=180)](/content/9746292e-7f7c-42af-8d09-64c8bd3fd939)
+
+Bank of Japan
+
+[Japan’s fiscal expansion puts the BoJ in a difficult spot](/content/9746292e-7f7c-42af-8d09-64c8bd3fd939)
+
+[![](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F96bda2a8-ef0e-4e03-8eba-8fb4f14f62e2.jpg?source=next-home-page&dpr=2&height=135&fit=cover&gravity=poi&width=180)](/content/02c0141e-ec8b-4d3e-b764-121834c24ae6)
+
+Federal Reserve
+
+[US unemployment ticks down in June, supporting hawkish Fed pivot](/content/02c0141e-ec8b-4d3e-b764-121834c24ae6)
+
+[Canada](/canada)
+
+[Toronto nude spot emerges as unlikely flashpoint over Canada investment](/content/3065dde2-452a-4455-a176-f7ded484b86b)
+
+[Airport expansion key to $1tn foreign investment plan threatens the birthplace of Canada’s gay pride movement](/content/3065dde2-452a-4455-a176-f7ded484b86b)
+
+2 hours ago
+
+[![Toronto nude spot emerges as unlikely flashpoint over Canada investment ](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F367f2eda-1107-4f01-bf18-80d9e8ed5571.jpg?source=next-home-page&dpr=2&width=580&fit=scale-down)](/content/3065dde2-452a-4455-a176-f7ded484b86b)
+
+[![Holtec heads for IPO as chief declares ‘world has become rational’ about nuclear](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Ff743b217-5b34-4bd5-ac08-33ddee37e9e6.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/98be2566-684b-4eea-b479-5a2c113b6289)
+
+[The CEO](/ceo)
+
+[Interview. Holtec heads for IPO as chief declares ‘world has become rational’ about nuclear](/content/98be2566-684b-4eea-b479-5a2c113b6289)
+
+[Founder Kris Singh seeks to tap new energy demand as industry powers AI boom](/content/98be2566-684b-4eea-b479-5a2c113b6289)
+
+3 hours ago
+
+[![EasyJet reaches outline agreement on £5.5bn takeover by Castlelake](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F3ee47066-c772-45c8-8503-14e07de53e21.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/0c317e2c-2fda-4c6f-8620-d8e629f1aeb3)
+
+[easyJet PLC](/stream/321fe9a3-15aa-4c2f-bdfb-7dd8e7c149c8)
+
+[EasyJet reaches outline agreement on £5.5bn takeover by Castlelake](/content/0c317e2c-2fda-4c6f-8620-d8e629f1aeb3)
+
+[UK airline’s board says it is minded to recommend proposal by US private credit group](/content/0c317e2c-2fda-4c6f-8620-d8e629f1aeb3)
+
+[![Cuban farmers rush to sell land as Trump’s fuel blockade hits harvests](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F4af25e5f-1dbd-4eb4-9306-b5bfae49e8a2.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/859ff727-3a8b-42df-a6d8-7d55ed0e8264)
+
+[Cuba](/cuba)
+
+[Cuban farmers rush to sell land as Trump’s fuel blockade hits harvests](/content/859ff727-3a8b-42df-a6d8-7d55ed0e8264)
+
+[Lack of funds and oil and diesel hamper access to food on communist island as some produce is left to rot in fields](/content/859ff727-3a8b-42df-a6d8-7d55ed0e8264)
+
+2 hours ago
+
+[![Turkey detains journalists and comic in crackdown before Nato summit](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Fc0908086-85b4-4eda-8335-4880babc85fc.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/16e8d24a-560f-404a-bc0f-2ff098afade7)
+
+[Turkey](/turkey)
+
+[Turkey detains journalists and comic in crackdown before Nato summit](/content/16e8d24a-560f-404a-bc0f-2ff098afade7)
+
+[Popular comedian who called President Recep Tayyip Erdoğan a ‘dictator’ is among those arrested](/content/16e8d24a-560f-404a-bc0f-2ff098afade7)
+
+## Most read
+
+1. [Fifa reverses suspension of star US striker after call from Trump](/content/a858d225-59b8-4a85-866d-77055e7bfd58)
+2. [Ukraine striking Russian energy infrastructure at unprecedented rate](/content/13687b48-9e54-44a1-bd4d-600bbc052baf)
+3. [Donald Trump defies storms and heatwave to deliver July 4 address](/content/e197cb3f-0329-4c3f-8f04-3f0b768cdb30)
+4. [How Bending Spoons built a $23bn tech empire from struggling brands](/content/040aac86-f458-400b-a353-7ff2ee5aa34f)
+5. [EasyJet reaches outline agreement on £5.5bn takeover by Castlelake](/content/0c317e2c-2fda-4c6f-8620-d8e629f1aeb3)
+
+[![The reality check of leaving the abstract world of finance](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Fe7776284-a994-4b58-a774-439a5f38a5ca.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/73d411c3-421a-41b1-8332-3237e38f28be)
+
+[Work & Careers](/work-careers)
+
+[opinion content. The reality check of leaving the abstract world of finance](/content/73d411c3-421a-41b1-8332-3237e38f28be)
+
+[Why banking does not prepare you for corporate life](/content/73d411c3-421a-41b1-8332-3237e38f28be)
+
+[Craig Coben](/craig-coben)
+
+[![Netanyahu government defies Israel’s top court over TV regulation](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Ff840676e-ef36-42a8-8974-c14bbc767275.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/20450f5c-757f-440d-a06e-6fa997f74754)
+
+[Israel](/israel)
+
+[Netanyahu government defies Israel’s top court over TV regulation](/content/20450f5c-757f-440d-a06e-6fa997f74754)
+
+[Premier’s cabinet raises fears of a constitutional crisis by formally rejecting ruling by Supreme Court](/content/20450f5c-757f-440d-a06e-6fa997f74754)
+
+[![Iran leadership shows unity at ayatollah’s funeral, but successor absent](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F5e25c0eb-ebc3-427b-9695-6bb018bfdc2d.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/a3dedf8e-f0fa-4646-a18e-5842c7359e3c)
+
+[Middle East war](/middle-east-war)
+
+[Iran leadership shows unity at ayatollah’s funeral, but successor absent](/content/a3dedf8e-f0fa-4646-a18e-5842c7359e3c)
+
+[Mojtaba Khamenei does not join other top leaders and sons alongside coffin of slain supreme leader](/content/a3dedf8e-f0fa-4646-a18e-5842c7359e3c)
+
+[![Is this Pauline Hanson’s moment in Australia?](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F6eac3852-7262-49db-85ac-9e08fecc10bb.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/ee900a08-206a-468a-bd4e-165f51927bbe)
+
+[Australian politics](/australian-politics)
+
+[Australia's far-right firebrand seizes spotlight](/content/ee900a08-206a-468a-bd4e-165f51927bbe)
+
+[Rise of far-right One Nation party raises prospect of a sweeping political realignment](/content/ee900a08-206a-468a-bd4e-165f51927bbe)
+
+3 hours ago
+
+[![France’s richest man ordered to pay €22.5mn in back taxes ](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Fd8634d3d-72e0-4b1b-af00-8123d979100b.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/5df9fa06-9719-4de5-b454-53b49346382d)
+
+[Tax](/tax)
+
+[France’s richest man ordered to pay €22.5mn in back taxes](/content/5df9fa06-9719-4de5-b454-53b49346382d)
+
+[Bernard Arnault, billionaire owner of luxury group LVMH, will appeal against ruling](/content/5df9fa06-9719-4de5-b454-53b49346382d)
+
+[![Baillie Gifford pursues ‘voluntary exits’ under new strategy ](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Fc6eb9a78-1c69-419a-b045-916412c12da2.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/bdde0d3f-6d1a-4738-a5fa-61985b4b3c76)
+
+[Asset management](/asset-management)
+
+[Baillie Gifford pursues ‘voluntary exits’ under new strategy](/content/bdde0d3f-6d1a-4738-a5fa-61985b4b3c76)
+
+[Scheme for UK-based staff comes as firm refocuses on areas such as family offices and financial advisers in US and Asia](/content/bdde0d3f-6d1a-4738-a5fa-61985b4b3c76)
+
+2 hours ago
+
+[![China releases Christian pastor after Trump appeal](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F4c81013d-d0c7-44bc-ae55-2ffdf7ea43c8.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/3775709b-1d55-4f0c-9148-2fa6d05bb9ad)
+
+[US-China relations](/us-china-relations)
+
+[China releases Christian pastor after Trump appeal](/content/3775709b-1d55-4f0c-9148-2fa6d05bb9ad)
+
+[US president raised case of Protestant church founder Ezra Jin during meeting with Xi Jinping in May](/content/3775709b-1d55-4f0c-9148-2fa6d05bb9ad)
+
+[![Wall Street banks recover in China amid trading boom](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F985f83da-2192-4da1-b313-a975ac02c1fc.jpg?source=next-home-page&dpr=2&width=280&fit=scale-down)](/content/90c1934a-505f-4c9d-9bdf-a28db14eb9f2)
+
+[Chinese business & finance](/chinese-business-finance)
+
+[Wall Street banks recover in China amid trading boom](/content/90c1934a-505f-4c9d-9bdf-a28db14eb9f2)
+
+[China securities units of Goldman Sachs, Morgan Stanley and JPMorgan posted record profits last year](/content/90c1934a-505f-4c9d-9bdf-a28db14eb9f2)
+
+[China cools on overseas publication of scientific research](/content/64a811f1-b132-4211-8a8c-2252cf964039)
+
+[opinion content. The Europeanisation of Nato is ever more important](/content/14e18591-a2a4-4011-b77d-48fa74dab7f4)
+
+[Transatlantic military alliance will be key to the continent’s future security](/content/14e18591-a2a4-4011-b77d-48fa74dab7f4)
+
+[Timothy Garton Ash](/stream/59e7e2d7-5513-406d-9b21-d770606c04f0)
+
+[![The Europeanisation of Nato is ever more important](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F9781cad1-1d4e-47ac-81da-9f0f93ac1b8e.jpg?source=next-home-page&dpr=2&height=435&fit=cover&gravity=poi&width=580)](/content/14e18591-a2a4-4011-b77d-48fa74dab7f4)
+
+[opinion content. Data centres are a crucial test of US industrial resolve](/content/8cb4128b-8dbc-45fd-afdc-1e6f2530536d)
+
+[America must not repeat the mistakes that handed China rare-earth dominance](/content/8cb4128b-8dbc-45fd-afdc-1e6f2530536d)
+
+[Josh Zoffer](/stream/7a4c9d3d-e460-46bf-8670-5402b26e07dd)
+
+[opinion content. Returning to pre-Trumpian politics won’t save America](/content/5e7ca535-90a8-4f6d-934b-0a0d9b36e62d)
+
+[![Jemima Kelly headshot](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Fuploaded-files%2FJemima_kelly-byline_cutout-02783fe4-c694-4c34-aff0-0e110ab46fdf.png?source=next-home-page&dpr=2&height=40&fit=cover&gravity=faces&width=40)Jemima Kelly](/jemima-kelly)
+
+[opinion content. US regulator’s change of tack comes with risk of obscuring audit flaws](/content/e7b5ae12-dbe1-4f88-978d-b5a6aaf4a0a6)
+
+[Stephen Foley](/stephen-foley)
+
+[opinion content. Investors must be wary of the earnings bubble](/content/64aa80ed-47a0-441d-8337-58874ee3f623)
+
+[Joachim Klement](/stream/4c349771-1fb9-4533-9c55-aba160a60571)
+
+[opinion content. The FT View. Saving Nato in the era of Trump](/content/25f274b2-69ba-4768-bcc6-aaddaea8030a)
+
+[The editorial board](/ft-view)
+
+[opinion content. What’s that smell in the office?](/content/e73642c3-9828-40bf-9fa2-2dd4eb327cef)
+
+[![Pilita Clark headshot](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Fuploaded-files%2FPilita%2520Clark-cb19ca0e-7f78-4adf-9861-a0a05700af4e.png?source=next-home-page&dpr=2&height=40&fit=cover&gravity=faces&width=40)Pilita Clark](/pilita-clark)
+
+[opinion content. Lex. High share prices are becoming a status symbol](/content/35bc6f34-bb3b-434a-9ce3-37a9d4fc3aa4)
+
+Premium content
+
+### More Opinion
+
+- [The FT View](https://www.ft.com/ft-view)
+- [Lex](https://www.ft.com/lex)
+- [Unhedged](https://www.ft.com/unhedged)
+- [Markets Insight](https://www.ft.com/markets/insight)
+- [Business Insight](https://www.ft.com/business-insight)
+
+[How Bending Spoons built a $23bn tech empire from struggling brands](/content/040aac86-f458-400b-a353-7ff2ee5aa34f)
+
+[Nasdaq listing caps more than a decade of deals that transformed an Italian start-up into a global internet company](/content/040aac86-f458-400b-a353-7ff2ee5aa34f)
+
+[![How Bending Spoons built a $23bn tech empire from struggling brands](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Ffc374e9e-0d2d-4759-816f-503b428f3bad.jpg?source=next-home-page&dpr=2&width=580&fit=scale-down)](/content/040aac86-f458-400b-a353-7ff2ee5aa34f)
+
+[How BlueCrest’s Michael Platt fell foul of the UK taxman](/content/dbd16db5-56c0-4bbd-9d1b-435375d1e3af)
+
+[Lululemon’s latest struggle: slowing sales in key China market](/content/7073e7b5-d845-44b5-a36b-d638c7de4cdd)
+
+[US clean power prices set to soar as AI demand coincides with subsidy cuts](/content/911ad6e1-154d-4d10-a7dc-2bd0fd6fbdc2)
+
+[Octopus Energy set for showdown with workers over union recognition](/content/2f5339b0-89db-4579-9dd2-f8c20aa9964f)
+
+[How Jamie Dimon’s long succession race claimed another victim](/content/4ab13dd4-b71d-45cf-bc44-8b17cb0ee8e0)
+
+[StubHub under investigation over alleged ‘ghost ticketing’ at World Cup](/content/bbcb648b-f6e6-4d79-8911-7d8fa8b04903)
+
+### More companies
+
+- [Stock Picking Game](https://stockpickinggame.ft.com)
+- [Energy](https://www.ft.com/energy)
+- [Financials](https://www.ft.com/financials)
+- [Health](https://www.ft.com/health)
+- [Industrials](https://www.ft.com/industrials)
+- [Media](https://www.ft.com/media)
+- [Professional Services](https://www.ft.com/professional-services)
+- [Retail & Consumer](https://www.ft.com/retail-consumer)
+- [Tech Sector](https://www.ft.com/technology-sector)
+- [Telecoms](https://www.ft.com/telecoms)
+- [Transport](https://www.ft.com/transport)
+
+[Lululemon’s latest struggle: slowing sales in key China market](/content/7073e7b5-d845-44b5-a36b-d638c7de4cdd)
+
+[Growth in second-largest economy has helped activewear maker offset series of other troubles but now faces new challenges](/content/7073e7b5-d845-44b5-a36b-d638c7de4cdd)
+
+[![Lululemon’s latest struggle: slowing sales in key China market  ](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Fc9daea1f-44c0-4546-a3f5-a0d382506e12.jpg?source=next-home-page&dpr=2&width=580&fit=scale-down)](/content/7073e7b5-d845-44b5-a36b-d638c7de4cdd)
+
+[Military drills for store managers: deaths mar Prabowo’s latest project](/content/b93a2c7e-61f0-4f78-8bfb-cc414d099688)
+
+[China steps up claims over sea east of Taiwan](/content/6ac24ea6-50c2-4e25-92b7-79d52edc0b8b)
+
+[Anthropic moves to close loopholes that allow Chinese access to Claude](/content/ad033063-60f9-4c0c-8d8a-9193a83e6f60)
+
+Exclusive content
+
+[‘The brakes failed and they’ve crashed the car’: how the Big Four’s wheels fell off Down Under](/content/f0f852ef-637e-4be7-8eee-e3ad2b767cf4)
+
+[Beijing plane crash pilot suffered from ‘insomnia and anxiety’, say police](/content/41d9164f-8158-4a89-90ce-59415056d4e1)
+
+[Modi and Takaichi meet in the shadow of Chinese pressure](/content/9240e19a-8a7e-4213-8ac4-b03c16120cd7)
+
+### More Asia-Pacific News
+
+- [Asia-Pacific economy](https://www.ft.com/asia-pacific-economy)
+- [Asia-Pacific companies](https://www.ft.com/companies/asia-pacific)
+- [Asia-Pacific equities](https://www.ft.com/asia-pacific-equities)
+- [China](https://www.ft.com/world/asia-pacific/china)
+- [India](https://www.ft.com/india)
+
+[Have a tip?Send us information securely](https://www.ft.com/news-tips/)
+
+[![Have a tip? Send us information securely](https://images.ft.com/v3/image/raw/https%3A%2F%2Fwww.ft.com%2F__assets%2Fcreatives%2Fhomepage-beta%2Fnewstip-thumb-sc-moD.png?source=next-home-page&dpr=2&height=280&fit=cover&gravity=faces&width=280)](https://www.ft.com/news-tips/)
+
+[![FT News Briefing podcast](https://images.ft.com/v3/image/raw/https%3A%2F%2Fnext-video-editor-images.s3.ap-northeast-1.amazonaws.com%2F3d88c01c-114e-427e-b6c2-1f8123709d64?source=next-home-page&dpr=2&height=180&fit=cover&gravity=faces&width=180)](/content/d55da957-60f5-4b9b-bd14-220ed173cc0e)
+
+[London’s push for AI sovereignty](/content/d55da957-60f5-4b9b-bd14-220ed173cc0e)
+
+9 min listen
+
+[![Political Fix podcast](https://images.ft.com/v3/image/raw/https%3A%2F%2Fnext-video-editor-images.s3.ap-northeast-1.amazonaws.com%2Ff9caf5d5-b927-4b02-b5fc-2485b2dff08f?source=next-home-page&dpr=2&height=180&fit=cover&gravity=faces&width=180)](/content/ecc376b0-5436-47a0-b0c0-802c95924285)
+
+[Power to the North: Burnham’s big idea](/content/ecc376b0-5436-47a0-b0c0-802c95924285)
+
+43 min listen
+
+[![The Economics Show with Soumaya Keynes podcast](https://images.ft.com/v3/image/raw/https%3A%2F%2Fnext-video-editor-images.s3.ap-northeast-1.amazonaws.com%2F4a553efa-c86a-40bd-8f92-5ed74527b441?source=next-home-page&dpr=2&height=180&fit=cover&gravity=faces&width=180)](/content/8b8a47e5-3fe7-426e-b744-93acda3db8d0)
+
+[Why didn’t the Iran war cause a recession? With Tyler Goodspeed](/content/8b8a47e5-3fe7-426e-b744-93acda3db8d0)
+
+32 min listen
+
+[![Unhedged Podcast](https://images.ft.com/v3/image/raw/https%3A%2F%2Fnext-video-editor-images.s3.ap-northeast-1.amazonaws.com%2F7051ab66-6d7b-4d50-bc2f-2e5c56377eaa?source=next-home-page&dpr=2&height=180&fit=cover&gravity=faces&width=180)](/content/84c69be1-72ff-4500-91d0-46047c9e8b95)
+
+[Halftime for the markets](/content/84c69be1-72ff-4500-91d0-46047c9e8b95)
+
+23 min listen
+
+- [Arts](https://www.ft.com/arts)
+- [Books](https://www.ft.com/books)
+- [Food & Drink](https://www.ft.com/food-drink)
+- [FT Magazine](https://www.ft.com/magazine)
+- [Style](https://www.ft.com/style)
+- [House & Home](https://www.ft.com/house-home)
+- [Travel](https://www.ft.com/travel)
+- [FT Globetrotter](https://www.ft.com/globetrotter)
+- [HTSI](https://www.ft.com/htsi)
+
+[![The Cartier Crash becomes a $2mn watch](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F90d133b3-e747-42e4-99f6-19acff4d2ee5.jpg?source=next-home-page&dpr=2&width=580&fit=scale-down)](/content/7873f596-a5f4-4c7f-8b4c-649a2d2b4c3b)
+
+[Watches](/watches)
+
+[The Cartier Crash becomes a $2mn watch](/content/7873f596-a5f4-4c7f-8b4c-649a2d2b4c3b)
+
+[![Five of the best debut novels — lust, longing and a wild night out on the Curry Mile](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F408ebd21-87c6-4e5b-ad00-892d00a1963f.jpg?source=next-home-page&dpr=2&width=580&fit=scale-down)](/content/84ead41e-ba5f-4770-9170-ed2a5dd68780)
+
+[Fiction](/fiction)
+
+[Five of the best debut novels — lust, longing and a wild night out on the Curry Mile](/content/84ead41e-ba5f-4770-9170-ed2a5dd68780)
+
+[![Gardening for birds — how to plant an avian oasis](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F5518b068-cfe5-4cc7-aaf7-445a91085306.jpg?source=next-home-page&dpr=2&width=580&fit=scale-down)](/content/8a75e49f-36f6-4b0b-83d7-6980c2f89e0a)
+
+[Gardens](/gardens)
+
+[Gardening for birds — how to plant an avian oasis](/content/8a75e49f-36f6-4b0b-83d7-6980c2f89e0a)
+
+[![Everyone loves apprenticeships. So why can’t Britain create more of them?](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F4733e0ef-84ff-4cd7-95a9-22358dd452fc.jpg?source=next-home-page&dpr=2&width=580&fit=scale-down)](/content/1a19a8c6-2472-497a-8f2e-68ace9532804)
+
+[The Weekend Essay](/the-weekend-essay)
+
+[Everyone loves apprenticeships. So why can’t Britain create more of them?](/content/1a19a8c6-2472-497a-8f2e-68ace9532804)
+
+[![Won’t somebody not think of the children?](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F23d0f11e-8002-44df-8602-6fbbc75f8ab8.jpg?source=next-home-page&dpr=2&width=580&fit=scale-down)](/content/bbd9c82a-7154-40a0-ab7b-4b822f554fa8)
+
+[Life & Arts](/life-arts)
+
+[opinion content. Won’t somebody not think of the children?](/content/bbd9c82a-7154-40a0-ab7b-4b822f554fa8)
+
+[![Bryce Elder headshot](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2Fuploaded-files%2FBryce-Elder-e4557503-d8e1-4d16-9b10-576bea7bc74f.png?source=next-home-page&dpr=2&height=40&fit=cover&gravity=faces&width=40)Bryce Elder](/bryce-elder)
+
+[play video content.
+
+![Kazakhstan: Beyond Oil](https://images.ft.com/v3/image/raw/https%3A%2F%2Fnext-video-editor-images.s3.ap-northeast-1.amazonaws.com%2F20472e6f-06d3-420c-a5ef-375ea6c96a88?source=next-home-page&dpr=2&width=180&fit=scale-down)](/video/458bc0ad-cd4b-4963-8280-4ad7362d1c40)
+
+[Oil](/oil)25 min
+
+[video content. Can Kazakhstan’s oil boom survive Putin’s War? | FT Film](/video/458bc0ad-cd4b-4963-8280-4ad7362d1c40)
+
+[play video content.
+
+![](https://images.ft.com/v3/image/raw/https%3A%2F%2Fnext-video-editor-images.s3.ap-northeast-1.amazonaws.com%2Fbf78e5b8-f340-4dde-b5e0-f843704650cd?source=next-home-page&dpr=2&width=180&fit=scale-down)](/video/d0030eb9-d07a-49c2-878d-8dacbcf5b347)
+
+[FT Film](/ft-film)8 min
+
+[video content. Nashville: the price of success | FT Film](/video/d0030eb9-d07a-49c2-878d-8dacbcf5b347)
+
+[play video content.
+
+![](https://images.ft.com/v3/image/raw/https%3A%2F%2Fnext-video-editor-images.s3.ap-northeast-1.amazonaws.com%2F0d4692b1-2c7f-4275-803b-f07389bf3f4d?source=next-home-page&dpr=2&width=180&fit=scale-down)](/video/5a5733ea-f8fa-488f-906d-418584b8bc36)
+
+[FT Film](/ft-film)21 min
+
+[video content. The AI factory: the rewiring of India's tech industry | FT Film](/video/5a5733ea-f8fa-488f-906d-418584b8bc36)
+
+[play video content.
+
+![](https://images.ft.com/v3/image/raw/https%3A%2F%2Fnext-video-editor-images.s3.ap-northeast-1.amazonaws.com%2F5b5ff530-6136-4cce-99d7-a0c9c8af880d?source=next-home-page&dpr=2&width=180&fit=scale-down)](/video/360c26ad-4719-4a90-af2d-40bd51aeea62)
+
+[Brexit](/brexit)59 min
+
+[video content. Ten years after Brexit | Political Fix](/video/360c26ad-4719-4a90-af2d-40bd51aeea62)
+
+[Surging Wall Street profit forecasts fuel fears of ‘earnings bubble’](/content/1d3da122-c043-4e51-bb95-ac68d41ab838)
+
+[Analysts’ expectations for S&P 500 earnings are rising at fastest rate since rebound from Covid pandemic](/content/1d3da122-c043-4e51-bb95-ac68d41ab838)
+
+[![Surging Wall Street profit forecasts fuel fears of ‘earnings bubble’](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F8e37b87e-3ac2-44c2-8838-2a785f3f1a02.jpg?source=next-home-page&dpr=2&width=580&fit=scale-down)](/content/1d3da122-c043-4e51-bb95-ac68d41ab838)
+
+[Brent could fall to $60 a barrel by Christmas, forecasts Citi](/content/30f0195c-6283-4a70-aab0-929b026c9b70)
+
+[IMF joins backlash against ‘opaque’ debt with Nigeria crackdown](/content/cf4d7747-342a-41c5-bc4d-5c9bb7e8b4af)
+
+[Hormuz transits increase as US-Iran ceasefire holds](/content/55195e9a-09ab-4eb8-878a-516a087a90b7)
+
+[£270,000 but lacking likes: Nigel Farage’s gold marketing under scrutiny](/content/4fc62a59-1a39-48ef-ac8d-e48f8818bcd2)
+
+[Canada unveils plans for new oil pipeline to break dependence on US](/content/e5ffb51d-40ee-4274-b6f2-2eb6cd5c4f89)
+
+[Lockheed in lead to buy naval tech group Ultra Maritime in $3.5bn deal](/content/5599eca5-5b23-4a10-a1fb-03db2d18bc69)
+
+Exclusive content
+
+### More markets news
+
+- [Alphaville](https://www.ft.com/alphaville)
+- [Markets Data](https://markets.ft.com/data)
+- [Private Markets](https://www.ft.com/private-markets)
+- [Equities](https://www.ft.com/equities)
+- [Bonds](https://www.ft.com/bonds)
+- [Currencies](https://www.ft.com/currencies)
+- [Commodities](https://www.ft.com/commodities)
+- [Crypto](https://www.ft.com/crypto)
+- [Wealth Management](https://www.ft.com/ft-wealth-management)
+- [Moral Money](https://www.ft.com/moral-money)
+- [Asset Management](https://www.ft.com/asset-management)
+
+[Uber stalls European food delivery push as it pursues Delivery Hero takeover](/content/53f631ef-98e4-4eec-92e4-3dd023ed25f5)
+
+[Ride-hailing company will no longer launch in five of its seven planned new markets this year](/content/53f631ef-98e4-4eec-92e4-3dd023ed25f5)
+
+Exclusive content
+
+[![Uber stalls European food delivery push as it pursues Delivery Hero takeover](https://images.ft.com/v3/image/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F2ffd998c-61af-4514-af51-a80554a576ea.jpg?source=next-home-page&dpr=2&width=580&fit=scale-down)](/content/53f631ef-98e4-4eec-92e4-3dd023ed25f5)
+
+[How Bending Spoons built a $23bn tech empire from struggling brands](/content/040aac86-f458-400b-a353-7ff2ee5aa34f)
+
+[Trump will oppose heavy US AI regulation, says outgoing tech adviser](/content/5128e476-db8b-48ac-a8fb-0f16d0f5c2ed)
+
+[Top official recuses herself from NHS Palantir contract decision after business links](/content/9ea6f458-ce0c-458e-8300-201030cf846e)
+
+[Anthropic moves to close loopholes that allow Chinese access to Claude](/content/ad033063-60f9-4c0c-8d8a-9193a83e6f60)
+
+Exclusive content
+
+[OpenAI proposes handing Trump administration 5% stake](/content/7c803eab-8e80-4431-9a87-e943bf00e00b)
+
+Exclusive content
+
+[Spotify deletes streams of chart-topping song after suspicious Kalshi bets](/content/2e10851c-9f47-410d-b46e-2a617118b05a)
+
+Exclusive content
+
+### More technology
+
+- [Artificial intelligence](https://www.ft.com/artificial-intelligence)
+- [Cyber Security](https://www.ft.com/cyber-security)
+- [Semiconductors](https://www.ft.com/semiconductors)
+- [Social Media](https://www.ft.com/social-media)
+- [Tech start-ups](https://www.ft.com/tech-start-ups)
+- [Tech Tonic podcast](https://www.ft.com/tech-tonic)
   </main_body>
 </extraction_result>
 
 
 === FULL RAW HTML ===
 
-<main id="site-content" data-ft-origin="next-home-page"><section class="slice advert-slice slice__no-title"><div class="slice__content"><pg-slot data-config-key="high-impact" labeled="true"></pg-slot></div></section><section class="slice advert-slice slice__no-title"><div class="slice__content"><pg-slot data-config-key="mid-desktop" labeled="true"></pg-slot></div></section><section class="slice advert-slice slice__no-title"><div class="slice__content"><pg-slot data-config-key="top-mobile" labeled="true"></pg-slot></div></section><section class="slice advert-slice slice__no-title"><div class="slice__content"><pg-slot data-config-key="mid-mobile" labeled="true"></pg-slot></div></section><div id="fomo-ghost-marker" class="fomo-ghost-marker" aria-hidden="true" data-trackable="fomo-ghost" data-trackable-context-component="{&quot;type&quot;:&quot;container&quot;,&quot;name&quot;:&quot;fomo-ghost-ds&quot;}" data-trackable-context-fomo-slice-visible="false"></div><div data-trackable="list:must-reads-you-missed" data-trackable-context-list-type="must-reads-you-missed" data-trackable-context-list-position="9" data-trackable-context-list-siblings="23" data-trackable-context-slice-key="fomo-1" class="client-slice hidden fomo-1" data-trackable-context-component="{&quot;type&quot;:&quot;container&quot;,&quot;name&quot;:&quot;fomo-carousel-ds&quot;}"><section class="slice slice--default" data-trackable-context-fomo-slice-visible="false"><div class="slice__content"><div class="separator--dotted"></div><div class="layout-desktop__grid-container"><div class="layout__grid-content"></div></div></div></section></div><section class="slice advert-slice slice__no-title"><div class="slice__content"><pg-slot data-config-key="mid1" labeled="true"></pg-slot></div></section><section class="slice section"><div class="slice__content"><div class="separator--dotted"></div><div class="community-home-page-slice o-grid-row o-grid-row--compact community-home-page-slice--events community-home-page-slice--default-layout"><div data-o-grid-colspan="12 M12 L3" class="community-home-page-slice__column community-home-page-slice__header-column"><div class="community-home-page-slice__header"><div role="heading" aria-level="3" class="o3-type-body-highlight community-home-page-slice__title">Upcoming events</div><p class="o3-type-body-base community-home-page-slice__strapline">Discover unmissable flagship events with FT journalists to expand your thinking and elevate your career</p><a class="o3-type-body-base community-home-page-slice__link" href="https://events.ft.com/events-list">Explore all events</a></div></div><div data-o-grid-colspan="12 M4 L3" class="community-home-page-slice__column community-home-page-slice__item-column"><div class="event-teaser" data-trackable="event-teaser" data-trackable-context-content-id="38a54f97-57a6-4d41-bb42-b3e64a593713" data-o-tracking-view="true"><div class="event-teaser__content-container"><div class="event-teaser__details"><a class="o3-type-label event-teaser__brand" href="https://insurance.live.ft.com" data-trackable="event-teaser-brand-link">FT Live</a><div class="event-teaser__title-heading" role="heading" aria-level="4"><a class="o3-type-body-highlight event-teaser__title" data-trackable="event-teaser-title" href="https://insurance.live.ft.com" title="Global Insurance Summit">Global Insurance Summit</a></div><span class="o3-type-body-base event-teaser__standfirst">Finding opportunity in a changing insurance ecosystem</span></div><div class="event-teaser__footer"><span class="o3-type-label event-teaser__timestamp event-teaser__timestamp--start-date"><time datetime="2026-06-24T09:00:00.000Z">Wednesday, 24 June</time></span><span class="o3-type-detail event-teaser__location">London, UK</span></div></div></div></div><div data-o-grid-colspan="12 M4 L3" class="community-home-page-slice__column community-home-page-slice__item-column"><div class="event-teaser" data-trackable="event-teaser" data-trackable-context-content-id="708b34bf-6555-4193-b3fb-4bc86f5e7916" data-o-tracking-view="true"><div class="event-teaser__content-container"><div class="event-teaser__details"><a class="o3-type-label event-teaser__brand" href="https://lawyerssummit.live.ft.com" data-trackable="event-teaser-brand-link">FT Live</a><div class="event-teaser__title-heading" role="heading" aria-level="4"><a class="o3-type-body-highlight event-teaser__title" data-trackable="event-teaser-title" href="https://lawyerssummit.live.ft.com" title="Innovative Lawyers Global Summit">Innovative Lawyers Global Summit</a></div><span class="o3-type-body-base event-teaser__standfirst">Shaping the Future of Law</span></div><div class="event-teaser__footer"><span class="o3-type-label event-teaser__timestamp event-teaser__timestamp--start-date"><time datetime="2026-06-25T08:00:00.000Z">Thursday, 25 June</time></span><span class="o3-type-detail event-teaser__location">London, UK</span></div></div></div></div><div data-o-grid-colspan="12 M4 L3" class="community-home-page-slice__column community-home-page-slice__item-column"><div class="event-teaser" data-trackable="event-teaser" data-trackable-context-content-id="1cb73936-27eb-49ae-96e7-00a77fe232da" data-o-tracking-view="true"><div class="event-teaser__content-container"><div class="event-teaser__details"><a class="o3-type-label event-teaser__brand" href="https://ukftweekendfestival.live.ft.com" data-trackable="event-teaser-brand-link">FT Live</a><div class="event-teaser__title-heading" role="heading" aria-level="4"><a class="o3-type-body-highlight event-teaser__title" data-trackable="event-teaser-title" href="https://ukftweekendfestival.live.ft.com" title="FT Weekend Festival">FT Weekend Festival</a></div><span class="o3-type-body-base event-teaser__standfirst">Experience the FT come to life</span></div><div class="event-teaser__footer"><span class="o3-type-label event-teaser__timestamp event-teaser__timestamp--start-date"><time datetime="2026-09-05T07:00:00.000Z">Saturday, 5 September</time></span><span class="o3-type-detail event-teaser__location">Kenwood House, Hampstead Lane, London, UK</span></div></div></div></div></div><div class="community-home-page-slice o-grid-row o-grid-row--compact community-home-page-slice--forums community-home-page-slice--default-layout"><div data-o-grid-colspan="12 M12 L3" class="community-home-page-slice__column community-home-page-slice__header-column"><div class="community-home-page-slice__header"><div role="heading" aria-level="3" class="o3-type-body-highlight community-home-page-slice__title">Join the discussion</div><p class="o3-type-body-base community-home-page-slice__strapline">Gain access to a series of exclusive communities, convened by the Financial Times.</p></div></div><div data-o-grid-colspan="12 M4 L3" class="community-home-page-slice__column community-home-page-slice__item-column"><div class="forum-teaser" data-trackable="forum-teaser"><div role="heading" aria-level="4" class="forum-teaser__title-heading"><a class="o3-type-body-highlight forum-teaser__title" data-trackable="forum-teaser-title" href="https://forums.live.ft.com/">FT Live Forums</a></div><span class="o3-type-detail forum-teaser__strapline">Exclusive, peer-level communities for senior executives shaping strategy, leadership and transformation.</span></div></div><div data-o-grid-colspan="12 M4 L3" class="community-home-page-slice__column community-home-page-slice__item-column"><div class="forum-teaser" data-trackable="forum-teaser"><div role="heading" aria-level="4" class="forum-teaser__title-heading"><a class="o3-type-body-highlight forum-teaser__title" data-trackable="forum-teaser-title" href="https://www.leadersacademy.ft.com/">FT Leaders Academy</a></div><span class="o3-type-detail forum-teaser__strapline">Smart, practical learning to help you grow at every stage of your career.  Delivered by experts, shaped by global trends.</span></div></div></div></div></section></main>

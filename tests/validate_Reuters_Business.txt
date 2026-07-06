@@ -2,9 +2,9 @@
 # URL: https://www.reuters.com/business/
 # Title: Business News | Today's International Headlines | Reuters
 # Selector: main
-# Confidence: 0.491
-# Content length: 1000 chars
-# Raw length: 9497 chars
+# Confidence: 0.489
+# Content length: 7331 chars
+# Raw length: 0 chars
 
 === FULL CONTENT ===
 
@@ -12,25 +12,114 @@
   <metadata>
   Title: Business News | Today's International Headlines | Reuters
   URL: https://www.reuters.com/business/
-  Timestamp: 2026-06-23T02:10:50.179461+00:00
+  Timestamp: 2026-07-06T05:37:53.045645+00:00
   </metadata>
 
   <main_body>
-- 38 mins ago
+- 1 hour ago
 
-  [Asia shares slip as markets reprice Fed expectations, oil gains](/world/asia-pacific/global-markets-global-markets-2026-06-23/)
+  [Morning Bid: Samsung to serve chip taster for earnings feast](/world/china/global-markets-view-europe-2026-07-06/)
 
-  Asian stocks mostly eased and ​oil prices regained strength early on Tuesday after the U.S. waived sanctions on Iran, while traders grappled ‌with rising expectations the Federal Reserve may take more aggressive action to tackle inflation later this year.
+  A look at the day ahead in European and global markets from Wayne Cole.
 
-  [![A man walks past a stock quotation board showing the  Nikkei stock prices outside a brokerage in Tokyo](https://www.reuters.com/resizer/v2/4WJZSSV3ZFLDPKZ24LXGE2PFWA.jpg?auth=ff90cdae990d786450e06d470fbe4467598993642eb7ec06b10eba5941ef9cd0&width=1200&quality=80)](/world/asia-pacific/global-markets-global-markets-2026-06-23/)
+  [![The logo of Samsung Electronics is seen at its headquarters in Seoul](https://www.reuters.com/resizer/v2/CPYJWB6P5ZK47DTLU3FEAZ5I2Q.jpg?auth=456e327db70b0fea5afec69189084a8da35ab2752b690af4322f509a37775a70&width=1200&quality=80)](/world/china/global-markets-view-europe-2026-07-06/)
+- 2 hours ago
+
+  [Asian shares slip as earnings loom, oil weighed by supply](/world/china/global-markets-global-markets-2026-07-06/)
+- 2 hours ago
+
+  [Samsung likely to post 18-fold jump in profit on surging AI demand for memory](/world/asia-pacific/samsung-likely-post-18-fold-jump-profit-surging-ai-demand-memory-2026-07-05/)
+- 18 hours ago
+
+  [Foxconn second-quarter revenue jumps, company cautions on geopolitics](/world/asia-pacific/foxconn-second-quarter-revenue-jumps-40-yy-2026-07-05/)
 
 ---
 
+- 1 hour ago
+
+  [Oil drifts down after OPEC+ agrees to raise output targets](/business/energy/oil-slips-after-opec-agrees-raise-output-targets-2026-07-06/)
+
+  [![The Rishiri Galaxy tanker is docked at the Texas City docks](https://www.reuters.com/resizer/v2/FRASLRDF3NNHBNV34HRLRW5FTI.jpg?auth=85d3012960fcd2ffc09974669d87164a261d6166717b8ccc1c29ee2d0e011f81&width=1200&quality=80)](/business/energy/oil-slips-after-opec-agrees-raise-output-targets-2026-07-06/)
+- 2 hours ago
+
+  [UK budget airline easyJet ready to accept $7.3 billion takeover bid from Castlelake](/business/easyjet-agrees-principle-castlelakes-sweetened-690-per-share-bid-2026-07-05/)
+
+- 47 mins ago
+
+  [South Korea's SK Hynix launching $28 billion US listing to ride global AI wave](/world/asia-pacific/south-koreas-sk-hynix-launch-28-billion-us-listing-ride-global-ai-wave-2026-07-06/)
+
+  [![China International Supply Chain Expo in Beijing](https://www.reuters.com/resizer/v2/MVX55YKAEJLVPFRC36RY6TGU2E.jpg?auth=8fe10e592f7eef5943226ec460f43be33c881f08b8dca8f451c345c9f428de42&width=1200&quality=80)](/world/asia-pacific/south-koreas-sk-hynix-launch-28-billion-us-listing-ride-global-ai-wave-2026-07-06/)
+- 2 hours ago
+
+  [Dollar near two-week lows as rate-hike bets recede, embattled yen in focus](/world/asia-pacific/dollar-near-two-week-lows-rate-hike-bets-recede-embattled-yen-focus-2026-07-06/)
+
+- 1 hour ago
+
+  [Fortescue served with class action alleging sexual harassment, discrimination](/legal/litigation/fortescue-served-with-class-action-alleging-sexual-harassment-discrimination-2026-07-06/)
+
+  [![A view shows the Fortescue logo in Perth](https://www.reuters.com/resizer/v2/TNQTZR5XIZPDDAEUGMR2S6NDLU.jpg?auth=6265f06d422c438411da11961e7bdb89eeae8fe4fd976df2f0c5710b206a15ee&width=1200&quality=80)](/legal/litigation/fortescue-served-with-class-action-alleging-sexual-harassment-discrimination-2026-07-06/)
+- 3 hours ago
+
+  [South Korea's Lee urges speed in launching mega chip projects](/world/asia-pacific/sk-hynix-build-51-billion-nand-memory-chip-factory-by-2029-2026-07-02/)
+
+- 18 hours ago
+
+  [OPEC+ approves further oil output increase as Hormuz exports start to recover](/business/energy/opec-set-clear-another-oil-output-increase-sources-say-2026-07-05/)
+
+  [![People walk past an installation depicting barrel of oil with the OPEC logo](https://www.reuters.com/resizer/v2/UKP6VVQQ5BKATLCKXN2VTPI54Y.jpg?auth=6ebee0776c8c10fefc38dd23ef68fdc8b858687a6d184d58ade048b6a2cf4835&width=1200&quality=80)](/business/energy/opec-set-clear-another-oil-output-increase-sources-say-2026-07-05/)
+- 5 hours ago
+
+  [South Korea starts 24-hour trading of dollar-won](/world/asia-pacific/south-korea-starts-24-hour-trading-dollar-won-2026-07-06/)
+
 ---
+
+- 4 hours ago
+
+  [Record wave of IPO lock-up shares to hit Hong Kong market](/world/china/record-wave-ipo-lock-up-shares-hit-hong-kong-market-2026-07-06/)
+
+  Shares in some of Hong Kong's hottest new listings are set to hit the market this week ​in an unprecedented wave of lock-up expirations, which brokers ‌say could create an overhang on the city's already struggling stock market.
+- [Businesscategory](/business/)·2 hours ago
+
+  [EasyJet's flight path from start-up to takeover deal](/business/easyjets-flight-path-start-up-takeover-deal-2026-07-05/)
+
+  A £5.50 billion ($7.34 billion) deal for U.S. investment firm Castlelake to acquire British budget airline easyJet , announced on Sunday, would mark ​a new chapter in the carrier's 31-year history.
+- [Businesscategory](/business/)·13 hours ago
+
+  [Uber pauses Europe food delivery expansion as it pursues Delivery Hero deal, FT reports](/business/uber-pauses-europe-food-delivery-expansion-it-pursues-delivery-hero-deal-ft-2026-07-05/)
+
+  The company expected the move ​to generate an additional $1 billion in gross bookings over ​the next three years.
+- [Financecategory](/business/finance/)·July 4, 2026
+
+  [Trump Accounts to debut as US kicks off 250th Independence Day celebrations](/business/finance/trump-accounts-debut-us-kicks-off-250th-independence-day-celebrations-2026-07-04/)
+
+  After months of fanfare, President Donald Trump's administration will launch its flagship cradle-to-adulthood investment ​program, Trump Accounts, on Saturday, as the U.S. begins celebrations marking the 250th anniversary of its independence.
+- [Healthcare & Pharmaceuticalscategory](/business/healthcare-pharmaceuticals/)·July 4, 2026
+
+  [For one small business, AI was key to a quick start and expansion](/business/healthcare-pharmaceuticals/one-small-business-ai-was-key-quick-start-expansion-2026-07-04/)
+
+  Michelle Turner had no experience with startup culture so she developed her funding pitch with AI guidance.
+- [Legalcategory](/legal/)·July 4, 2026
+
+  [Continental to sell ContiTech unit to Lone Star Funds for $4.6 billion](/legal/transactional/continental-sell-contitech-unit-lone-star-funds-46-billion-2026-07-04/)
+
+  Continental said on Saturday it had signed an agreement ​to sell its ContiTech plastics and rubber ‌business to private equity firm Lone Star Funds for €4 billion ($4.57 billion), plus potential performance-based components of up to €250 ​million in subsequent years.
+- ANALYSIS·July 3, 2026
+
+  [US oil companies see big profit jump, gird for clash over pump prices with Trump](/business/energy/us-oil-companies-see-big-profit-jump-gird-clash-over-pump-prices-with-trump-2026-07-03/)
+
+  U.S. oil companies are set to report their strongest quarterly profits in years, courting a possible clash with President Donald Trump, who has been pressing his ​longtime ally Big Oil to bring down gasoline prices before midterm elections in November.
+- [Retail & Consumercategory](/business/retail-consumer/)·July 4, 2026
+
+  [UK's Next plans takeover bid for Harvey Nichols, Sky News reports](/business/retail-consumer/uks-next-plans-takeover-bid-harvey-nichols-sky-news-reports-2026-07-04/)
+
+  British ​clothing retailer Next is ‌preparing to launch a takeover bid for luxury department ​store chain Harvey ​Nichols, Sky News reported on ⁠Saturday.
+
+Loading...
+
+Load more articles
   </main_body>
 </extraction_result>
 
 
 === FULL RAW HTML ===
 
-<main data-testid="SlicesLayout" id="main-content" role="main" class="slices-layout-module__main__kM1Ex"><section class="story-cluster-module__container__RMK2u divider-container-module__container__MpXC- default divider-container-module__narrow-desktop-only__m5qBM" data-testid="story-cluster"><ul class="story-cluster-module__tpl-story-cluster__A9NtL story-cluster-module__for-4-with-module__0VUht story-cluster-module__two-modules__ptn-p"><li class="story-card-module__tpl-common__G5wYS story-card-module__tpl-hero__BVKNM story-card-module__transition-media-on-right-for-extra-wide-desktop__r1iG0 story-cluster-module__story-1__bOzIA story-cluster-module__two-columns__U54EG" data-are-authors="true" data-has-multiple-authors="false" data-testid="StoryCard" tabindex="-1"><time data-testid="DateLineText" datetime="2026-06-23T01:31:45.813Z" class="text-module__text__0GDob text-module__medium-grey__yZtlg text-module__light__ZYtNU text-module__ultra_small__6-vhY story-card-module__area-date__p9wlR">38 mins ago</time><div data-testid="Title" class="title-module__title__Lr6MH story-card-module__area-headline__N6EZa"><a data-testid="TitleLink" href="/world/asia-pacific/global-markets-global-markets-2026-06-23/" class="text-module__text__0GDob text-module__dark-grey__UFC18 text-module__inherit-font__1P1hv text-module__inherit-size__EyiQW link-module__link__INqxZ link-module__underline_on_hover__YTwYC"><span data-testid="TitleHeading" class="text-module__text__0GDob text-module__inherit-color__PhuPF text-module__bold__chuBM text-module__heading_4__SADTf heading-module__base__p-zaD heading-module__heading_4_bold__WVkzn title-module__heading__ZrRzk">Asia shares slip as markets reprice Fed expectations, oil gains</span></a></div><p data-testid="Description" class="text-module__text__0GDob text-module__dark-grey__UFC18 text-module__regular__qJJtA text-module__extra_small__8Buss body-module__full_width__kCIGb body-module__extra_small_body__Bfz20 description-module__description__9Uo7K story-card-module__area-description__NJV41 transition-media-on-right-for-extra-wide-desktop">Asian stocks mostly eased and ​oil prices regained strength early on Tuesday after the U.S. waived sanctions on Iran, while traders grappled ‌with rising expectations the Federal Reserve may take more aggressive action to tackle inflation later this year.</p><figure class=" image-container no-caption story-card-module__area-media__N2Hg6" data-testid="MediaImage"><a data-testid="MediaImageLink" aria-hidden="true" tabindex="-1" href="/world/asia-pacific/global-markets-global-markets-2026-06-23/" class="text-module__text__0GDob text-module__dark-grey__UFC18 text-module__medium__2Rl30 text-module__default__R2Ckt link-module__link__INqxZ link-module__underline_default__-okuC image-module__container__dqGwP story-card-module__image-link__4wq06"><div data-testid="EagerImageContainer" class="image story-card-module__image__NNKq2"><div class="styles-module__image-container__E0mCm styles-module__cover__SgyOM styles-module__center_center__bzABO styles-module__apply-ratio__u0jXJ" style="--aspect-ratio: 1.5;"><img data-testid="EagerImage" sizes="(min-width: 1024px) 680px, 100vw" alt="A man walks past a stock quotation board showing the  Nikkei stock prices outside a brokerage in Tokyo" srcset="https://www.reuters.com/resizer/v2/4WJZSSV3ZFLDPKZ24LXGE2PFWA.jpg?auth=ff90cdae990d786450e06d470fbe4467598993642eb7ec06b10eba5941ef9cd0&amp;width=120&amp;quality=80 120w,https://www.reuters.com/resizer/v2/4WJZSSV3ZFLDPKZ24LXGE2PFWA.jpg?auth=ff90cdae990d786450e06d470fbe4467598993642eb7ec06b10eba5941ef9cd0&amp;width=240&amp;quality=80 240w,https://www.reuters.com/resizer/v2/4WJZSSV3ZFLDPKZ24LXGE2PFWA.jpg?auth=ff90cdae990d786450e06d470fbe4467598993642eb7ec06b10eba5941ef9cd0&amp;width=480&amp;quality=80 480w,https://www.reuters.com/resizer/v2/4WJZSSV3ZFLDPKZ24LXGE2PFWA.jpg?auth=ff90cdae990d786450e06d470fbe4467598993642eb7ec06b10eba5941ef9cd0&amp;width=960&amp;quality=80 960w,https://www.reuters.com/resizer/v2/4WJZSSV3ZFLDPKZ24LXGE2PFWA.jpg?auth=ff90cdae990d786450e06d470fbe4467598993642eb7ec06b10eba5941ef9cd0&amp;width=1200&amp;quality=80 1200w" src="https://www.reuters.com/resizer/v2/4WJZSSV3ZFLDPKZ24LXGE2PFWA.jpg?auth=ff90cdae990d786450e06d470fbe4467598993642eb7ec06b10eba5941ef9cd0&amp;width=1200&amp;quality=80"></div></div></a></figure></li><li class="story-cluster-module__extra-module__cWZO0"></li><li class="story-cluster-module__ad-module__UpN4U"><div data-testid="ResponsiveAdSlot" class="ad-module__container__PgTvB"><div class="ad-slot-module__container__VEdre" style="--height: 250px;"><div class="ad-slot-module__inner__tEY-D"><div><div class="ad-slot-module__slot__rdFsT" id="reuters_mpu"></div></div></div></div></div></li></ul></section><div data-testid="divider" class="divider-container-module__container__MpXC- default divider-container-module__narrow-desktop-only__m5qBM divider-container-module__max-width__KpWSo divider-container-module__tablet-mobile-only__-Jb2- divider-always"><hr class="divider-container-module__divider__UXgiJ" aria-hidden="true"></div><div data-testid="divider" class="divider-container-module__container__MpXC- default divider-container-module__below-wide-desktop__PpFGj divider-container-module__max-width__KpWSo divider-always"><hr class="divider-container-module__divider__UXgiJ" aria-hidden="true"></div><div data-testid="ContentLayout" class="spacing-container-module__container__pUI7w spacing-container-module__t-spacing-single__BkBkc spacing-container-module__b-spacing-single__NVeK6 spacing-container-module__below-wide-desktop__f-Xrv spacing-container-module__max-width__v4xCG"><div class="content-layout-module__three_and_one_column__RBrfs" style="--rows: 2;"><div class="content-layout-module__item__P1bVF content-layout-module__left-col-item-1__bS7RB"><div style="display: none;" data-fusion-name="I" data-fusion-message="NotFoundError: Node.removeChild: The node to be removed is not a child of this node"></div></div><div class="content-layout-module__right-col__Sa37C"><div class="content-layout-module__item__P1bVF"><div data-testid="StickyContainer" class="sticky-container-module__container__8H8ZP spacing-container-module__container__pUI7w" style="--top: 125px; --height: 100%;"><div class="sticky-container-module__content-container__yS5dI"><div data-testid="StickyAdSlot"><div class="ad-slot-module__container__VEdre" style="--height: 0px;"><div class="ad-slot-module__inner__tEY-D"><div><div class="ad-slot-module__slot__rdFsT" id="reuters_desktop_right_rail_2"></div></div></div></div></div></div></div></div><div class="content-layout-module__item__P1bVF"><div data-testid="StickyContainer" class="sticky-container-module__container__8H8ZP spacing-container-module__container__pUI7w" style="--top: 30px; --height: 100%;"><div class="sticky-container-module__content-container__yS5dI"><div data-testid="StickyAdSlot"><div class="ad-slot-module__container__VEdre" style="--height: 0px;"><div class="ad-slot-module__inner__tEY-D"><div><div class="ad-slot-module__slot__rdFsT" id="reuters_desktop_right_rail_3"></div></div></div></div></div></div></div></div></div></div></div><div data-testid="TalkingPoints" id="reuters-plus-sponsored-content" class="divider-container-module__container__MpXC- default divider-container-module__below-wide-desktop__PpFGj divider-container-module__max-width__KpWSo"><div class="talking-points-v2-module__container__K8uz5"><ul class="talking-points-v2-module__grid__eHcWQ talking-points-v2-module__list__Fnl7a" id="_r_12_" aria-labelledby="_r_12_"><li data-testid="TalkingPointsCell" class="talking-points-v2-module__cell__NDrD-"><div data-testid="ResponsiveAdSlot" class="divider-container-module__container__MpXC- default divider-container-module__max-width__KpWSo"><div class="ad-slot-module__container__VEdre" style="--height: 0px;"><div class="ad-slot-module__inner__tEY-D"><div><div class="ad-slot-module__slot__rdFsT" id="reuters_recirc_mid_unit_1"></div></div></div></div></div></li><li data-testid="TalkingPointsCell" class="talking-points-v2-module__cell__NDrD-"><div data-testid="ResponsiveAdSlot" class="divider-container-module__container__MpXC- default divider-container-module__max-width__KpWSo"><div class="ad-slot-module__container__VEdre" style="--height: 0px;"><div class="ad-slot-module__inner__tEY-D"><div><div class="ad-slot-module__slot__rdFsT" id="reuters_recirc_mid_unit_2"></div></div></div></div></div></li><li data-testid="TalkingPointsCell" class="talking-points-v2-module__cell__NDrD-"><div data-testid="ResponsiveAdSlot" class="divider-container-module__container__MpXC- default divider-container-module__max-width__KpWSo"><div class="ad-slot-module__container__VEdre" style="--height: 0px;"><div class="ad-slot-module__inner__tEY-D"><div><div class="ad-slot-module__slot__rdFsT" id="reuters_recirc_mid_unit_3"></div></div></div></div></div></li></ul></div></div><div data-testid="Dianomi" lang="en" class="spacing-container-module__container__pUI7w spacing-container-module__t-spacing-single__BkBkc spacing-container-module__b-spacing-single__NVeK6 spacing-container-module__below-wide-desktop__f-Xrv spacing-container-module__max-width__v4xCG"><div class="dianomi_context" data-dianomi-context-id="1948" data-dianomi-loading="0" style="height: auto;" data-dianomi-complete="1"><iframe class="dianomi-parent-iframe" title="Dianomi ad container (1948-661)" id="1948-661" style="width: 100%; overflow: hidden; border: medium;" height="689px"></iframe></div></div></main>

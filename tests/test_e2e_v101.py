@@ -9,7 +9,6 @@ Run from project root: python tests/test_e2e_v101.py
 
 import sys
 import os
-import json
 
 # Add project root to path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -206,7 +205,7 @@ try:
                 check("example.com has no headings (expected)", True)
 
             # Print summary
-            print(f"\n--- Extraction Summary ---")
+            print("\n--- Extraction Summary ---")
             print(f"Title: {item.get('title', 'N/A')}")
             print(f"Selector: {meta.get('selector', 'N/A')}")
             print(f"Confidence: {conf}")
@@ -215,7 +214,7 @@ try:
             print(f"Scored blocks: {meta.get('scored_blocks_count', 'N/A')}")
             print(f"Pruned static: {meta.get('pruned_static', 'N/A')}")
             print(f"Pruned dynamic: {meta.get('pruned_dynamic', 'N/A')}")
-            print(f"Content preview (first 300 chars):")
+            print("Content preview (first 300 chars):")
             print(content[:300])
 
 except Exception as e:

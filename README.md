@@ -6,9 +6,26 @@ Prebextor adalah backend provider deterministik untuk ekstraksi web (`web_extrac
 - **Output Format**: Markdown dibungkus dengan *Semantic XML-style boundary tags* (`<extraction_result>`, `<main_body>`, dst). Presisi batas konten tanpa mengorbankan keterbacaan bagi LLM.
 - **Determinisme**: Seluruh pipeline bersifat *stateless* dan berbasis aturan (Rule-Based), bukan heuristik probabilitas.
 - **Content-Aware**: Skor text-density (CETD-style) mengidentifikasi noise (navigasi, iklan, sidebar) dan membuangnya sebelum ekstraksi konten.
-- **Structure Cache (v1.2.0)**: Pipeline decisions (CSS selector, noise selectors, scoring) di-cache ke disk. HTML selalu segar — aman untuk situs dinamis (economic calendars, harga, news).
+- **Structure Cache (v1.2.0+)**: Pipeline decisions (CSS selector, noise selectors, scoring) di-cache ke disk. HTML selalu segar — aman untuk situs dinamis (economic calendars, harga, news).
 
 Pipeline dasar: **Mapping → Scoring → Pruning → Validation → Text → Iframe → Markdown → Boundary Wrap → Close**.
+
+## 1.1 Package Layout
+```
+prebextor/
+├── prebextor/              # source package
+│   ├── __init__.py         # __version__, re-exports
+│   ├── provider.py         # PrebextorProvider (WebSearchProvider contract)
+│   ├── tool_extract.py     # prebextor_extract standalone tool
+│   ├── plugin.yaml         # plugin manifest (copy dari root)
+│   ├── pipeline/           # map → score → prune → validate → transform
+│   └── fetcher/            # CamoFox CLI subprocess wrapper
+├── tests/                  # unit + e2e validation
+├── plugin.yaml             # root copy (untuk deployment)
+├── pyproject.toml
+├── README.md
+└── CHANGELOG.md
+```
 
 ## 2. Integration with Hermes Agent
 Prebextor diintegrasikan melalui sistem plugin Hermes, mendukung **dua mode**:

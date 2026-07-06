@@ -1,26 +1,285 @@
 # CNBC Economy
 # URL: https://www.cnbc.com/economy/
-# Title: https://www.cnbc.com/economy/
+# Title: Economy
 # Selector: [role="main"]
-# Confidence: 0.438
-# Content length: 221 chars
-# Raw length: 127 chars
+# Confidence: 0.480
+# Content length: 15365 chars
+# Raw length: 0 chars
 
 === FULL CONTENT ===
 
 <extraction_result>
   <metadata>
-  Title: https://www.cnbc.com/economy/
+  Title: Economy
   URL: https://www.cnbc.com/economy/
-  Timestamp: 2026-06-23T02:11:06.226269+00:00
+  Timestamp: 2026-07-06T05:38:08.740542+00:00
   </metadata>
 
   <main_body>
+[Markets](https://www.cnbc.com/markets/)
 
+# Economy
+
+- [World Economy](/world-economy/)
+- [The Fed](/federal-reserve/)
+- [Central Banks](/central-banks/)
+
+[![Christine Lagarde leaves door open to early ECB exit, as she mulls French politics](https://image.cnbcfm.com/api/v1/image/108320235-1781186107366-gettyimages-2280390387-GERMANY_ECB.jpeg?v=1781186133&w=884&h=442&vtcrop=y)](https://www.cnbc.com/2026/07/03/christine-lagarde-ecb-france-election.html)
+
+[Christine Lagarde leaves door open to early ECB exit, as she mulls French politics](https://www.cnbc.com/2026/07/03/christine-lagarde-ecb-france-election.html)
+
+[Mike Sheen](https://www.cnbc.com/mike-sheen/)Fri, Jul 3rd 2026
+
+[![Labor force participation rate falls to lowest in 50 years, outside of Covid era](https://image.cnbcfm.com/api/v1/image/108300154-1777568965605-gettyimages-2273897299-jr_17222_lrhcapzi.jpeg?v=1783012330&w=412&h=442&vtcrop=y)](https://www.cnbc.com/2026/07/02/job-seekers-giving-up-labor-force-participation-rate-falls-to-lowest-in-50-years-outside-of-covid-era.html)
+
+[Labor force participation rate falls to lowest in 50 years, outside of Covid era](https://www.cnbc.com/2026/07/02/job-seekers-giving-up-labor-force-participation-rate-falls-to-lowest-in-50-years-outside-of-covid-era.html)
+
+[Jeff Cox](https://www.cnbc.com/jeff-cox/)Thu, Jul 2nd 2026
+
+[![U.S. job creation cools in June with payrolls growth of just 57,000; unemployment rate at 4.2%](https://image.cnbcfm.com/api/v1/image/108303914-1783007688061-108303914-1778178939793-gettyimages-2275025925-jr_19173_tzqifexs.jpg?v=1783007698&w=412&h=206&vtcrop=y)](https://www.cnbc.com/2026/07/02/jobs-report-june-2026-.html)
+
+[U.S. job creation cools in June with payrolls growth of just 57,000; unemployment rate at 4.2%](https://www.cnbc.com/2026/07/02/jobs-report-june-2026-.html)
+
+[Jeff Cox](https://www.cnbc.com/jeff-cox/)Thu, Jul 2nd 2026
+
+[![EU-China trade tensions collide with air-conditioner boom](https://image.cnbcfm.com/api/v1/image/108328647-1782822624711-gettyimages-2283190980-vcg111650268801.jpeg?v=1782822859&w=412&h=206&vtcrop=y)](https://www.cnbc.com/2026/07/02/european-union-china-meeting-summer-heatwave-trade-imbalance-tariffs-.html)
+
+[EU-China trade tensions collide with air-conditioner boom](https://www.cnbc.com/2026/07/02/european-union-china-meeting-summer-heatwave-trade-imbalance-tariffs-.html)
+
+[Anniek Bao](https://www.cnbc.com/anniek-bao/)Thu, Jul 2nd 2026
+
+[![World Cup could boost the June jobs report by 40,000, Goldman estimates](https://image.cnbcfm.com/api/v1/image/108321366-1781289964765-gettyimages-2280581172-FIFA_WORLD_CUP.jpeg?v=1781290017&w=412&h=206&vtcrop=y)](https://www.cnbc.com/2026/07/01/world-cup-could-boost-the-june-jobs-report-by-40000-goldman-estimates.html)
+
+[World Cup could boost the June jobs report by 40,000, Goldman estimates](https://www.cnbc.com/2026/07/01/world-cup-could-boost-the-june-jobs-report-by-40000-goldman-estimates.html)
+
+[Jeff Cox](https://www.cnbc.com/jeff-cox/)Thu, Jul 2nd 2026
+
+[![Private payrolls rose by 98,000 in June, less than expected, ADP reports](https://image.cnbcfm.com/api/v1/image/108328949-1782851610706-gettyimages-2284068830-_75a0345_48xpws9r.jpeg?v=1782851800&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/07/01/private-payrolls-rose-by-98000-in-june-less-than-expected-adp-reports.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Private payrolls rose by 98,000 in June, less than expected, ADP reports](https://www.cnbc.com/2026/07/01/private-payrolls-rose-by-98000-in-june-less-than-expected-adp-reports.html)
+
+Wed, Jul 1st 2026
+
+[![The next UK prime minister's North Sea oil test](https://image.cnbcfm.com/api/v1/image/108305942-1778618617116-APA_UK_Ops_04_LowRes.jpg?v=1778618953&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/07/01/burnham-north-sea-oil-energy-security.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[The next UK prime minister’s North Sea oil test](https://www.cnbc.com/2026/07/01/burnham-north-sea-oil-energy-security.html)
+
+Wed, Jul 1st 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Do you really love your job? Then you’re not alone, this surprising survey says](https://www.cnbc.com/2026/06/30/surprising-survey-of-american-job-satisfaction-.html)
+
+Tue, Jun 30th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[China widens Japan export curbs, targeting drone makers, nuclear firms and defense institutes](https://www.cnbc.com/2026/06/29/china-japan-export-controls-watch-list-defense-entities.html)
+
+Mon, Jun 29th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Traffic rebounds in Strait of Hormuz but fragile confidence threatens recovery](https://www.cnbc.com/2026/06/26/strait-of-hormuz-shipping-oil-us-iran.html)
+
+Fri, Jun 26th 2026
+
+## Trending Now
+
+- 1
+
+  [Trump asked FIFA to review Balogun’s World Cup game suspension: Reports](https://www.cnbc.com/2026/07/05/trump-fifa-balogun-world-cup-red-card-suspension.html)
+- 2
+
+  [Why Iran may find it difficult to clear its oil inventories even after sanctions relief](https://www.cnbc.com/2026/07/06/iran-oil-supply-hormuz-china-energy.html)
+- 3
+
+  [S&P 500 and Nasdaq futures extend gains after a strong week on Wall Street: Live updates](https://www.cnbc.com/2026/07/05/stock-market-today-live-updates.html)
+- 4
+
+  [Nvidia’s next-gen AI rack system delayed to 2028 on manufacturing snags, SemiAnalysis says](https://www.cnbc.com/2026/07/06/nvidia-kyber-rack-system-delays-manufacturing-taiwan-rubin-chips-.html)
+- 5
+
+  [I’m a psychologist who studies couples: Don’t ignore these 7 relationship ‘red flags’—they’re ‘easy to miss’](https://www.cnbc.com/2026/07/05/im-a-psychologist-who-studies-couples-dont-ignore-these-7-relationship-red-flags.html)
+
+## More In Economy
+
+[![UN agency pauses Hormuz ship evacuation plan after vessel attack](https://image.cnbcfm.com/api/v1/image/108321902-17815304562026-06-11t130233z_286950723_rc2prlahy3d2_rtrmadp_0_iran-crisis.jpeg?v=1781530476&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/06/26/strait-of-hormuz-vessel-attack-evacuation-pauses-iran-united-states-peace-deal-negotiation-.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[UN agency pauses Hormuz ship evacuation plan after vessel attack](https://www.cnbc.com/2026/06/26/strait-of-hormuz-vessel-attack-evacuation-pauses-iran-united-states-peace-deal-negotiation-.html)
+
+Thu, Jun 25th 2026
+
+[![Core inflation rate hit 3.4% in May, highest since October 2023, Fed’s preferred gauge shows](https://image.cnbcfm.com/api/v1/image/108316925-1780594933899-gettyimages-2279844260-_dsc0609.jpeg?v=1780594959&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/06/25/pce-inflation-report-may-2026-.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Core inflation rate hit 3.4% in May, highest since October 2023, Fed’s preferred gauge shows](https://www.cnbc.com/2026/06/25/pce-inflation-report-may-2026-.html)
+
+Thu, Jun 25th 2026
+
+[![Trump pledges fast U.S. response for Venezuela as strong earthquakes kill hundreds](https://image.cnbcfm.com/api/v1/image/108326745-1782391611091-gettyimages-2282650712-TRUMP_STATE_FAIR.jpeg?v=1782391794&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/06/25/venezuela-earthquakes-casualties-trump-pledges-support-aids-oil-.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Trump pledges fast U.S. response for Venezuela as strong earthquakes kill hundreds](https://www.cnbc.com/2026/06/25/venezuela-earthquakes-casualties-trump-pledges-support-aids-oil-.html)
+
+Thu, Jun 25th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Iran declares new Hormuz route ‘unacceptable,’ warns on transit](https://www.cnbc.com/2026/06/25/iran-navy-shipping-recovery-strait-of-hormuz-unauthorized-routes-us-fragile-mou-.html)
+
+Thu, Jun 25th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Factory job cuts in June neared financial crisis and Covid levels, S&P says](https://www.cnbc.com/2026/06/23/factory-job-cuts-reported-around-financial-crisis-and-covid-levels-for-june-sp-says.html)
+
+Tue, Jun 23rd 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[U.S. issues sweeping Iran oil sanctions waivers, unlocking billions in revenue for Tehran](https://www.cnbc.com/2026/06/23/us-iran-oil-sanction-relief-strait-of-hormuz-peace-deal-.html)
+
+Tue, Jun 23rd 2026
+
+[![Struggling to find a job? Try looking in Nevada](https://image.cnbcfm.com/api/v1/image/108265275-1770931196667-gettyimages-2158788328-vg-5056-2.jpeg?v=1770931221&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/06/19/nevada-workforce-job-market.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Struggling to find a job? Try looking in Nevada](https://www.cnbc.com/2026/06/19/nevada-workforce-job-market.html)
+
+Fri, Jun 19th 2026
+
+[![Hormuz relief may not ease the economic toll that's already 'baked in,' analysts warn](https://image.cnbcfm.com/api/v1/image/108323839-1781798569930-108323839-1781785965962-2026-06-17T191059Z_754832867_RC2PVLAKI4UI_RTRMADP_3_IRAN-CRISIS.JPG?v=1781798582&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/06/19/hormuz-relief-may-not-ease-the-economic-toll-thats-already-baked-in-analysts-warn.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Hormuz relief may not ease the economic toll that’s already ‘baked in,’ analysts warn](https://www.cnbc.com/2026/06/19/hormuz-relief-may-not-ease-the-economic-toll-thats-already-baked-in-analysts-warn.html)
+
+Fri, Jun 19th 2026
+
+[![Trump claims Iran deal is an 'unconditional surrender,': Axios ](https://image.cnbcfm.com/api/v1/image/108322039-1781540736323-gettyimages-2281727152-090a9205_fmxl5fym.jpeg?v=1781828762&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/06/19/trump-claims-iran-deal-is-unconditional-surrender-axios-.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Trump claims Iran deal is an ‘unconditional surrender,’: Axios](https://www.cnbc.com/2026/06/19/trump-claims-iran-deal-is-unconditional-surrender-axios-.html)
+
+Thu, Jun 18th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Bank of England holds interest rates at 3.75% amid Iran war peace prospects](https://www.cnbc.com/2026/06/18/inflation-interest-rates-uk-bank-of-england-iran-deal.html)
+
+Thu, Jun 18th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Here are the five big takeaways from Kevin Warsh’s first meeting as Fed chairman](https://www.cnbc.com/2026/06/17/here-are-the-five-big-takeaways-from-kevin-warshs-first-meeting-as-fed-chairman.html)
+
+Thu, Jun 18th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[UK inflation holds steady at 2.8% in May](https://www.cnbc.com/2026/06/17/inflation-uk-cpi-interest-rates-bank-of-england.html)
+
+Wed, Jun 17th 2026
+
+[![Three Iranian tankers exit U.S. blockade for first time in months](https://image.cnbcfm.com/api/v1/image/108293889-1776687628437-gettyimages-2271672740-dod_11163988700_00_17_14still003.jpeg?v=1776687691&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/06/17/iranian-tankers-oil-shipment-us-iran-deal-strait-of-hormuz-.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Three Iranian tankers exit U.S. blockade for first time in months](https://www.cnbc.com/2026/06/17/iranian-tankers-oil-shipment-us-iran-deal-strait-of-hormuz-.html)
+
+Wed, Jun 17th 2026
+
+[![UK economy shrank 0.1% in April as Iran conflict weighed on growth](https://image.cnbcfm.com/api/v1/image/108320523-1781203803330-gettyimages-2271765909-AA_21042026_2747740.jpeg?v=1781203834&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/06/12/uk-gdp-april-iran-war-growth.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[UK economy shrank 0.1% in April as Iran conflict weighed on growth](https://www.cnbc.com/2026/06/12/uk-gdp-april-iran-war-growth.html)
+
+Fri, Jun 12th 2026
+
+[![A Chinese start-up's dilemma exposes cracks in Beijing's tech funding machine](https://image.cnbcfm.com/api/v1/image/108319714-1781109681395-gettyimages-2279733007-vcg111646049117.jpeg?v=1781109752&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/06/12/a-chinese-start-ups-dilemma-exposes-cracks-in-beijings-tech-funding.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[A Chinese start-up’s dilemma exposes cracks in Beijing’s tech funding machine](https://www.cnbc.com/2026/06/12/a-chinese-start-ups-dilemma-exposes-cracks-in-beijings-tech-funding.html)
+
+Thu, Jun 11th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Wholesale prices rose 1.1% in May, more than expected, on surge in energy](https://www.cnbc.com/2026/06/11/producer-price-index-may-2026-.html)
+
+Thu, Jun 11th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[ECB hikes interest rates for first time since 2023 as Iran war ramps up energy costs](https://www.cnbc.com/2026/06/11/ecb-hikes-interest-rates.html)
+
+Thu, Jun 11th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Consumer prices rose 4.2% annually in May, highest in three years](https://www.cnbc.com/2026/06/10/cpi-inflation-report-may-2026.html)
+
+Wed, Jun 10th 2026
+
+[![Energy prices take center stage as the ECB prepares to decide on rates](https://image.cnbcfm.com/api/v1/image/108268773-1771879771710-gettyimages-2262709263-NABE_ECONOMIC_CONFERENCE.jpeg?v=1771879804&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/06/10/ecb-rate-hike-energy-prices-inflation.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Energy prices take center stage as the ECB prepares to decide on rates](https://www.cnbc.com/2026/06/10/ecb-rate-hike-energy-prices-inflation.html)
+
+Thu, Jun 11th 2026
+
+[![The May inflation numbers are due out Wednesday morning. Here's what to expect](https://image.cnbcfm.com/api/v1/image/108307155-1778782582311-gettyimages-2276257565-_75a4177_xw8cb9fm.jpeg?v=1781033609&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/06/09/the-may-inflation-numbers-are-due-out-wednesday-morning-heres-what-to-expect.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[The May inflation numbers are due out Wednesday morning. Here’s what to expect](https://www.cnbc.com/2026/06/09/the-may-inflation-numbers-are-due-out-wednesday-morning-heres-what-to-expect.html)
+
+Tue, Jun 9th 2026
+
+[![Household worries over finances hit highest since July 2022, Fed survey shows](https://image.cnbcfm.com/api/v1/image/108316927-1780595060821-gettyimages-2279844262-_dsc0614.jpeg?v=1780595090&w=410&h=212&vtcrop=y)](https://www.cnbc.com/2026/06/08/household-financial-worries-at-highest-level-since-2022-new-york-fed-says.html)
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Household worries over finances hit highest since July 2022, Fed survey shows](https://www.cnbc.com/2026/06/08/household-financial-worries-at-highest-level-since-2022-new-york-fed-says.html)
+
+Mon, Jun 8th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[The May jobs report will be released Friday. Here’s what to expect](https://www.cnbc.com/2026/06/04/the-may-jobs-report-will-be-released-friday-heres-what-to-expect.html)
+
+Thu, Jun 4th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Long-term unemployment is surging in the U.S., costing workers and the economy](https://www.cnbc.com/2026/06/04/long-term-unemployment-economy-jobs.html)
+
+Thu, Jun 4th 2026
+
+[Economy](https://www.cnbc.com/economy/)
+
+[Private payrolls grew by 122,000 in May, stronger than expected, ADP reports](https://www.cnbc.com/2026/06/03/adp-jobs-report-may-2026-payrolls-increase-by-122000.html)
+
+Wed, Jun 3rd 2026
+
+Load More
   </main_body>
 </extraction_result>
 
 
 === FULL RAW HTML ===
 
-<div class="BrandPageWrapper-contentWrapper" role="main" id="MainContentContainer"><p id="MainContent" tabindex="-1"></p></div>

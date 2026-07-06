@@ -20,15 +20,10 @@ v1.0.2 changes:
 from __future__ import annotations
 
 import json
-import os
-import sys
 import time
-_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _pkg_dir not in sys.path:
-    sys.path.insert(0, _pkg_dir)
-from fetcher.camofox_client import CamoFoxClient
 
-import re
+from ..fetcher.camofox_client import CamoFoxClient
+
 from typing import List, Optional
 
 

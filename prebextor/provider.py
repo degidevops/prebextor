@@ -49,18 +49,13 @@ try:
 except Exception:  # pragma: no cover
     WebSearchProvider = object  # type: ignore[misc,assignment]
 
-import sys, os
-_pkg = os.path.dirname(os.path.abspath(__file__))
-if _pkg not in sys.path:
-    sys.path.insert(0, _pkg)
-
-from fetcher.camofox_client import CamoFoxClient
-from pipeline.mapper import StructuralMapper
-from pipeline.pruner import SurgicalPruner
-from pipeline.transform import MarkdownConverter, BoundaryWrapper
-from pipeline.iframe_extractor import IframeExtractor
-from pipeline.scorer import ContentAwareScorer
-from pipeline.validator import ContentValidator
+from .fetcher.camofox_client import CamoFoxClient
+from .pipeline.mapper import StructuralMapper
+from .pipeline.pruner import SurgicalPruner
+from .pipeline.transform import MarkdownConverter, BoundaryWrapper
+from .pipeline.iframe_extractor import IframeExtractor
+from .pipeline.scorer import ContentAwareScorer
+from .pipeline.validator import ContentValidator
 
 
 def _extract_title_from_text(text: str) -> str:
@@ -392,8 +387,6 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
     
     async def _extract_one_no_cache(self, url: str, **kwargs: Any) -> Dict[str, Any]:
         """Extract single URL - full pipeline, no cache check."""
-        scroll = bool(kwargs.get("scroll_to_bottom", False))
-        wait_ms = int(kwargs.get("wait_after_scroll", 3000))
         user = f"prebextor_{uuid.uuid4().hex}"
         
         tab_id = self._camofox.open_tab(url, user=user)
@@ -613,8 +606,6 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Apply cached structure to fresh HTML fetch."""
-        scroll = bool(kwargs.get("scroll_to_bottom", False))
-        wait_ms = int(kwargs.get("wait_after_scroll", 3000))
         user = f"prebextor_{uuid.uuid4().hex}"
         
         tab_id = self._camofox.open_tab(url, user=user)
@@ -861,7 +852,6 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         try:
             # Run async batch extraction - detect if already in event loop
             try:
-                loop = asyncio.get_running_loop()
                 # We're in a running loop, create task and wait
                 import concurrent.futures
                 with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:

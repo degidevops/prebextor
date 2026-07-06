@@ -14,18 +14,12 @@ cross-origin iframe that cannot be accessed via contentDocument.
 from __future__ import annotations
 
 
-import os
-import sys
-_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _pkg_dir not in sys.path:
-    sys.path.insert(0, _pkg_dir)
-from fetcher.camofox_client import CamoFoxClient
+from ..fetcher.camofox_client import CamoFoxClient
 
 import json
-import re
 import time
 import uuid
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 
 

@@ -12,12 +12,7 @@ v1.0.1 enhancements:
 from __future__ import annotations
 
 
-import os
-import sys
-_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _pkg_dir not in sys.path:
-    sys.path.insert(0, _pkg_dir)
-from fetcher.camofox_client import CamoFoxClient
+from ..fetcher.camofox_client import CamoFoxClient
 
 import json
 from typing import List

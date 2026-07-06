@@ -273,7 +273,7 @@ for category, urls in CATEGORIES.items():
             check("No <style in raw", "<style" not in raw.lower())
 
             # ── Performance ────────────────────────────────────────
-            check(f"Elapsed < 30s", elapsed < 30, f"elapsed: {elapsed:.1f}s")
+            check("Elapsed < 30s", elapsed < 30, f"elapsed: {elapsed:.1f}s")
 
             # ── Store result ───────────────────────────────────────
             cat_results.append({
@@ -375,30 +375,30 @@ if all_success:
     pruned = [r["pruned_total"] for r in all_success]
     times = [r["elapsed"] for r in all_success]
 
-    print(f"\nConfidence:")
+    print("\nConfidence:")
     print(f"  Min:    {min(confs):.3f}")
     print(f"  Max:    {max(confs):.3f}")
     print(f"  Mean:   {sum(confs)/len(confs):.3f}")
     print(f"  Median: {sorted(confs)[len(confs)//2]:.3f}")
 
-    print(f"\nScored blocks:")
+    print("\nScored blocks:")
     print(f"  Min:    {min(scored)}")
     print(f"  Max:    {max(scored)}")
     print(f"  Mean:   {sum(scored)/len(scored):.1f}")
 
-    print(f"\nPruned nodes:")
+    print("\nPruned nodes:")
     print(f"  Min:    {min(pruned)}")
     print(f"  Max:    {max(pruned)}")
     print(f"  Mean:   {sum(pruned)/len(pruned):.1f}")
 
-    print(f"\nTiming:")
+    print("\nTiming:")
     print(f"  Min:    {min(times):.1f}s")
     print(f"  Max:    {max(times):.1f}s")
     print(f"  Mean:   {sum(times)/len(times):.1f}s")
 
     # Validation pass distribution
     passes = [r.get("validation_pass", 0) for r in all_success]
-    print(f"\nValidation pass distribution:")
+    print("\nValidation pass distribution:")
     for p in (1, 2, 3):
         count = sum(1 for v in passes if v == p)
         print(f"  Pass {p}: {count} ({count/max(len(passes),1)*100:.0f}%)")

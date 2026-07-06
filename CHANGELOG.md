@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.1] — 2026-07-06
+
+### Changed
+- **Version bump 1.2.0 → 1.2.1** — Audit cleanup release.
+- **Package structure** — `plugin.yaml` copied into `prebextor/` directory for proper packaging.
+- **Test cleanup** — removed fragile `types.ModuleType` injection hacks from test scripts; tests now use direct `from prebextor.pipeline import ...` imports.
+
+### Verified
+- `tests/test_v101_content_aware.py`: 52/52 PASS
+- `tests/validate_v102.py`: 13/13 PASS
+- `tests/validate_content.py`: PASS (smoke)
+
+---
+
 ## [Unreleased] — 2026-07-05
 
 ### Fixed

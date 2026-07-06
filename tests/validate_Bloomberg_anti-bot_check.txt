@@ -1,32 +1,14 @@
 # Bloomberg (anti-bot check)
 # URL: https://www.bloomberg.com
 # Title: Bloomberg - Are you a robot?
-# Selector: section.main
-# Confidence: 0.354
-# Content length: 353 chars
-# Raw length: 728 chars
+# Selector: 
+# Confidence: 0.000
+# Content length: 0 chars
+# Raw length: 0 chars
 
 === FULL CONTENT ===
 
-<extraction_result>
-  <metadata>
-  Title: Bloomberg - Are you a robot?
-  URL: https://www.bloomberg.com
-  Timestamp: 2026-06-23T02:10:28.427549+00:00
-  </metadata>
-
-  <main_body>
-## We've detected unusual activity from your computer network
-
-To continue, please click the box below to let us know you're not a robot.
-  </main_body>
-</extraction_result>
 
 
 === FULL RAW HTML ===
 
-<section class="box main">
-                <h2 class="main__heading">We've detected unusual activity from your computer network</h2>
-                <p class="continue">To continue, please click the box below to let us know you're not a robot.</p>
-                <div id="px-captcha" style="display: block; min-width: 310px;"><iframe style="display: none; width: 100%; height: 102px; border: 0; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none;" token="65e1d16ba72878fcd1a866d83d386ea9334ef58ce1e003b546f42c557df53f2f6e77dc86f8eb25bacad3fb93ee72c108ff48d050dd93651d190a10c5c6085885" title="Human verification challenge"></iframe></div>
-            </section>

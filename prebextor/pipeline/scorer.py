@@ -17,15 +17,9 @@ High score = likely content. Low score = likely noise.
 from __future__ import annotations
 
 import json
-import os
-import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
-# Support both package import and direct file import (_v101: fixed for testability)
-_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _pkg_dir not in sys.path:
-    sys.path.insert(0, _pkg_dir)
-from fetcher.camofox_client import CamoFoxClient
+from ..fetcher.camofox_client import CamoFoxClient
 
 
 # -- Tunable thresholds --

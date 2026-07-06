@@ -32,7 +32,7 @@ from .tool_extract import (
 
 from .provider import PrebextorProvider
 
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 __all__ = ["PrebextorProvider"]
 
 # Skill that ships WITH this plugin. The path is resolved at register-time

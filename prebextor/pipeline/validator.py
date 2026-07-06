@@ -13,15 +13,9 @@ Key principle: It's better to return some noise than to lose content.
 from __future__ import annotations
 
 import json
-import os
-import sys
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
-# Support both package import and direct file import
-_pkg_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _pkg_dir not in sys.path:
-    sys.path.insert(0, _pkg_dir)
-from fetcher.camofox_client import CamoFoxClient
+from ..fetcher.camofox_client import CamoFoxClient
 
 # Lazy import to avoid circular deps during module loading
 _scorer_mod = None
