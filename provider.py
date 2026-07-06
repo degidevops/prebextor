@@ -532,7 +532,13 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                 "url": url,
                 "title": title,
                 "content": xml_wrapped,
-                "raw_content": raw_html,
+                # raw_content intentionally empty: web_tools._extract dispatcher
+                # prefers raw_content over content when present, which would
+                # substitute the pre-pruning HTML for the clean markdown+XML
+                # output we built. Leaving it blank forces the dispatcher to
+                # fall back to `content` so consumers receive the processed
+                # markdown+XML boundary wrap (the prebextor contract).
+                "raw_content": "",
                 "metadata": {
                     "selector": selector,
                     "extractor": "prebextor-v3.1",
@@ -732,7 +738,8 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                 "url": url,
                 "title": title,
                 "content": xml_wrapped,
-                "raw_content": raw_html,
+                # raw_content intentionally empty — see full-pipeline path comment.
+                "raw_content": "",
                 "metadata": {
                     "selector": selector,
                     "extractor": "prebextor-v3.1",
