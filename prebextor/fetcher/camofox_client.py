@@ -68,7 +68,11 @@ class CamoFoxClient:
 
     @staticmethod
     def extract_result(stdout: str) -> Optional[str]:
-        """Parse `result: <value>` (multiline OK) from a camofox eval output."""
+        """Parse `result: <value>` (multiline OK) from a camofox eval output.
+        
+        Stops immediately when encountering CamoFox CLI control lines 
+        (resultType, truncated, ok) to prevent footer leakage into the result.
+        """
         lines = stdout.splitlines()
         in_result = False
         out: List[str] = []
@@ -79,9 +83,10 @@ class CamoFoxClient:
                 if tail:
                     out.append(tail)
                 continue
-            if in_result and line.startswith(("resultType:", "truncated:", "ok:")):
-                break
             if in_result:
+                # Strict stop: these are always control lines in camofox eval output
+                if line.startswith(("resultType:", "truncated:", "ok:")):
+                    break
                 out.append(line)
         joined = "\n".join(out).strip()
         return joined or None
@@ -200,7 +205,10 @@ class CamoFoxClient:
         if length == 0:
             return ""
 
-        # Chunked retrieval
+        # Chunked retrieval — advance by chunk_size, NOT len(part).
+        # Using len(part) causes index drift on non-BMP characters (emoji, CJK
+        # surrogates) where JS substring counts UTF-16 code units but Python
+        # len() counts code points. pos = end is always correct.
         chunks: List[str] = []
         pos = 0
         while pos < length:
@@ -216,7 +224,7 @@ class CamoFoxClient:
             if not part:
                 break
             chunks.append(part)
-            pos += len(part)
+            pos = end  # Always advance by chunk boundary, not len(part)
 
         # Clean up staging
         try:

@@ -846,15 +846,23 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
                     return await self._extract_one(url, **kwargs)
             
             tasks = [_extract_with_semaphore(url) for url in urls]
-            raw_results = await asyncio.gather(*tasks, return_exceptions=True)
-            return raw_results  # type: ignore[return-value]
+            # Use return_exceptions=True to prevent one failure from killing the batch
+            return await asyncio.gather(*tasks, return_exceptions=True)
         
         try:
-            # Run async batch extraction - detect if already in event loop
+            # Stable loop management:
+            # 1. Try to get current running loop (for async contexts)
+            # 2. If no loop, use asyncio.run (for sync contexts)
             try:
-                # We're in a running loop, create task and wait
+                loop = asyncio.get_running_loop()
+                # If we are in a running loop, we cannot use asyncio.run().
+                # We must create a task and wait for it, but the provider.extract
+                # is a sync method. This is a fundamental conflict.
+                # To solve this, we use a temporary thread to run the async batch
+                # and wait for the result, avoiding loop conflicts.
                 import concurrent.futures
                 with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                    # We use a separate loop in the thread to avoid blocking the main loop
                     future = executor.submit(asyncio.run, _batch_extract())
                     raw_results = future.result()
             except RuntimeError:

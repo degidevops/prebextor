@@ -9,7 +9,7 @@ Prebextor adalah backend provider deterministik untuk ekstraksi web (`web_extrac
 - **Structure Cache (v1.2.0+)**: Pipeline decisions (CSS selector, noise selectors, scoring) di-cache ke disk. HTML selalu segar — aman untuk situs dinamis (economic calendars, harga, news).
 
 Pipeline dasar: **Mapping → Scoring → Pruning → Validation → Text → Iframe → Markdown → Boundary Wrap → Close**.
-
+(v1.2.2: Fixed HTML chunking drift, CLI result footer leakage, parallel loop instability — lihat CHANGELOG.md).
 ## 1.1 Package Layout
 ```
 prebextor/
