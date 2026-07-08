@@ -4,7 +4,7 @@
 
 ### Gejala
 - `web.extract_backend: prebextor` sudah diset di `config.yaml`
-- Plugin Prebextor sudah ter-copy ke `~/.hermes/plugins/web/prebextor/`
+- Plugin Prebextor sudah ter-copy ke `~/.hermes/plugins/prebextor/`
 - Tapi `web_extract` error: *"SearXNG is a search-only backend and cannot extract URL content"*
 
 ### Root Cause
@@ -134,7 +134,7 @@ hermes tools list | grep prebextor
 ┌─────────────────────────────────────────────────────────────┐
 │  Plugin System (hermes_cli/plugins.py)                     │
 │  ├── _ensure_plugins_discovered()                          │
-│  │   └── loads ~/.hermes/plugins/web/prebextor/__init__.py │
+│  │       └── loads ~/.hermes/plugins/prebextor/__init__.py │
 │  │       └── register(ctx) → registers BOTH:              │
 │  │           1. web_search_provider (PrebextorProvider)    │
 │  │           2. register_tool('prebextor_extract')         │
@@ -144,7 +144,7 @@ hermes tools list | grep prebextor
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  Prebextor Plugin (~/.hermes/plugins/web/prebextor/)       │
+│  Prebextor Plugin (~/.hermes/plugins/prebextor/)       │
 │  ├── plugin.yaml (kind: backend, provides_web_providers)   │
 │  ├── __init__.py → register(ctx) — dual-mode: provider    │
 │  │                              + standalone tool          │
@@ -182,12 +182,12 @@ hermes tools list | grep prebextor
 | `~/.hermes/hermes-agent/tools/web_tools.py` | Backend selection & dispatch (optional fix) |
 | `~/.hermes/hermes-agent/agent/web_search_registry.py` | Registry implementation |
 | `~/.hermes/hermes-agent/hermes_cli/plugins.py` | Plugin discovery & registration |
-| `~/.hermes/plugins/web/prebextor/__init__.py` | Plugin entry point — registers provider + tool + skill |
-| `~/.hermes/plugins/web/prebextor/provider.py` | PrebextorProvider implementation |
-| `~/.hermes/plugins/web/prebextor/tool_extract.py` | Standalone `prebextor_extract` tool handler |
-| `~/.hermes/plugins/web/prebextor/pipeline/*.py` | Mapper, Scorer, Pruner, Validator, Transformer, Iframe |
-| `~/.hermes/plugins/web/prebextor/fetcher/camofox_client.py` | CamoFox CLI wrapper |
-| `~/.hermes/plugins/web/prebextor/skill_internal/SKILL.md` | Embedded install skill |
+| `~/.hermes/plugins/prebextor/__init__.py` | Plugin entry point — registers provider + tool + skill |
+| `~/.hermes/plugins/prebextor/provider.py` | PrebextorProvider implementation |
+| `~/.hermes/plugins/prebextor/tool_extract.py` | Standalone `prebextor_extract` tool handler |
+| `~/.hermes/plugins/prebextor/pipeline/*.py` | Mapper, Scorer, Pruner, Validator, Transformer, Iframe |
+| `~/.hermes/plugins/prebextor/fetcher/camofox_client.py` | CamoFox CLI wrapper |
+| `~/.hermes/plugins/prebextor/skill_internal/SKILL.md` | Embedded install skill |
 
 ---
 

@@ -1,6 +1,6 @@
 """Prebextor — Deterministic Extraction Engine.
 
-User plugin for Hermes Agent (deployed at ~/.hermes/plugins/web/prebextor/).
+User plugin for Hermes Agent (deployed at ~/.hermes/plugins/prebextor/).
 
 Pipeline v3.1 (per URL, structure-cache aware):
   open_tab -> StructuralMapper (anti-bot check + container discovery)
@@ -37,7 +37,7 @@ __all__ = ["PrebextorProvider"]
 
 # Skill that ships WITH this plugin. The path is resolved at register-time
 # relative to this file so it works from any installed copy (project source,
-# ~/.hermes/plugins/web/prebextor/, pip-installed, etc).
+# ~/.hermes/plugins/prebextor/, pip-installed, etc).
 _EMBEDDED_SKILL_PATH = Path(__file__).parent / "skill_internal" / "SKILL.md"
 _EMBEDDED_SKILL_NAME = "install"
 

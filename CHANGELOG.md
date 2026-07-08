@@ -23,6 +23,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.2] — 2026-07-08
 
 ### Fixed
+- **Install path correction** — Hermes plugin loader scans `plugins/<name>/`
+  directly and requires `__init__.py` + `plugin.yaml` at that root. The correct
+  install is the **`prebextor/` sub-folder** as the plugin root, NOT the whole
+  repo. Use:
+  ```bash
+  hermes plugins install https://github.com/degidevops/prebextor/tree/main/prebextor
+  ```
+  (The bare `hermes plugins install degidevops/prebextor` clones the repo root,
+  which has no `__init__.py` at root → `register()` never runs →
+  `prebextor_extract` tool does not appear.)
+- **`deploy.sh`** — now copies the *contents* of `prebextor/` into
+  `~/.hermes/plugins/prebextor/` (flat). Previously copied `prebextor/` as a
+  nested subdir (`web/prebextor/prebextor/`), double-nesting the package.
+
+### Changed
+- **Documentation paths** — all docs (`README.md`, `INTEGRATION.md`,
+  `AUDIT_REPORT.md`, embedded `skill_internal/SKILL.md`, `__init__.py`
+  docstring) updated from the obsolete `~/.hermes/plugins/web/prebextor/` to the
+  correct flat `~/.hermes/plugins/prebextor/`.
+- **Version sync** — `prebextor/plugin.yaml` and embedded skill `version`
+  bumped `1.2.0 → 1.2.2` to match `__init__.py` / `pyproject.toml` / root
+  `plugin.yaml`.
+
+### Verified
+- `prebextor_extract` registers cleanly via `register(ctx)` (provider
+  `prebextor` + tool `prebextor_extract` + skill `install`).
+- Live extraction of `https://example.com` succeeds (pipeline `prebextor-v3.1`,
+  structure cache hit).
+
+---
+
+### Fixed (continued — pipeline bugfixes)
 - **HTML Chunking Truncation (BUG-5)** — `CamoFoxClient.get_html` now advances `pos = end` instead of `pos += len(part)`. Previously, `len(part)` (JSON string length) caused index drift on non-BMP characters and escaped strings, leading to truncated or skipped content on large pages (e.g., WyckoffAnalytics.com).
 - **CLI Result Parser Leak (BUG-6)** — `CamoFoxClient.extract_result` now implements strict footer detection. It stops immediately upon hitting `resultType:`, `truncated:`, or `ok:`. Previously, it was too lenient, allowing control lines to leak into the result, which corrupted CSS selectors (e.g., `body.class\nresultType: string`) and caused 0-char extractions.
 - **Parallel Loop Instability (BUG-7)** — Refactored `PrebextorProvider.extract` to handle `asyncio` loops more robustly. Replaced fragile `ThreadPoolExecutor` logic with a stable pattern that detects running loops and uses isolated threads for sync-to-async bridging, preventing loop conflicts and timeouts during high-concurrency batches.
@@ -33,10 +65,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Tool Integration**: `prebextor_extract` tool verified working via Hermes Agent.
 
 ---
+
 ## [1.2.1] — 2026-07-06
 
 ## [1.2.0] — 2026-07-04
-
 ### Added
 - **Structure Cache** — `StructureCache` class caches pipeline decisions (CSS selector, noise selectors, scoring results, confidences) to `~/.cache/prebextor_structure/` with configurable TTL (default 7 days). **NOT content** — HTML is fetched fresh every time, structure reapplied. Safe for dynamic sites (economic calendars, prices, news).
 - **CachedStructure dataclass** — Serializes pipeline structure decisions without any content data.

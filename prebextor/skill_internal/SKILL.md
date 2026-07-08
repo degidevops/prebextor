@@ -1,7 +1,7 @@
 ---
 name: prebextor-install
 description: "Install, verify, and uninstall Prebextor — the procedure is bundled INSIDE the plugin so the install lifecycle travels with the code itself. Opt-in via skill_view('prebextor:install')."
-version: 1.2.0
+version: 1.2.2
 platforms: [linux, macos]
 metadata:
   hermes:
@@ -35,7 +35,7 @@ Use this embedded skill when:
 ## Source layout (when bundled with plugin)
 
 ```
-<plugin_root>/                     e.g. ~/.hermes/plugins/web/prebextor/
+<plugin_root>/                     e.g. ~/.hermes/plugins/prebextor/
 ├── __init__.py                    # register(ctx) — registers provider + tool + THIS skill
 ├── provider.py                    # WebSearchProvider subclass + StructureCache + Metrics
 ├── tool_extract.py                # prebextor_extract standalone tool handler
@@ -53,13 +53,20 @@ the standalone tool (`prebextor_extract`), and this install skill.
 
 ## Install procedure
 
-1.  **Confirm source** is at the plugin install path (typically
-    `~/.hermes/plugins/web/prebextor/`). If missing, use the Hermes CLI
-    plugin install command or copy via `cp -rL`.
+1.  **Install via Hermes CLI** (preferred) — pass the **sub-folder path** so
+    the installer clones only `prebextor/` as the plugin root:
+    ```bash
+    hermes plugins install https://github.com/degidevops/prebextor/tree/main/prebextor
+    hermes plugins enable prebextor
+    # restart gateway from a shell OUTSIDE the running gateway
+    ```
+    Do NOT use `hermes plugins install degidevops/prebextor` (whole repo) —
+    the repo root has no `__init__.py`, so `register()` never runs and the
+    `prebextor_extract` tool won't appear.
 
-2.  **Enable the plugin** via `hermes plugins list` then
-    `hermes plugins install <source>` (or symlink/copy manually to
-    `~/.hermes/plugins/web/prebextor/`).
+2.  **Confirm source** is at the plugin install path
+    (`~/.hermes/plugins/prebextor/`) with `__init__.py` + `plugin.yaml` at
+    that root.
 
 3.  **Verify** the plugin loaded:
     ```bash
@@ -67,7 +74,7 @@ the standalone tool (`prebextor_extract`), and this install skill.
     # Should show: prebextor (enabled)
 
     python3 -c "
-    import sys; sys.path.insert(0, '$HOME/.hermes/plugins/web')
+    import sys; sys.path.insert(0, '$HOME/.hermes/plugins')
     from prebextor import PrebextorProvider
     p = PrebextorProvider()
     print(p.name, p.supports_extract(), p.is_available())
@@ -84,7 +91,7 @@ the standalone tool (`prebextor_extract`), and this install skill.
 5.  **Smoke-test** native extraction:
     ```bash
     python3 -c "
-    import sys; sys.path.insert(0, '$HOME/.hermes/plugins/web')
+    import sys; sys.path.insert(0, '$HOME/.hermes/plugins')
     from prebextor import PrebextorProvider
     p = PrebextorProvider()
     r = p.extract(['https://example.com'])
@@ -106,7 +113,7 @@ tool bypasses this config — it works independently.
 
 ```bash
 # Remove plugin
-rm -rf ~/.hermes/plugins/web/prebextor/
+rm -rf ~/.hermes/plugins/prebextor/
 
 # Revert config if you set it
 hermes config set web.extract_backend searxng   # or your previous backend

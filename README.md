@@ -40,14 +40,40 @@ Provider mengimplementasikan kontrak `WebSearchProvider` dari Hermes Agent core:
 - `is_available()`: Cek ketersediaan CamoFox CLI.
 
 ### Plugin Registration
-1. Path plugin: `~/.hermes/plugins/web/prebextor/`.
+1. Path plugin: `~/.hermes/plugins/prebextor/` (flat — Hermes loader scans `plugins/<name>/` directly, expecting `__init__.py` + `plugin.yaml` at that root).
 2. Dual-mode registration otomatis via `register(ctx)` di `__init__.py`.
 3. Skill internal `prebextor:install` ter-bundle didalam plugin (reachable via `skill_view('prebextor:install')`).
 
 ## 3. Installation Guide
-1. **Dependencies**: `markdownify>=0.11`, `beautifulsoup4>=4.12`, `pyyaml>=6.0` terinstal di environment Hermes.
-2. **Plugin Install**: Gunakan perintah Hermes CLI (lihat dokumen install skill untuk detail).
-3. **Verification**: Jalankan `hermes tools list` untuk memastikan `web.prebextor_extract` muncul.
+
+### A. Install via Hermes CLI (RECOMMENDED)
+Prebextor lives in the `prebextor/` sub-folder of the repo. Pass the **sub-folder path** to `hermes plugins install` so the installer clones only that directory as the plugin root (do NOT clone the whole repo root — it has no `__init__.py` at root and `register()` would never be called):
+
+```bash
+# Correct — installs the prebextor/ subfolder as the plugin root
+hermes plugins install https://github.com/degidevops/prebextor/tree/main/prebextor
+
+# Enable + restart gateway
+hermes plugins enable prebextor
+hermes gateway restart   # from a shell OUTSIDE the running gateway
+```
+
+The installer supports GitHub sub-directory URLs (`/tree/<branch>/<path>`) and will deploy only that subdir to `~/.hermes/plugins/prebextor/`.
+
+> ⚠️ Wrong (what fails): `hermes plugins install degidevops/prebextor` (whole repo) → clones root, which lacks `__init__.py` at root → `prebextor_extract` tool never registers.
+
+### B. Manual deploy (alternative)
+Use `deploy.sh` — it copies the *contents* of `prebextor/` into `~/.hermes/plugins/prebextor/` (flat, no double-nesting):
+```bash
+./deploy.sh
+hermes plugins enable prebextor
+```
+
+### Verification
+Jalankan `hermes tools list` untuk memastikan `web.prebextor_extract` muncul (setelah gateway restart).
+
+### Dependencies
+`markdownify>=0.11`, `beautifulsoup4>=4.12`, `pyyaml>=6.0` terinstal di environment Hermes. CamoFox CLI must be on `PATH`.
 
 ### Direct usage (tanpa config)
 ```python

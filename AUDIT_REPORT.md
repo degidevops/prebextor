@@ -181,7 +181,7 @@ E2E scripts butuh CamoFox + browser → tidak dijalanin saat audit. Historis: v1
 
 1. Fix test path references: ganti `PROJECT_ROOT` di test scripts ke `prebextor/PROJECT_ROOT` atau `os.path.join(PROJECT_ROOT, 'prebextor')`
 2. Run `mypy prebextor/ --ignore-missing-imports` dan fix typing issues jika ada
-3. Deploy ke `~/.hermes/plugins/web/prebextor/` dan restart Hermes
+3. Deploy ke `~/.hermes/plugins/prebextor/` dan restart Hermes
 
 ### 7.2. Medium-Term (Feature Enhancement)
 
