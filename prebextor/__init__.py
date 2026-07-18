@@ -27,12 +27,17 @@ from pathlib import Path
 from .tool_extract import (
     PREBEXTOR_EXTRACT_SCHEMA,
     prebextor_extract_handler,
-    _check_available,
+    _check_available as _check_extract_available,
+)
+from .tool_search import (
+    PREBEXTOR_SEARCH_SCHEMA,
+    prebextor_search_handler,
+    _check_available as _check_search_available,
 )
 
 from .provider import PrebextorProvider
 
-__version__ = "1.2.2"
+__version__ = "1.3.0"
 __all__ = ["PrebextorProvider"]
 
 # Skill that ships WITH this plugin. The path is resolved at register-time
@@ -72,6 +77,18 @@ def register(ctx) -> None:
         is_async=True,
         emoji="📄",
         description="Prebextor extraction (deterministic, no API key needed)"
+    )
+
+    # 2. Standalone search tool
+    ctx.register_tool(
+        name="prebextor_search",
+        toolset="web",
+        schema=PREBEXTOR_SEARCH_SCHEMA,
+        handler=prebextor_search_handler,
+        check_fn=_check_search_available,
+        is_async=True,
+        emoji="🔍",
+        description="Prebextor search (SearXNG backend, no API key needed)"
     )
 
     if _EMBEDDED_SKILL_PATH.exists():

@@ -14,12 +14,15 @@ Pipeline dasar: **Mapping → Scoring → Pruning → Validation → Text → If
 ```
 prebextor/
 ├── prebextor/              # source package
-│   ├── __init__.py         # __version__, re-exports
+│   ├── __init__.py         # __version__, re-exports, registrasi
 │   ├── provider.py         # PrebextorProvider (WebSearchProvider contract)
 │   ├── tool_extract.py     # prebextor_extract standalone tool
+│   ├── tool_search.py      # prebextor_search standalone tool
 │   ├── plugin.yaml         # plugin manifest (copy dari root)
 │   ├── pipeline/           # map → score → prune → validate → transform
-│   └── fetcher/            # CamoFox CLI subprocess wrapper
+│   ├── fetcher/            # CamoFox CLI subprocess wrapper
+│   └── search/             # Search engines (SearXNG)
+│       └── searxng.py      # SearXNG search engine
 ├── tests/                  # unit + e2e validation
 ├── plugin.yaml             # root copy (untuk deployment)
 ├── pyproject.toml
@@ -30,7 +33,8 @@ prebextor/
 ## 2. Integration with Hermes Agent
 Prebextor diintegrasikan melalui sistem plugin Hermes, mendukung **dua mode**:
 1. **Provider** — terdaftar via `register_web_search_provider`. Diaktifkan dengan `web.extract_backend: prebextor` di config.yaml.
-2. **Standalone Tool** — terdaftar via `register_tool` sebagai `prebextor_extract`. Bypass `web_tools` dispatcher, zero-config. Disarankan untuk penggunaan langsung.
+2. **Standalone Tool (Extract)** — terdaftar via `register_tool` sebagai `prebextor_extract`. Bypass `web_tools` dispatcher, zero-config.
+3. **Standalone Tool (Search)** — terdaftar via `register_tool` sebagai `prebextor_search`. Search via SearXNG tanpa config.
 
 ### Contract Compliance
 Provider mengimplementasikan kontrak `WebSearchProvider` dari Hermes Agent core:
@@ -161,6 +165,54 @@ Pada cache hit: skip fase 3-6 (map/score/prune/validate), apply struktur yang di
     }
   ]
 }
+```
+
+## 5. Usage in pi (Coding Agent)
+
+Prebextor sudah terintegrasi dengan pi via extension. Tools akan muncul otomatis setelah restart pi.
+
+### Setup
+
+```bash
+# 1. Install Prebextor (editable mode)
+cd /home/degi/project/prebextor
+pip install -e ".[all]"
+
+# 2. Pastikan SEARXNG_URL terisi (untuk search)
+#    Sudah otomatis terbaca dari ~/.hermes/.env
+
+# 3. Extension pi sudah terpasang di:
+#    ~/.pi/agent/extensions/prebextor/index.ts
+#    Akan otomatis di-load oleh pi saat startup / reload
+```
+
+### Tools yang Tersedia di pi
+
+| Tool | Deskripsi |
+|---|---|
+| `prebextor_search` | Web search via SearXNG. Mencari informasi terbaru dari internet. |
+| `prebextor_extract` | Extract konten bersih dari URL. Output markdown + XML boundary. |
+
+Keduanya akan muncul di daftar *Available tools* pi dan bisa langsung dipakai oleh LLM.
+
+### Manual reload di pi
+
+```bash
+# Di dalam sesi pi:
+/reload
+
+# Atau dari luar:
+pi --reload
+```
+
+### Testing langsung
+
+```bash
+# Search
+SEARXNG_URL=http://localhost:8080 prebextor search "berita terbaru" --limit 3
+
+# Extract
+prebextor extract https://example.com
 ```
 
 ## 6. Project Structure

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hermes-prebextor"
-version = "1.2.2"
-description = "Prebextor Deterministic Extraction Engine — Mapping → Pruning → Fetching → Cleaning → Markdown → Boundary XML Wrap → QA Gate."
+version = "1.3.0"
+description = "Prebextor Deterministic Extraction + Search Engine — Mapping → Pruning → Fetching → Cleaning → Markdown → Boundary XML Wrap → QA Gate. Now with SearXNG web search."
 authors = [{ name = "degi", email = "degi@example.com" }]
 license = { text = "MIT" }
 requires-python = ">=3.10"
@@ -16,11 +16,22 @@ dependencies = [
     "pyyaml>=6.0",
 ]
 
+[project.optional-dependencies]
+search = ["httpx>=0.24"]
+all = ["httpx>=0.24"]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["prebextor*"]
+
+[project.scripts]
+prebextor = "prebextor.__main__:main"
+prebextor-search = "prebextor.__main__:cmd_search"
+prebextor-extract = "prebextor.__main__:cmd_extract"
+prebextor-info = "prebextor.__main__:cmd_info"
 
 [tool.setuptools]
 # Plugin is discovered via plugin.yaml + __init__.py:register(ctx) by the
 # Hermes CLI's `hermes plugins install` workflow. We don't package a pip
 # distribution — install via `hermes plugins install degidevops/prebextor`.
+# For pi standalone usage, install via: pip install -e .  atau pip install -e ".[all]"

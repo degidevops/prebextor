@@ -56,6 +56,7 @@ from .pipeline.transform import MarkdownConverter, BoundaryWrapper
 from .pipeline.iframe_extractor import IframeExtractor
 from .pipeline.scorer import ContentAwareScorer
 from .pipeline.validator import ContentValidator
+from .search.searxng import SearXNGSearchEngine
 
 
 def _extract_title_from_text(text: str) -> str:
@@ -294,7 +295,12 @@ class ContentQualityFilter:
 
 
 class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
-    """Deterministic extraction provider (CamoFox + markdownify)."""
+    """Deterministic extraction + search provider (CamoFox + SearXNG).
+    
+    Dual capability:
+    - ``extract()`` — deterministic extraction via CamoFox (existing pipeline)
+    - ``search()`` — web search via SearXNG (requires SEARXNG_URL)
+    """
     
     def __init__(
         self,
@@ -304,9 +310,11 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         cache_ttl_hours: int = 168,  # 7 days for structure
         enable_quality_filter: bool = True,
         enable_metrics: bool = True,
+        searxng_url: Optional[str] = None,
+        search_timeout: int = 15,
     ) -> None:
         self._name = "prebextor"
-        self._display = "Prebextor (Deterministic Extraction Engine v3)"
+        self._display = "Prebextor (Deterministic Extraction + Search Engine)"
         
         # Concurrency control
         self._semaphore = asyncio.Semaphore(max_concurrent)
@@ -334,6 +342,12 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         self._iframe = IframeExtractor(self._camofox)
         self._scorer = ContentAwareScorer(self._camofox)
         self._validator = ContentValidator(self._camofox)
+        
+        # Search engine (SearXNG)
+        self._search_engine = SearXNGSearchEngine(
+            searxng_url=searxng_url,
+            timeout=search_timeout,
+        )
     
     # ---------- WebSearchProvider surface ----------
     
@@ -346,19 +360,34 @@ class PrebextorProvider(WebSearchProvider):  # type: ignore[misc]
         return self._display
     
     def is_available(self) -> bool:
-        return CamoFoxClient.is_available()
+        """Available if CamoFox (for extract) OR SearXNG (for search) is configured."""
+        return CamoFoxClient.is_available() or self._search_engine.is_available()
     
     def supports_search(self) -> bool:
-        return False
+        return True
     
     def supports_extract(self) -> bool:
         return True
     
-    def search(self, query: str, **_: Any) -> List[Dict[str, Any]]:  # pragma: no cover
-        raise NotImplementedError(
-            "PrebextorProvider is extraction-only. "
-            "Pair with a search provider (e.g. searxng) for web_search."
-        )
+    def search(self, query: str, limit: int = 5) -> Dict[str, Any]:
+        """Execute a web search via SearXNG.
+        
+        Returns the standard Hermes search envelope::
+        
+            {"success": True, "data": {"web": [{title, url, description, position}, ...]}}
+        
+        Requires ``SEARXNG_URL`` env var or ``searxng_url`` constructor arg.
+        """
+        if not self._search_engine.is_available():
+            return {
+                "success": False,
+                "error": (
+                    "SEARXNG_URL is not set. "
+                    "Configure it via env var or the constructor. "
+                    "Example: SEARXNG_URL=http://localhost:8080"
+                ),
+            }
+        return self._search_engine.search(query, limit=limit)
     
     # ---------- Internal ----------
     
