@@ -41,7 +41,7 @@ _PASS2_MIN_COMMAS = 1
 _PASS2_MIN_SCORE = 1.0
 _PASS2_MAX_LINK_DENSITY = 0.6
 
-_PASS3_MIN_TEXT = 50   # Absolute minimum -- almost anything
+_PASS3_MIN_TEXT = 32   # Absolute minimum -- keep short-but-real content
 
 
 class ValidationResult:

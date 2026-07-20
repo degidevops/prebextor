@@ -137,6 +137,33 @@ class CamoFoxClient:
         )
         return rc == 0
 
+    def scroll(
+        self,
+        tab_id: str,
+        user: str,
+        direction: str = "down",
+        amount: int = 3000,
+        wait_ms: int = 0,
+    ) -> bool:
+        """Scroll the page to trigger lazy-loaded content.
+
+        Wraps ``camofox scroll <dir> [tabId] --amount N``. Optionally sleeps
+        ``wait_ms`` milliseconds afterward so async fetches settle before the
+        next read.
+        """
+        try:
+            _, _, rc = self.run(
+                ["scroll", direction, tab_id, "--amount", str(amount), "--user", user],
+                user=user,
+                timeout=15,
+            )
+        except Exception:
+            return False
+        if wait_ms > 0 and rc == 0:
+            import time as _time
+            _time.sleep(wait_ms / 1000.0)
+        return rc == 0
+
     def snapshot(self, tab_id: str, user: str, timeout: int = 60) -> Optional[str]:
         """Get accessibility tree snapshot. DEPRECATED — do not use."""
         stdout, _, rc = self.run(["snapshot", tab_id], user=user, timeout=timeout)

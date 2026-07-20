@@ -1,5 +1,5 @@
 name: prebextor
-version: "1.2.2"
+version: "1.3.1"
 description: "Prebextor Deterministic Extraction Engine — content-aware scoring, structure cache, parallel batch, zero-API-key. Built on CamoFox and markdownify."
 author: degi
 kind: backend

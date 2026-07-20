@@ -1,5 +1,5 @@
 name: prebextor
-version: "1.3.0"
+version: "1.3.1"
 description: "Prebextor Deterministic Extraction + Search Engine — content-aware scoring, structure cache, parallel batch, SearXNG search, zero-API-key. Built on CamoFox, markdownify, and SearXNG."
 author: degi
 kind: backend

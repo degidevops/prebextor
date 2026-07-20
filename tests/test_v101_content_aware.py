@@ -167,7 +167,7 @@ print("\n" + "=" * 60)
 print("Section 7: Version")
 print("=" * 60)
 
-check("Version is 1.2.1", __version__ == "1.2.1", f"version: {__version__}")
+check("Version is 1.3.1", __version__ == "1.3.1", f"version: {__version__}")
 
 # ── Summary ──
 print(f"\n{'='*60}")

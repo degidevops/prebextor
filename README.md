@@ -113,7 +113,7 @@ Setiap request `extract()` mengikuti alur kaku (pipeline v3.1):
    - **Dynamic**: `SurgicalPruner.prune_dynamic()` — noise selectors dari scorer (high link density + low text).
 6. **Content Validation**: `ContentValidator.validate()` — strict → relaxed → fallback (3-pass dengan warning).
 7. **Text Extraction**: `CamoFoxClient.get_text()` — `innerText` langsung dari pruned DOM (no outerHTML round-trip).
-8. **Empty Content Detection**: Reject extraction < 30 chars (indikasi JS-render atau block).
+8. **Empty Content Detection**: Two-tier floor (`SHORT_CONTENT_FLOOR=32`, `_ABSOLUTE_EMPTY_FLOOR=1`). Below the soft floor → try the selector ladder (`main → article → role=main → role=article → body`) to recover; still thin → return what's available with `low_content_healed` flag instead of erroring. Truly empty → hard error.
 9. **Iframe Extraction**: `IframeExtractor.detect_significant_iframes()` — extract content dari cross-origin iframes (CME FedWatch, widgets).
 10. **Markdown**: `MarkdownConverter.convert()` — hierarchy-preserving markdown.
 11. **Boundary Wrap**: `BoundaryWrapper.wrap()` — XML semantic tags.

@@ -7,6 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.1] — 2026-07-18
+
+### Fixed
+- **False reject on short content (< 32)** — The old ``len(text) < 30`` gate
+  was killing legitimate short pages (FAQ, status pages, sparse articles).
+  Replaced with a two-tier floor: ``SHORT_CONTENT_FLOOR=32`` for *soft*
+  acceptance (returns the available content with a ``low_content_healed``
+  flag) and ``_ABSOLUTE_EMPTY_FLOOR=1`` for hard rejection of truly empty
+  pages. See ``prebextor/provider.py``.
+- **Empty thin container recovery** — Added ``_heal_low_content`` ladder
+  (main -> article -> role=main -> role=article -> body) that runs before
+  the floor check, so over-pruned containers get expanded automatically.
+- **Structure cache was caching empty noise lists** — ``noise_selectors``
+  was always persisted as ``[]`` regardless of pipeline output, so the
+  cached-structure path never re-applied dynamic pruning. Now persists the
+  actual selectors + scored blocks via ``_noise_selectors`` /
+  ``_scored_blocks`` keys in metadata. See ``_cache_structure_from_result``.
+- **Cache poisoning on broken structure** — Added auto-heal: if the cached
+  path produces empty/starved content, the cache entry is invalidated and
+  the full pipeline runs once. The heal is bounded by a private
+  ``_heal_in_progress`` flag so it cannot recurse forever.
+- **Main tab never scrolled** — ``scroll_to_bottom`` only forwarded to
+  iframe sub-tabs, so lazy-loaded main-page content (infinite-scroll,
+  JS feeds, paginated tables) was missed. Added ``CamoFoxClient.scroll``
+  + ``_maybe_scroll_main_tab`` to drive the main tab.
+- **Stale test assertions** — Updated ``tests/test_v101_content_aware.py``
+  (version 1.2.1 → 1.3.1) and ``tests/validate_v102.py``
+  (``supports_search=False`` → ``True`` for v1.3 SearXNG dual mode).
+
+### Optimized
+- **Faster parallel batches** — Refactored ``extract()`` looping into two
+  helpers: ``_run_batch_extract`` (semaphore + gather) and
+  ``_run_async_in_isolated_loop`` (worker-thread + fresh loop for callers
+  already inside a running event loop). No more inline ThreadPoolExecutor.
+- **Cleaner pipeline tail** — Extracted shared text→markdown→XML-boundary
+  logic into ``_finish_extraction`` so the full-pipeline path and the
+  cached-structure path can no longer drift apart.
+- **Cache management API** — Added ``StructureCache.invalidate(url)`` and
+  ``StructureCache.clear()`` for debugging / manual eviction.
+
+### Changed
+- Version bumped 1.3.0 → 1.3.1 (``__init__.py``, ``pyproject.toml``,
+  ``plugin.yaml``, embedded plugin YAML).
+- Validator ``_PASS3_MIN_TEXT`` lowered 50 → 32 to match the new
+  pipeline floor (consistency across modules).
+
+---
+
 ## [1.2.1] — 2026-07-06
 
 ### Changed
